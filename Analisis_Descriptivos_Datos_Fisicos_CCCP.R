@@ -1,3 +1,13 @@
+#Titulo: Visualización y Análisis descriptivo - CCCP
+#Autor: Christian Bermúdez-Rivas
+#Objectivo: Visualización y análisis descriptivo de los datos físicos obtenidos de la sonda CDT-O General Oceanics 19v PLUS.
+#Lenguaje de programación: R
+#Fecha: December 2021
+#Notas: 
+###############################################################################################################################
+
+
+
 #Este script tiene cómo objetivo realizar las gráficas del componente físico de la Expedición Pacífico.
 
 library(ggplot2)
@@ -317,3 +327,15 @@ grid.arrange(nrow=3, ncol=2,Temp_G01A, Temp_G02A,Temp_G03A,  Temp_G04A,  Temp_G0
 dev.off()
 
 
+hexbin_plot<-function(Estacion, var1, var2, labelx, labely)
+{
+  if (!is.null(Estacion) &  !is.null(var1)& !is.null(var2)& !is.null(labelx)& !is.null(labely)){
+    ggplot(Estacion, aes(x=var1, y=var2)) +
+      geom_hex(bins = 20) +
+      labs(x= labelx, y=labely)+
+      scale_y_reverse()+
+      scale_x_continuous(position = "top")+
+      theme_bw()}else{
+        print('Faltan Valores')}
+}
+hexbin_Temp<-hexbin_plot(CTDO, CTDO$Temp, CTDO$Prof, "Temperatura [�C]", "Profundidad [m]")

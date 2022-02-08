@@ -1,3 +1,12 @@
+#Titulo: Visualización y Análisis descriptivo - Datos Químicos
+#Autor: Christian Bermúdez-Rivas
+#Objectivo: Visualización y análisis descriptivo de los datos químicos obtenidos de los análisis en laboratorio.
+#Lenguaje de programación: R
+#Fecha: December 2021
+#Notas: 
+###############################################################################################################################
+
+
 library(tidyverse)
 library(gridExtra)
 

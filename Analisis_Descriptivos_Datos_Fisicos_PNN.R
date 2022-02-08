@@ -1,3 +1,12 @@
+#Titulo: Visualización y Análisis descriptivo - PNN
+#Autor: Christian Bermúdez-Rivas
+#Objectivo: Visualización y análisis descriptivo de los datos físicos obtenidos de la sonda CastAWAY General Oceanics 19v PLUS.
+#Lenguaje de programación: R
+#Fecha: December 2021
+#Notas: 
+###############################################################################################################################
+
+
 library(tidyverse)
 library(gridExtra)
 
