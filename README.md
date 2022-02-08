@@ -6,6 +6,9 @@
 
 ![Estaciones de muestreo](Mapa_Estaciones_Bocas.png)
 
-
+<div style="text-align:center"> <img src="..." /> </div>.
 ![Caption for the picture.](Screen_shot.png)
 
+<p align="center" width="100%">
+    <img width="33%" src="Mapa_Estaciones_Bocas.png">
+</p>
