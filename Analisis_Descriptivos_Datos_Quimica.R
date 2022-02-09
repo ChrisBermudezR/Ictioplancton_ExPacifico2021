@@ -9,6 +9,9 @@
 
 library(tidyverse)
 library(gridExtra)
+library(gsw)
+library(oce)
+library(lattice)
 
 Datos_Quimica<-read.table("Quimica.csv", header = TRUE, sep=",")
 
@@ -29,6 +32,8 @@ Datos_Quimica$Boca <- recode_factor(Datos_Quimica$Boca,
 write.table(Datos_Quimica, "Datos_Quimica.csv", col.names = TRUE, sep=",")
 
 Datos_Quimica$Boca2 <- with(Datos_Quimica, relevel(Boca, "Amarales"))
+
+legend <- get_legend(NO2_Quimica)
 
 NO2_Quimica<-ggplot(Datos_Quimica, aes(x=Boca, y=NO2, color=Marea)) + 
   geom_boxplot()+ 
@@ -176,3 +181,9 @@ tiff(filename = "02_Quimica_Linea.tif", width = 20, height = 30, units = "cm", p
 grid.arrange(nrow=5, ncol=2, NO2_line, NO3_line, PO4_line,SiO2_line,Clorofila_line,Salinidad_line,pH_line,OD_line,Transparencia_line,SST_line
              )
 dev.off()
+
+
+
+NO2_WIRE<- interpBarnes(Datos_Quimica$latitud, Datos_Quimica$longitud, Datos_Quimica$NO2)
+NO2_WIRE_Graf<-wireframe(NO2_WIRE$zg, xlab="Longitud", ylab=list("Latitud", rot = 0), zlab=list("NO2", rot = 90), main= "Temperatura Superficial", cex=5, zoom=0.8, screen = list(z = 15, x = -50, y = -1), colorkey=TRUE, drape=TRUE)
+b4=contour(NO2_WIRE$xg, NO2_WIRE$yg, NO2_WIRE$zg, xlab="Lon", ylab="Lat", labcex=1)
