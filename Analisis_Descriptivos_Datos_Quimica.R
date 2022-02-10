@@ -12,6 +12,8 @@ library(gridExtra)
 library(gsw)
 library(oce)
 library(lattice)
+library(latticeExtra)
+library(GGally)
 
 Datos_Quimica<-read.table("Quimica.csv", header = TRUE, sep=",")
 
@@ -78,12 +80,12 @@ OD_Quimica<-ggplot(Datos_Quimica, aes(x=Boca, y=OD, color=Marea)) +
   geom_point(position = position_jitterdodge())
 Transparencia_Quimica<-ggplot(Datos_Quimica, aes(x=Boca, y=Transparencia, color=Marea)) + 
   geom_boxplot()+ 
-  labs( y = "Transparencia [m]", x = "Boca de los ríos")+
+  labs( y = "Transparencia [m]", x = "Transecto")+
   theme_classic()+
   geom_point(position = position_jitterdodge())
 SST_Quimica<-ggplot(Datos_Quimica, aes(x=Boca, y=SST, color=Marea)) + 
   geom_boxplot()+ 
-  labs( y = "SST [mg/L]", x = "Boca de los ríos")+
+  labs( y = "SST [mg/L]", x = "Transecto")+
   theme_classic()+
   geom_point(position = position_jitterdodge())
 
@@ -98,7 +100,7 @@ NO2_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=NO2)) +
   geom_line()+ 
   geom_point()+ 
   labs( y = "NO2 [µM]")+
-  scale_x_discrete(name ="Boca de los ríos", 
+  scale_x_discrete(name ="Transecto", 
                    limits=c("1", "2", "3", "4", "5", "6"))+
    theme_bw()+
   facet_grid(Marea~Boca)
@@ -107,7 +109,7 @@ NO3_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=NO3)) +
   geom_line()+ 
   geom_point()+ 
   labs( y = "NO3 [µM]")+
-  scale_x_discrete(name ="Boca de los ríos", 
+  scale_x_discrete(name ="Transecto", 
                    limits=c("1", "2", "3", "4", "5", "6"))+
   theme_bw()+
   facet_grid(Marea~Boca)
@@ -115,7 +117,7 @@ PO4_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=PO4)) +
   geom_line()+ 
   geom_point()+ 
   labs( y = "PO4 [µM]")+
-  scale_x_discrete(name ="Boca de los ríos", 
+  scale_x_discrete(name ="Transecto", 
                    limits=c("1", "2", "3", "4", "5", "6"))+
   theme_bw()+
   facet_grid(Marea~Boca)
@@ -123,7 +125,7 @@ SiO2_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=SiO2)) +
   geom_line()+ 
   geom_point()+ 
   labs( y = "SiO2 [µM]")+
-  scale_x_discrete(name ="Boca de los ríos", 
+  scale_x_discrete(name ="Transecto", 
                    limits=c("1", "2", "3", "4", "5", "6"))+
   theme_bw()+
   facet_grid(Marea~Boca)
@@ -131,7 +133,7 @@ Clorofila_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=Clorofila)) +
   geom_line()+ 
   geom_point()+ 
   labs( y = "Clorofila [mg/m3]")+
-  scale_x_discrete(name ="Boca de los ríos", 
+  scale_x_discrete(name ="Transecto", 
                    limits=c("1", "2", "3", "4", "5", "6"))+
   theme_bw()+
   facet_grid(Marea~Boca)
@@ -139,7 +141,7 @@ Salinidad_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=Salinidad)) +
   geom_line()+ 
   geom_point()+ 
   labs( y = "Salinidad [PSU]")+
-  scale_x_discrete(name ="Boca de los ríos", 
+  scale_x_discrete(name ="Transecto", 
                    limits=c("1", "2", "3", "4", "5", "6"))+
   theme_bw()+
   facet_grid(Marea~Boca)
@@ -147,7 +149,7 @@ pH_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=pH)) +
   geom_line()+ 
   geom_point()+ 
   labs( y = "pH")+
-  scale_x_discrete(name ="Boca de los ríos", 
+  scale_x_discrete(name ="Transecto", 
                    limits=c("1", "2", "3", "4", "5", "6"))+
   theme_bw()+
   facet_grid(Marea~Boca)
@@ -155,7 +157,7 @@ OD_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=OD)) +
   geom_line()+ 
   geom_point()+ 
   labs( y = "Oxígeno Disuelto [mg/L]")+
-  scale_x_discrete(name ="Boca de los ríos", 
+  scale_x_discrete(name ="Transecto", 
                    limits=c("1", "2", "3", "4", "5", "6"))+
   theme_bw()+
   facet_grid(Marea~Boca)
@@ -163,7 +165,7 @@ Transparencia_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=Transparencia)) +
   geom_line()+ 
   geom_point()+ 
   labs( y = "Transparencia [m]")+
-  scale_x_discrete(name ="Boca de los ríos", 
+  scale_x_discrete(name ="Transecto", 
                    limits=c("1", "2", "3", "4", "5", "6"))+
   theme_bw()+
   facet_grid(Marea~Boca)
@@ -171,19 +173,85 @@ SST_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=SST)) +
   geom_line()+ 
   geom_point()+ 
   labs( y = "SST [mg/L]")+
-  scale_x_discrete(name ="Boca de los ríos", 
+  scale_x_discrete(name ="Transecto", 
                    limits=c("1", "2", "3", "4", "5", "6"))+
   theme_bw()+
   facet_grid(Marea~Boca)
 
 
 tiff(filename = "02_Quimica_Linea.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
-grid.arrange(nrow=5, ncol=2, NO2_line, NO3_line, PO4_line,SiO2_line,Clorofila_line,Salinidad_line,pH_line,OD_line,Transparencia_line,SST_line
-             )
+grid.arrange(nrow=5, ncol=2, NO2_line, NO3_line, PO4_line,SiO2_line,Clorofila_line,Salinidad_line,pH_line,OD_line,Transparencia_line,SST_line)
+dev.off()
+
+
+tiff(filename = "04_correlaciones_Quimica.tif", width = 30, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
+Datos_Quimica %>% ggpairs(columns = 7:17,upper = list(continuous = wrap("cor", method = "spearman")))
 dev.off()
 
 
 
+
+
+#Revisar despues
 NO2_WIRE<- interpBarnes(Datos_Quimica$latitud, Datos_Quimica$longitud, Datos_Quimica$NO2)
 NO2_WIRE_Graf<-wireframe(NO2_WIRE$zg, xlab="Longitud", ylab=list("Latitud", rot = 0), zlab=list("NO2", rot = 90), main= "Temperatura Superficial", cex=5, zoom=0.8, screen = list(z = 15, x = -50, y = -1), colorkey=TRUE, drape=TRUE)
-b4=contour(NO2_WIRE$xg, NO2_WIRE$yg, NO2_WIRE$zg, xlab="Lon", ylab="Lat", labcex=1)
+NO2_contour<-contour(NO2_WIRE$xg, NO2_WIRE$yg, NO2_WIRE$zg, xlab="Lon", ylab="Lat", labcex=1)
+
+filled.contour(NO2_WIRE$zg, plot.axes = {
+  axis(NO2_WIRE$xg)
+  axis(NO2_WIRE$yg)
+  contour(NO2_WIRE$zg, add = TRUE, lwd = 2)
+}
+)
+
+cols <- hcl.colors(10, "YlOrRd")
+
+contour(NO2_WIRE$zg,
+        col = cols)
+
+
+
+ggpairs(Datos_Quimica,          # Data frame
+        columns = 7:17) # Columns
+Datos_Quimica %>% ggpairs(columns = 7:17,upper = list(continuous = wrap("cor", method = "spearman")))
+
+
+
+printVar = function(x,y){
+  vals = cor.test(x,y,
+                  method="spearman")[c("estimate","p.value")]
+  names(vals) = c("rho","p")
+  paste(names(vals),signif(unlist(vals),2),collapse="\n")
+}
+
+my_fn <- function(data, mapping, ...){
+  # takes in x and y for each panel
+  xData <- eval_data_col(data, mapping$x)
+  yData <- eval_data_col(data, mapping$y)
+  colorData <- eval_data_col(data, mapping$colour)
+  
+  # if you have colors, split according to color group and calculate cor
+  
+  byGroup =by(data.frame(xData,yData),colorData,function(i)printVar(i[,1],i[,2]))
+  byGroup = data.frame(col=names(byGroup),label=as.character(byGroup))
+  byGroup$x = 0.5
+  byGroup$y = seq(0.8-0.3,0.2,length.out=nrow(byGroup))
+  
+  #main correlation
+  mainCor = printVar(xData,yData)
+  
+  p <- ggplot(data = data, mapping = mapping) +
+    annotate(x=0.5,y=0.8,label=mainCor,geom="text",size=3) +
+    geom_text(data=byGroup,inherit.aes=FALSE,
+              aes(x=x,y=y,col=col,label=label),size=3)+ 
+    theme_void() + ylim(c(0,1))
+  p
+}
+
+ggpairs(Datos_Quimica,columns = 7:17,
+        mapping=ggplot2::aes(colour = Datos_Quimica$Marea),
+        axisLabels = "show", 
+        upper = list(continuous = my_fn))+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black"))
