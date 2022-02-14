@@ -19,72 +19,149 @@ Datos_Quimica<-read.table("Quimica.csv", header = TRUE, sep=",")
 
 
 Datos_Quimica$Separar<-Datos_Quimica$Estacion
-Datos_Quimica<-separate(Datos_Quimica, Separar, c("Boca", "No.Estacion"), sep = "0" )
-as.factor(Datos_Quimica$Boca)->Datos_Quimica$Boca
+Datos_Quimica<-separate(Datos_Quimica, Separar, c("Transecto", "No.Estacion"), sep = "0" )
+as.factor(Datos_Quimica$Transecto)->Datos_Quimica$Transecto
 as.numeric(Datos_Quimica$No.Estacion)->Datos_Quimica$No.Estacion
 
 
 
-Datos_Quimica$Boca <- recode_factor(Datos_Quimica$Boca, 
+Datos_Quimica$Transecto <- recode_factor(Datos_Quimica$Transecto, 
                                      A = "Amarales", 
                                      S = "Sanquianga", 
-                                     G = "Guamales")
+                                     G = "Guascama")
 
 
 write.table(Datos_Quimica, "Datos_Quimica.csv", col.names = TRUE, sep=",")
 
-Datos_Quimica$Boca2 <- with(Datos_Quimica, relevel(Boca, "Amarales"))
-
 legend <- get_legend(NO2_Quimica)
 
-NO2_Quimica<-ggplot(Datos_Quimica, aes(x=Boca, y=NO2, color=Marea)) + 
+NO2_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=NO2, color=Marea)) + 
   geom_boxplot()+ 
-  labs( y = "NO2 [µM]", x = "Boca de los ríos")+
-  theme_classic()+
+  stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
+  labs( y = "NO2 [µM]", x = "Marea")+
+  theme_classic()
   geom_point(position = position_jitterdodge()) 
-NO3_Quimica<-ggplot(Datos_Quimica, aes(x=Boca, y=NO3, color=Marea)) + 
+NO3_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=NO3, color=Marea)) + 
   geom_boxplot()+ 
-  labs( y = "NO3 [µM]", x = "Boca de los ríos")+
+  stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
+  labs( y = "NO3 [µM]", x = "Marea")+
   theme_classic()+
   geom_point(position = position_jitterdodge()) 
 
-PO4_Quimica<-ggplot(Datos_Quimica, aes(x=Boca, y=PO4, color=Marea)) + 
+PO4_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=PO4, color=Marea)) + 
   geom_boxplot()+ 
-  labs( y = "PO4 [µM]", x = "Boca de los ríos")+
+  stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
+  labs( y = "PO4 [µM]", x = "Marea")+
   theme_classic()+
   geom_point(position = position_jitterdodge())
-SiO2_Quimica<-ggplot(Datos_Quimica, aes(x=Boca, y=SiO2, color=Marea)) + 
+SiO2_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=SiO2, color=Marea)) + 
   geom_boxplot()+ 
-  labs( y = "SiO2 [µM]", x = "Boca de los ríos")+
+  stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
+  labs( y = "SiO2 [µM]", x = "Marea")+
   theme_classic()+
   geom_point(position = position_jitterdodge()) 
-Clorofila_Quimica<-ggplot(Datos_Quimica, aes(x=Boca, y=Clorofila, color=Marea)) + 
+Clorofila_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=Clorofila, color=Marea)) + 
   geom_boxplot()+ 
-  labs( y = "Clorofila [mg/m3]", x = "Boca de los ríos")+
+  stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
+  labs( y = "Clorofila [mg/m3]", x = "Marea")+
   theme_classic()+
   geom_point(position = position_jitterdodge())
-Salinidad_Quimica<-ggplot(Datos_Quimica, aes(x=Boca, y=Salinidad, color=Marea)) + 
+Salinidad_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=Salinidad, color=Marea)) + 
   geom_boxplot()+ 
-  labs( y = "Salinidad [PSU]", x = "Boca de los ríos")+
+  stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
+  labs( y = "Salinidad [PSU]", x = "Marea")+
   theme_classic()+
   geom_point(position = position_jitterdodge())
-pH_Quimica<-ggplot(Datos_Quimica, aes(x=Boca, y=pH, color=Marea)) + 
+pH_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=pH, color=Marea)) + 
   geom_boxplot()+ 
-  labs( y = "pH", x = "Boca de los ríos")+
+  stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
+  labs( y = "pH", x = "Marea")+
   theme_classic()+
   geom_point(position = position_jitterdodge())
-OD_Quimica<-ggplot(Datos_Quimica, aes(x=Boca, y=OD, color=Marea)) + 
+OD_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=OD, color=Marea)) + 
   geom_boxplot()+ 
-  labs( y = "Oxígeno Disuelto [mg/L]", x = "Boca de los ríos")+
+  stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
+  labs( y = "Oxígeno Disuelto [mg/L]", x = "Marea")+
   theme_classic()+
   geom_point(position = position_jitterdodge())
-Transparencia_Quimica<-ggplot(Datos_Quimica, aes(x=Boca, y=Transparencia, color=Marea)) + 
+Transparencia_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=Transparencia, color=Marea)) + 
   geom_boxplot()+ 
+  stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
+  labs( y = "Transparencia [m]", x = "Marea")+
+  theme_classic()+
+  geom_point(position = position_jitterdodge())
+SST_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=SST, color=Marea)) + 
+  geom_boxplot()+ 
+  stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
+  labs( y = "SST [mg/L]", x = "Marea")+
+  theme_classic()+
+  geom_point(position = position_jitterdodge())
+
+tiff(filename = "01_Datos_Quimica_Total.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
+grid.arrange(nrow=5, ncol=2, NO2_Quimica_Total, NO3_Quimica_Total, PO4_Quimica_Total, SiO2_Quimica_Total ,Clorofila_Quimica_Total, Salinidad_Quimica_Total,pH_Quimica_Total,OD_Quimica_Total,Transparencia_Quimica_Total,SST_Quimica_Total,
+             top="Datos totales")
+dev.off()
+
+
+
+NO2_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=NO2, color=Marea)) + 
+  geom_boxplot()+ 
+  stat_summary(fun=mean, aes(y = NO2, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) +
+   labs( y = "NO2 [µM]", x = "Transecto")+
+  theme_classic()+
+  geom_point(position = position_jitterdodge()) 
+NO3_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=NO3, color=Marea)) + 
+  stat_summary(fun=mean, aes(y = NO3, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) +
+  geom_boxplot()+ 
+  labs( y = "NO3 [µM]", x = "Transecto")+
+  theme_classic()+
+  geom_point(position = position_jitterdodge()) 
+
+PO4_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=PO4, color=Marea)) + 
+  geom_boxplot()+ 
+  stat_summary(fun=mean, aes(y = PO4, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) +
+  labs( y = "PO4 [µM]", x = "Transecto")+
+  theme_classic()+
+  geom_point(position = position_jitterdodge())
+SiO2_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=SiO2, color=Marea)) + 
+  geom_boxplot()+ 
+  stat_summary(fun=mean, aes(y = SiO2, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) +
+  labs( y = "SiO2 [µM]", x = "Transecto")+
+  theme_classic()+
+  geom_point(position = position_jitterdodge()) 
+Clorofila_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=Clorofila, color=Marea)) + 
+  geom_boxplot()+ 
+  stat_summary(fun=mean, aes(y = Clorofila, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) +
+  labs( y = "Clorofila [mg/m3]", x = "Transecto")+
+  theme_classic()+
+  geom_point(position = position_jitterdodge())
+Salinidad_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=Salinidad, color=Marea)) + 
+  geom_boxplot()+ 
+  stat_summary(fun=mean, aes(y = Salinidad, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) + 
+  labs( y = "Salinidad [PSU]", x = "Transecto")+
+  theme_classic()+
+  geom_point(position = position_jitterdodge())
+pH_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=pH, color=Marea)) + 
+  geom_boxplot()+ 
+  stat_summary(fun=mean, aes(y = pH, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) + 
+  labs( y = "pH", x = "Transecto")+
+  theme_classic()+
+  geom_point(position = position_jitterdodge())
+OD_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=OD, color=Marea)) + 
+  geom_boxplot()+ 
+  stat_summary(fun=mean, aes(y = OD, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) + 
+  labs( y = "Oxígeno Disuelto [mg/L]", x = "Transecto")+
+  theme_classic()+
+  geom_point(position = position_jitterdodge())
+Transparencia_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=Transparencia, color=Marea)) + 
+  geom_boxplot()+ 
+  stat_summary(fun=mean, aes(y = Transparencia, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) + 
   labs( y = "Transparencia [m]", x = "Transecto")+
   theme_classic()+
   geom_point(position = position_jitterdodge())
-SST_Quimica<-ggplot(Datos_Quimica, aes(x=Boca, y=SST, color=Marea)) + 
+SST_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=SST, color=Marea)) + 
   geom_boxplot()+ 
+  stat_summary(fun=mean, aes(y = SST, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) +
   labs( y = "SST [mg/L]", x = "Transecto")+
   theme_classic()+
   geom_point(position = position_jitterdodge())
@@ -103,7 +180,7 @@ NO2_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=NO2)) +
   scale_x_discrete(name ="Transecto", 
                    limits=c("1", "2", "3", "4", "5", "6"))+
    theme_bw()+
-  facet_grid(Marea~Boca)
+  facet_grid(Marea~Transecto)
 
 NO3_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=NO3)) + 
   geom_line()+ 
@@ -112,7 +189,7 @@ NO3_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=NO3)) +
   scale_x_discrete(name ="Transecto", 
                    limits=c("1", "2", "3", "4", "5", "6"))+
   theme_bw()+
-  facet_grid(Marea~Boca)
+  facet_grid(Marea~Transecto)
 PO4_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=PO4)) + 
   geom_line()+ 
   geom_point()+ 
@@ -120,7 +197,7 @@ PO4_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=PO4)) +
   scale_x_discrete(name ="Transecto", 
                    limits=c("1", "2", "3", "4", "5", "6"))+
   theme_bw()+
-  facet_grid(Marea~Boca)
+  facet_grid(Marea~Transecto)
 SiO2_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=SiO2)) + 
   geom_line()+ 
   geom_point()+ 
@@ -128,7 +205,7 @@ SiO2_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=SiO2)) +
   scale_x_discrete(name ="Transecto", 
                    limits=c("1", "2", "3", "4", "5", "6"))+
   theme_bw()+
-  facet_grid(Marea~Boca)
+  facet_grid(Marea~Transecto)
 Clorofila_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=Clorofila)) + 
   geom_line()+ 
   geom_point()+ 
@@ -136,7 +213,7 @@ Clorofila_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=Clorofila)) +
   scale_x_discrete(name ="Transecto", 
                    limits=c("1", "2", "3", "4", "5", "6"))+
   theme_bw()+
-  facet_grid(Marea~Boca)
+  facet_grid(Marea~Transecto)
 Salinidad_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=Salinidad)) + 
   geom_line()+ 
   geom_point()+ 
@@ -144,7 +221,7 @@ Salinidad_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=Salinidad)) +
   scale_x_discrete(name ="Transecto", 
                    limits=c("1", "2", "3", "4", "5", "6"))+
   theme_bw()+
-  facet_grid(Marea~Boca)
+  facet_grid(Marea~Transecto)
 pH_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=pH)) + 
   geom_line()+ 
   geom_point()+ 
@@ -152,7 +229,7 @@ pH_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=pH)) +
   scale_x_discrete(name ="Transecto", 
                    limits=c("1", "2", "3", "4", "5", "6"))+
   theme_bw()+
-  facet_grid(Marea~Boca)
+  facet_grid(Marea~Transecto)
 OD_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=OD)) + 
   geom_line()+ 
   geom_point()+ 
@@ -160,7 +237,7 @@ OD_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=OD)) +
   scale_x_discrete(name ="Transecto", 
                    limits=c("1", "2", "3", "4", "5", "6"))+
   theme_bw()+
-  facet_grid(Marea~Boca)
+  facet_grid(Marea~Transecto)
 Transparencia_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=Transparencia)) + 
   geom_line()+ 
   geom_point()+ 
@@ -168,7 +245,7 @@ Transparencia_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=Transparencia)) +
   scale_x_discrete(name ="Transecto", 
                    limits=c("1", "2", "3", "4", "5", "6"))+
   theme_bw()+
-  facet_grid(Marea~Boca)
+  facet_grid(Marea~Transecto)
 SST_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=SST)) + 
   geom_line()+ 
   geom_point()+ 
@@ -176,7 +253,7 @@ SST_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=SST)) +
   scale_x_discrete(name ="Transecto", 
                    limits=c("1", "2", "3", "4", "5", "6"))+
   theme_bw()+
-  facet_grid(Marea~Boca)
+  facet_grid(Marea~Transecto)
 
 
 tiff(filename = "02_Quimica_Linea.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)

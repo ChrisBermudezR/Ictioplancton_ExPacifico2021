@@ -1,6 +1,6 @@
 #Titulo: VisualizaciÃ³n y AnÃ¡lisis descriptivo - PNN
 #Autor: Christian BermÃºdez-Rivas
-#Objectivo: VisualizaciÃ³n y anÃ¡lisis descriptivo de los datos físicos obtenidos de la sonda CastAWAY General Oceanics 19v PLUS.
+#Objectivo: VisualizaciÃ³n y anÃ¡lisis descriptivo de los datos fÃ­sicos obtenidos de la sonda CastAWAY General Oceanics 19v PLUS.
 #Lenguaje de programaciÃ³n: R
 #Fecha: December 2021
 #Notas: 
@@ -44,7 +44,7 @@ as.factor(Datos_CTDO_PNN$No.Estacion)->Datos_CTDO_PNN$No.Estacion
 Datos_CTDO_PNN$Transecto <- recode_factor(Datos_CTDO_PNN$Transecto, 
                                      A = "Amarales", 
                                      S = "Sanquianga", 
-                                G = "Guamales")
+                                     G = "Guascama")
 write.table(Datos_CTDO_PNN, "Datos_CTDO_PNN.csv", col.names = TRUE, sep=",")
 
 
@@ -53,16 +53,21 @@ write.table(Datos_CTDO_PNN, "Datos_CTDO_PNN.csv", col.names = TRUE, sep=",")
 
 Temperatura_Total_PNN<-ggplot(Datos_CTDO_PNN, aes(x=Transecto, y=Temperatura)) + 
   geom_boxplot()+ 
-  labs( y = "Temperatura [°C]", x = "Transectos")+
-  theme_classic()+geom_jitter(width=0.1,alpha=0.2) 
+  theme_bw()+
+  geom_jitter(width=0.1,alpha=0.2) +
+  stat_summary(fun=mean, aes(y = Temperatura,x=Transecto), geom="point", shape=20, size=4, color="red", position = position_dodge(width =0.8)) +
+  labs( y = "Temperatura [Â°C]", x = "Transectos")
+  
 Salnidad_Total_PNN<-ggplot(Datos_CTDO_PNN, aes(x=Transecto, y=Salinidad)) + 
   geom_boxplot()+ 
   labs( y = "Salinidad [PSU]", x = "Transectos")+
-  theme_classic()+geom_jitter(width=0.1,alpha=0.2) 
+  theme_bw()+geom_jitter(width=0.1,alpha=0.2) +
+  stat_summary(fun=mean, aes(y = Salinidad,x=Transecto), geom="point", shape=20, size=4, color="red", position = position_dodge(width =0.8))
 Densidad_Total_PNN<-ggplot(Datos_CTDO_PNN, aes(x=Transecto, y=Densidad)) + 
   geom_boxplot()+  
   labs( y = "Densidad [kg/m3]", x = "Transectos")+
-  theme_classic()+geom_jitter(width=0.1,alpha=0.2) 
+  theme_bw()+geom_jitter(width=0.1,alpha=0.2) +
+  stat_summary(fun=mean, aes(y = Densidad,x=Transecto), geom="point", shape=20, size=4, color="red", position = position_dodge(width =0.8))
 
 tiff(filename = "01_Datos_Totales_PNN.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=2, ncol=2, Temperatura_Total_PNN, 
@@ -70,11 +75,19 @@ grid.arrange(nrow=2, ncol=2, Temperatura_Total_PNN,
              top="Datos totales")
 dev.off()
 
+tiff(filename = "01_BoxPlot_Totales.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
+grid.arrange(nrow=3, ncol=2, Temperatura_Total_PNN,  Temperatura_Total_CCCP, 
+             Salnidad_Total_PNN, Salnidad_Total_CCCP,
+             Densidad_Total_PNN, Densidad_Total_CCCP,
+             top="Datos totales")
+dev.off()
+
+
 Temperatura_Hist_PNN<-ggplot(Datos_CTDO_PNN, aes(x=Temperatura)) + 
   geom_histogram(aes(group=Marea))+  
-    labs(title = "Histograma de la Temperatura [°C]",
+    labs(title = "Histograma de la Temperatura [Â°C]",
        subtitle = "(Distribuido por los Transectos)",
-       y = "Frecuencia", x = "[°C]")+
+       y = "Frecuencia", x = "[Â°C]")+
   facet_grid(Marea~Transecto)
 Salinidad_Hist_PNN<-ggplot(Datos_CTDO_PNN, aes(x=Salinidad)) + 
   geom_histogram(aes(group=Marea))+  
@@ -97,13 +110,15 @@ dev.off()
 Temperatura_boxplot_PNN<-ggplot(Datos_CTDO_PNN) + 
   geom_boxplot(aes(x=No.Estacion, y=Temperatura))+ 
   theme_bw()+
-  labs(title = "Boxplot de la Temperatura [°C]",
-       y = "Temperatura [°C]", x = "Estaciones")+
+  stat_summary(fun=mean, aes(y = Temperatura,x=No.Estacion), geom="point", shape=20, size=2, color="red", position = position_dodge(width =0.8)) +
+  labs(title = "Boxplot de la Temperatura [Â°C]",
+       y = "Temperatura [Â°C]", x = "Estaciones")+
   facet_grid(Marea~Transecto)
 
 Salinidad_boxplot_PNN<-ggplot(Datos_CTDO_PNN) + 
   geom_boxplot(aes(x=No.Estacion, y=Salinidad))+ 
   theme_bw()+
+  stat_summary(fun=mean, aes(y = Salinidad,x=No.Estacion), geom="point", shape=20, size=2, color="red", position = position_dodge(width =0.8)) +
   labs(title = "Boxplot de la Salinidad [PSU]",
        y = "Salinidad [PSU]", x = "Estaciones")+
     facet_grid(Marea~Transecto)
@@ -111,6 +126,7 @@ Salinidad_boxplot_PNN<-ggplot(Datos_CTDO_PNN) +
 Densidad_boxplot_PNN<-ggplot(Datos_CTDO_PNN) + 
   geom_boxplot(aes(x=No.Estacion, y=Densidad))+ 
   theme_bw()+
+  stat_summary(fun=mean, aes(y = Densidad,x=No.Estacion), geom="point", shape=20, size=2, color="red", position = position_dodge(width =0.8)) +
   labs(title = "Boxplot de la Densidad [Kg/m3]",
        y = "Densidad [Kg/m3]", x = "Estaciones")+
   facet_grid(Marea~Transecto)
@@ -173,18 +189,18 @@ G02B_PNN<-Filtrado(Datos_CTDO_PNN,"G02","Baja")
 G01B_PNN<-Filtrado(Datos_CTDO_PNN,"G01","Baja")
 
 
-Temp_A06A_PNN<-Estandar_15(A06A_PNN, "A06 - Marea Alta", A06A_PNN$Temperatura, A06A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_A06B_PNN<-Estandar_15(A06B_PNN, "A06 - Marea Baja", A06B_PNN$Temperatura, A06B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_A05A_PNN<-Estandar_15(A05A_PNN, "A05 - Marea Alta", A05A_PNN$Temperatura, A05A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_A05B_PNN<-Estandar_15(A05B_PNN, "A05 - Marea Baja", A05B_PNN$Temperatura, A05B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_A04A_PNN<-Estandar_15(A04A_PNN, "A04 - Marea Alta", A04A_PNN$Temperatura, A04A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_A04B_PNN<-Estandar_15(A04B_PNN, "A04 - Marea Baja", A04B_PNN$Temperatura, A04B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_A03A_PNN<-Estandar_40(A03A_PNN, "A03 - Marea Alta", A03A_PNN$Temperatura, A03A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_A03B_PNN<-Estandar_40(A03B_PNN, "A03 - Marea Baja", A03B_PNN$Temperatura, A03B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_A02A_PNN<-Estandar_75(A02A_PNN, "A02 - Marea Alta", A02A_PNN$Temperatura, A02A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_A02B_PNN<-Estandar_75(A02B_PNN, "A02 - Marea Baja", A02B_PNN$Temperatura, A02B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_A01A_PNN<-Estandar_75(A01A_PNN, "A01 - Marea Alta", A01A_PNN$Temperatura, A01A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_A01B_PNN<-Estandar_75(A01B_PNN, "A01 - Marea Baja", A01B_PNN$Temperatura, A01B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
+Temp_A06A_PNN<-Estandar_15(A06A_PNN, "A06 - Marea Alta", A06A_PNN$Temperatura, A06A_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_A06B_PNN<-Estandar_15(A06B_PNN, "A06 - Marea Baja", A06B_PNN$Temperatura, A06B_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_A05A_PNN<-Estandar_15(A05A_PNN, "A05 - Marea Alta", A05A_PNN$Temperatura, A05A_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_A05B_PNN<-Estandar_15(A05B_PNN, "A05 - Marea Baja", A05B_PNN$Temperatura, A05B_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_A04A_PNN<-Estandar_15(A04A_PNN, "A04 - Marea Alta", A04A_PNN$Temperatura, A04A_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_A04B_PNN<-Estandar_15(A04B_PNN, "A04 - Marea Baja", A04B_PNN$Temperatura, A04B_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_A03A_PNN<-Estandar_40(A03A_PNN, "A03 - Marea Alta", A03A_PNN$Temperatura, A03A_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_A03B_PNN<-Estandar_40(A03B_PNN, "A03 - Marea Baja", A03B_PNN$Temperatura, A03B_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_A02A_PNN<-Estandar_75(A02A_PNN, "A02 - Marea Alta", A02A_PNN$Temperatura, A02A_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_A02B_PNN<-Estandar_75(A02B_PNN, "A02 - Marea Baja", A02B_PNN$Temperatura, A02B_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_A01A_PNN<-Estandar_75(A01A_PNN, "A01 - Marea Alta", A01A_PNN$Temperatura, A01A_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_A01B_PNN<-Estandar_75(A01B_PNN, "A01 - Marea Baja", A01B_PNN$Temperatura, A01B_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
 
 tiff(filename = "Temperatura_Transecto_Amarales_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=6, ncol=2,Temp_A01A_PNN, Temp_A01B_PNN, Temp_A02A_PNN,Temp_A02B_PNN, Temp_A03A_PNN, Temp_A03B_PNN, Temp_A04A_PNN, Temp_A04B_PNN, Temp_A05A_PNN,Temp_A05B_PNN, Temp_A06A_PNN, Temp_A06B_PNN, top="Transecto Amarales")
@@ -225,38 +241,20 @@ tiff(filename = "Densidad_Transecto_Amarales_PNN.tif", width = 40, height = 50, 
 grid.arrange(nrow=6, ncol=2,Den_A01A_PNN, Den_A01B_PNN, Den_A02A_PNN,Den_A02B_PNN, Den_A03A_PNN, Den_A03B_PNN, Den_A04A_PNN, Den_A04B_PNN, Den_A05A_PNN,Den_A05B_PNN, Den_A06A_PNN, Den_A06B_PNN, top="Transecto Amarales")
 dev.off()
 
-Oxi_A06A_PNN<-Estandar_15(A06A_PNN, "A06 - Marea Alta", A06A_PNN$Oxigeno, A06A_PNN$Profundidad, "Oxígeno - [mg/L]", "Profundidad [m]")
-Oxi_A06B_PNN<-Estandar_15(A06B_PNN, "A06 - Marea Baja", A06B_PNN$Oxigeno, A06B_PNN$Profundidad, "Oxígeno - [mg/L]", "Profundidad [m]")
-Oxi_A05A_PNN<-Estandar_15(A05A_PNN, "A05 - Marea Alta", A05A_PNN$Oxigeno, A05A_PNN$Profundidad, "Oxígeno - [mg/L]", "Profundidad [m]")
-Oxi_A05B_PNN<-Estandar_15(A05B_PNN, "A05 - Marea Baja", A05B_PNN$Oxigeno, A05B_PNN$Profundidad, "Oxígeno - [mg/L]", "Profundidad [m]")
-Oxi_A04A_PNN<-Estandar_15(A04A_PNN, "A04 - Marea Alta", A04A_PNN$Oxigeno, A04A_PNN$Profundidad, "Oxígeno - [mg/L]", "Profundidad [m]")
-Oxi_A04B_PNN<-Estandar_15(A04B_PNN, "A04 - Marea Baja", A04B_PNN$Oxigeno, A04B_PNN$Profundidad, "Oxígeno - [mg/L]", "Profundidad [m]")
-Oxi_A03A_PNN<-Estandar_40(A03A_PNN, "A03 - Marea Alta", A03A_PNN$Oxigeno, A03A_PNN$Profundidad, "Oxígeno - [mg/L]", "Profundidad [m]")
-Oxi_A03B_PNN<-Estandar_40(A03B_PNN, "A03 - Marea Baja", A03B_PNN$Oxigeno, A03B_PNN$Profundidad, "Oxígeno - [mg/L]", "Profundidad [m]")
-Oxi_A02A_PNN<-Estandar_75(A02A_PNN, "A02 - Marea Alta", A02A_PNN$Oxigeno, A02A_PNN$Profundidad, "Oxígeno - [mg/L]", "Profundidad [m]")
-Oxi_A02B_PNN<-Estandar_75(A02B_PNN, "A02 - Marea Baja", A02B_PNN$Oxigeno, A02B_PNN$Profundidad, "Oxígeno - [mg/L]", "Profundidad [m]")
-Oxi_A01A_PNN<-Estandar_75(A01A_PNN, "A01 - Marea Alta", A01A_PNN$Oxigeno, A01A_PNN$Profundidad, "Oxígeno - [mg/L]", "Profundidad [m]")
-Oxi_A01B_PNN<-Estandar_75(A01B_PNN, "A01 - Marea Baja", A01B_PNN$Oxigeno, A01B_PNN$Profundidad, "Oxígeno - [mg/L]", "Profundidad [m]")
 
 
-tiff(filename = "Oxigeno_Transecto_Amarales_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
-grid.arrange(nrow=6, ncol=2,Oxi_A01A_PNN, Oxi_A01B_PNN, Oxi_A02A_PNN,Oxi_A02B_PNN, Oxi_A03A_PNN, Oxi_A03B_PNN, Oxi_A04A_PNN, Oxi_A04B_PNN, Oxi_A05A_PNN,Oxi_A05B_PNN, Oxi_A06A_PNN, Oxi_A06B_PNN, top="Transecto Amarales")
-dev.off()
-
-
-
-Temp_S06A_PNN<-Estandar_15(S06A_PNN, "S06 - Marea Alta", S06A_PNN$Temperatura, S06A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_S06B_PNN<-Estandar_15(S06B_PNN, "S06 - Marea Baja", S06B_PNN$Temperatura, S06B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_S05A_PNN<-Estandar_15(S05A_PNN, "S05 - Marea Alta", S05A_PNN$Temperatura, S05A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_S05B_PNN<-Estandar_15(S05B_PNN, "S05 - Marea Baja", S05B_PNN$Temperatura, S05B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_S04A_PNN<-Estandar_15(S04A_PNN, "S04 - Marea Alta", S04A_PNN$Temperatura, S04A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_S04B_PNN<-Estandar_15(S04B_PNN, "S04 - Marea Baja", S04B_PNN$Temperatura, S04B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_S03A_PNN<-Estandar_40(S03A_PNN, "S03 - Marea Alta", S03A_PNN$Temperatura, S03A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_S03B_PNN<-Estandar_40(S03B_PNN, "S03 - Marea Baja", S03B_PNN$Temperatura, S03B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_S02A_PNN<-Estandar_75(S02A_PNN, "S02 - Marea Alta", S02A_PNN$Temperatura, S02A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_S02B_PNN<-Estandar_75(S02B_PNN, "S02 - Marea Baja", S02B_PNN$Temperatura, S02B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_S01A_PNN<-Estandar_75(S01A_PNN, "S01 - Marea Alta", S01A_PNN$Temperatura, S01A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_S01B_PNN<-Estandar_75(S01B_PNN, "S01 - Marea Baja", S01B_PNN$Temperatura, S01B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
+Temp_S06A_PNN<-Estandar_15(S06A_PNN, "S06 - Marea Alta", S06A_PNN$Temperatura, S06A_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_S06B_PNN<-Estandar_15(S06B_PNN, "S06 - Marea Baja", S06B_PNN$Temperatura, S06B_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_S05A_PNN<-Estandar_15(S05A_PNN, "S05 - Marea Alta", S05A_PNN$Temperatura, S05A_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_S05B_PNN<-Estandar_15(S05B_PNN, "S05 - Marea Baja", S05B_PNN$Temperatura, S05B_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_S04A_PNN<-Estandar_15(S04A_PNN, "S04 - Marea Alta", S04A_PNN$Temperatura, S04A_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_S04B_PNN<-Estandar_15(S04B_PNN, "S04 - Marea Baja", S04B_PNN$Temperatura, S04B_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_S03A_PNN<-Estandar_40(S03A_PNN, "S03 - Marea Alta", S03A_PNN$Temperatura, S03A_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_S03B_PNN<-Estandar_40(S03B_PNN, "S03 - Marea Baja", S03B_PNN$Temperatura, S03B_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_S02A_PNN<-Estandar_75(S02A_PNN, "S02 - Marea Alta", S02A_PNN$Temperatura, S02A_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_S02B_PNN<-Estandar_75(S02B_PNN, "S02 - Marea Baja", S02B_PNN$Temperatura, S02B_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_S01A_PNN<-Estandar_75(S01A_PNN, "S01 - Marea Alta", S01A_PNN$Temperatura, S01A_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_S01B_PNN<-Estandar_75(S01B_PNN, "S01 - Marea Baja", S01B_PNN$Temperatura, S01B_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
 
 tiff(filename = "Temperatura_Transecto_Sanquianga_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=6, ncol=2,Temp_S01A_PNN, Temp_S01B_PNN, Temp_S02A_PNN,Temp_S02B_PNN, Temp_S03A_PNN, Temp_S03B_PNN, Temp_S04A_PNN, Temp_S04B_PNN, Temp_S05A_PNN,Temp_S05B_PNN, Temp_S06A_PNN, Temp_S06B_PNN, top="Transecto Sanquianga")
@@ -316,18 +314,18 @@ grid.arrange(nrow=6, ncol=2,Oxi_S01A_PNN, Oxi_S01B_PNN, Oxi_S02A_PNN,Oxi_S02B_PN
 dev.off()
 
 
-Temp_G06A_PNN<-Estandar_15(G06A_PNN, "G06 - Marea Alta", G06A_PNN$Temperatura, G06A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_G06B_PNN<-Estandar_15(G06B_PNN, "G06 - Marea Baja", G06B_PNN$Temperatura, G06B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_G05A_PNN<-Estandar_15(G05A_PNN, "G05 - Marea Alta", G05A_PNN$Temperatura, G05A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_G05B_PNN<-Estandar_15(G05B_PNN, "G05 - Marea Baja", G05B_PNN$Temperatura, G05B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_G04A_PNN<-Estandar_15(G04A_PNN, "G04 - Marea Alta", G04A_PNN$Temperatura, G04A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_G04B_PNN<-Estandar_15(G04B_PNN, "G04 - Marea Baja", G04B_PNN$Temperatura, G04B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_G03A_PNN<-Estandar_40(G03A_PNN, "G03 - Marea Alta", G03A_PNN$Temperatura, G03A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_G03B_PNN<-Estandar_40(G03B_PNN, "G03 - Marea Baja", G03B_PNN$Temperatura, G03B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_G02A_PNN<-Estandar_75(G02A_PNN, "G02 - Marea Alta", G02A_PNN$Temperatura, G02A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_G02B_PNN<-Estandar_75(G02B_PNN, "G02 - Marea Baja", G02B_PNN$Temperatura, G02B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_G01A_PNN<-Estandar_75(G01A_PNN, "G01 - Marea Alta", G01A_PNN$Temperatura, G01A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_G01B_PNN<-Estandar_75(G01B_PNN, "G01 - Marea Baja", G01B_PNN$Temperatura, G01B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
+Temp_G06A_PNN<-Estandar_15(G06A_PNN, "G06 - Marea Alta", G06A_PNN$Temperatura, G06A_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_G06B_PNN<-Estandar_15(G06B_PNN, "G06 - Marea Baja", G06B_PNN$Temperatura, G06B_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_G05A_PNN<-Estandar_15(G05A_PNN, "G05 - Marea Alta", G05A_PNN$Temperatura, G05A_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_G05B_PNN<-Estandar_15(G05B_PNN, "G05 - Marea Baja", G05B_PNN$Temperatura, G05B_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_G04A_PNN<-Estandar_15(G04A_PNN, "G04 - Marea Alta", G04A_PNN$Temperatura, G04A_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_G04B_PNN<-Estandar_15(G04B_PNN, "G04 - Marea Baja", G04B_PNN$Temperatura, G04B_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_G03A_PNN<-Estandar_40(G03A_PNN, "G03 - Marea Alta", G03A_PNN$Temperatura, G03A_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_G03B_PNN<-Estandar_40(G03B_PNN, "G03 - Marea Baja", G03B_PNN$Temperatura, G03B_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_G02A_PNN<-Estandar_75(G02A_PNN, "G02 - Marea Alta", G02A_PNN$Temperatura, G02A_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_G02B_PNN<-Estandar_75(G02B_PNN, "G02 - Marea Baja", G02B_PNN$Temperatura, G02B_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_G01A_PNN<-Estandar_75(G01A_PNN, "G01 - Marea Alta", G01A_PNN$Temperatura, G01A_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
+Temp_G01B_PNN<-Estandar_75(G01B_PNN, "G01 - Marea Baja", G01B_PNN$Temperatura, G01B_PNN$Profundidad, "Temperatura - [Â°C]", "Profundidad [m]")
 
 tiff(filename = "Temperatura_Transecto_Guascama_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=6, ncol=2,Temp_G01A_PNN, Temp_G01B_PNN, Temp_G02A_PNN,Temp_G02B_PNN, Temp_G03A_PNN, Temp_G03B_PNN, Temp_G04A_PNN, Temp_G04B_PNN, Temp_G05A_PNN,Temp_G05B_PNN, Temp_G06A_PNN, Temp_G06B_PNN, top="Transecto Guascama")
@@ -409,16 +407,16 @@ hexbin_plot<-function(Estacion, var1, var2, labelx, labely)
       theme_bw()}else{
         print('Faltan Valores')}
 }
-hexbin_Temp_PNN<-hexbin_plot(Datos_CTDO_PNN, Datos_CTDO_PNN$Temperatura, Datos_CTDO_PNN$Profundidad, "Temperatura [°C]", "Profundidad [m]")
+hexbin_Temp_PNN<-hexbin_plot(Datos_CTDO_PNN, Datos_CTDO_PNN$Temperatura, Datos_CTDO_PNN$Profundidad, "Temperatura [Â°C]", "Profundidad [m]")
 hexbin_Sal_PNN<-hexbin_plot(Datos_CTDO_PNN, Datos_CTDO_PNN$Salinidad , Datos_CTDO_PNN$Profundidad, "Salinidad [PSU]", "Profundidad [m]")
 hexbin_Dens_PNN<-hexbin_plot(Datos_CTDO_PNN, Datos_CTDO_PNN$Densidad   , Datos_CTDO_PNN$Profundidad, "Densidad [kg/m3]", "Profundidad [m]")
-tiff(filename = "hexbin_Temp_total.tiff",width = 22, height = 26, units = "cm", res=300)
+tiff(filename = "hexbin_Temp_total.tiff",width = 20, height = 12, units = "cm", res=300)
 hexbin_Temp_total<-grid.arrange(hexbin_Temp_CCCP, hexbin_Temp_PNN,  ncol=2, nrow=1)
 dev.off()
-tiff(filename = "hexbin_Temp_total.tiff",width = 22, height = 26, units = "cm", res=300)
+tiff(filename = "hexbin_Sal_total.tiff",width = 20, height = 12, units = "cm", res=300)
 hexbin_Sal_total<-grid.arrange(hexbin_Sal_CCCP, hexbin_Sal_PNN,  ncol=2, nrow=1)
 dev.off()
-tiff(filename = "hexbin_Temp_total.tiff",width = 22, height = 26, units = "cm", res=300)
+tiff(filename = "hexbin_Dens_total.tiff",width = 20, height = 12, units = "cm", res=300)
 hexbin_Dens_total<-grid.arrange(hexbin_Dens_CCCP, hexbin_Dens_PNN,  ncol=2, nrow=1)
 dev.off()
 
