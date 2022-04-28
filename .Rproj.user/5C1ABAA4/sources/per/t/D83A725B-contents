@@ -1,0 +1,3 @@
+
+
+Datos_Quimica<-read.table("Quimica.csv", header = TRUE, sep=",")

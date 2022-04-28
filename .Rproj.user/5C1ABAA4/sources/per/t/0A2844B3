@@ -1,0 +1,26 @@
+{
+    "id": "0A2844B3",
+    "path": "~/Expedición Pacífico/2021/Ictioplancton/Analisis_Exp_Pac/Carga_Datos_PNN.R",
+    "project_path": "Carga_Datos_PNN.R",
+    "type": "r_source",
+    "hash": "3297119821",
+    "contents": "",
+    "dirty": false,
+    "created": 1644209695684.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "88,22",
+        "scrollLine": "70"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1644209289,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1644209289,
+    "read_only": false,
+    "read_only_alternatives": []
+}

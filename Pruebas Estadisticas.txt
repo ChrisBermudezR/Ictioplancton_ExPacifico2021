@@ -1,0 +1,218 @@
+> summary(Datos_CTDO_CCCP[,8:11])
+  Temperatura      Salinidad       Conductividad       Oxigeno      
+ Min.   :16.74   Min.   : 0.3501   Min.   :0.5383   Min.   : 1.645  
+ 1st Qu.:21.20   1st Qu.:31.6900   1st Qu.:4.6900   1st Qu.: 4.033  
+ Median :25.77   Median :32.4603   Median :4.9863   Median : 4.797  
+ Mean   :24.56   Mean   :32.0553   Mean   :4.8489   Mean   : 4.778  
+ 3rd Qu.:27.82   3rd Qu.:34.4103   3rd Qu.:5.1622   3rd Qu.: 5.387  
+ Max.   :30.02   Max.   :35.5690   Max.   :5.2398   Max.   :14.108  
+ NA's   :2                                          NA's   :88      
+
+summary(subset(Datos_CTDO_CCCP[,8:11], Datos_CTDO_CCCP$Marea=="Baja"))
+  Temperatura      Salinidad       Conductividad       Oxigeno     
+ Min.   :16.74   Min.   : 0.3501   Min.   :0.5383   Min.   :2.739  
+ 1st Qu.:21.56   1st Qu.:31.7301   1st Qu.:4.7283   1st Qu.:4.037  
+ Median :27.28   Median :32.4258   Median :5.0217   Median :4.815  
+ Mean   :24.82   Mean   :32.0964   Mean   :4.8782   Mean   :4.690  
+ 3rd Qu.:27.86   3rd Qu.:34.3963   3rd Qu.:5.1696   3rd Qu.:5.408  
+ Max.   :30.02   Max.   :35.2585   Max.   :5.2398   Max.   :6.618  
+                                                    NA's   :58 
+
+ summary(subset(Datos_CTDO_CCCP[,8:11], Datos_CTDO_CCCP$Marea=="Alta"))
+  Temperatura      Salinidad      Conductividad      Oxigeno      
+ Min.   :17.13   Min.   : 7.195   Min.   :1.600   Min.   : 1.645  
+ 1st Qu.:20.84   1st Qu.:31.626   1st Qu.:4.659   1st Qu.: 4.025  
+ Median :24.95   Median :32.492   Median :4.946   Median : 4.785  
+ Mean   :24.31   Mean   :32.017   Mean   :4.821   Mean   : 4.860  
+ 3rd Qu.:27.77   3rd Qu.:34.419   3rd Qu.:5.152   3rd Qu.: 5.376  
+ Max.   :28.21   Max.   :35.569   Max.   :5.237   Max.   :14.108  
+ NA's   :2                                        NA's   :30 
+
+> summary(Datos_CTDO_PNN[,3:8])
+  Temperatura    Conductividad    Conductancia     Salinidad       Vel_Sonido      Densidad   
+ Min.   :16.56   Min.   :21279   Min.   :20449   Min.   :12.20   Min.   :1513   Min.   :1006  
+ 1st Qu.:20.60   1st Qu.:47533   1st Qu.:49166   1st Qu.:32.13   1st Qu.:1524   1st Qu.:1020  
+ Median :26.44   Median :50281   Median :50324   Median :32.97   Median :1533   Median :1021  
+ Mean   :24.35   Mean   :49448   Mean   :50276   Mean   :32.89   Mean   :1531   Mean   :1022  
+ 3rd Qu.:27.73   3rd Qu.:51874   3rd Qu.:52794   3rd Qu.:34.68   3rd Qu.:1538   3rd Qu.:1025  
+ Max.   :29.84   Max.   :52558   Max.   :53764   Max.   :35.16   Max.   :1539   Max.   :1026  
+
+
+> summary(subset(Datos_CTDO_PNN[,3:8], Datos_CTDO_PNN$Marea == "Baja"))
+  Temperatura    Conductividad    Conductancia     Salinidad       Vel_Sonido      Densidad   
+ Min.   :16.56   Min.   :21279   Min.   :20449   Min.   :12.20   Min.   :1513   Min.   :1006  
+ 1st Qu.:21.22   1st Qu.:47406   1st Qu.:48910   1st Qu.:31.94   1st Qu.:1525   1st Qu.:1020  
+ Median :27.29   Median :50320   Median :49879   Median :32.65   Median :1534   Median :1021  
+ Mean   :24.69   Mean   :49197   Mean   :49698   Mean   :32.48   Mean   :1531   Mean   :1022  
+ 3rd Qu.:27.76   3rd Qu.:51846   3rd Qu.:52636   3rd Qu.:34.58   3rd Qu.:1538   3rd Qu.:1024  
+ Max.   :29.84   Max.   :52558   Max.   :53764   Max.   :35.16   Max.   :1539   Max.   :1026 
+
+> summary(subset(Datos_CTDO_PNN[,3:8], Datos_CTDO_PNN$Marea == "Alta"))
+  Temperatura    Conductividad    Conductancia     Salinidad       Vel_Sonido      Densidad   
+ Min.   :16.94   Min.   :37454   Min.   :35234   Min.   :22.17   Min.   :1514   Min.   :1013  
+ 1st Qu.:20.30   1st Qu.:47641   1st Qu.:49409   1st Qu.:32.31   1st Qu.:1523   1st Qu.:1020  
+ Median :24.30   Median :50263   Median :51476   Median :33.81   Median :1532   Median :1023  
+ Mean   :24.03   Mean   :49685   Mean   :50823   Mean   :33.28   Mean   :1530   Mean   :1022  
+ 3rd Qu.:27.70   3rd Qu.:51898   3rd Qu.:52921   3rd Qu.:34.76   3rd Qu.:1538   3rd Qu.:1025  
+ Max.   :28.16   Max.   :52510   Max.   :53682   Max.   :35.14   Max.   :1539   Max.   :1026 
+
+
+
+
+
+
+
+> wilcox.test(Datos_CTDO_CCCP$Temperatura, Datos_CTDO_PNN$Temperatura, paired=FALSE)
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  Datos_CTDO_CCCP$Temperatura and Datos_CTDO_PNN$Temperatura
+W = 7226828, p-value = 3.425e-07
+alternative hypothesis: true location shift is not equal to 0
+
+wilcox.test(subset(Datos_CTDO_CCCP$Temperatura,Datos_CTDO_CCCP$Marea=="Alta") , subset(Datos_CTDO_PNN$Temperatura,Datos_CTDO_PNN$Marea=="Alta"), paired=FALSE)
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  subset(Datos_CTDO_CCCP$Temperatura, Datos_CTDO_CCCP$Marea == "Alta") and subset(Datos_CTDO_PNN$Temperatura, Datos_CTDO_PNN$Marea == "Alta")
+W = 1888662, p-value = 0.001893
+alternative hypothesis: true location shift is not equal to 0
+
+wilcox.test(subset(Datos_CTDO_CCCP$Temperatura,Datos_CTDO_CCCP$Marea=="Baja") , subset(Datos_CTDO_PNN$Temperatura,Datos_CTDO_PNN$Marea=="Baja"), paired=FALSE)
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  subset(Datos_CTDO_CCCP$Temperatura, Datos_CTDO_CCCP$Marea == "Baja") and subset(Datos_CTDO_PNN$Temperatura, Datos_CTDO_PNN$Marea == "Baja")
+W = 1742186, p-value = 3.874e-06
+alternative hypothesis: true location shift is not equal to 0
+
+
+
+
+
+
+
+
+
+> wilcox.test(Datos_CTDO_CCCP$Salinidad, Datos_CTDO_PNN$Salinidad, paired=FALSE)
+
+Wilcoxon rank sum test with continuity correction
+
+data:  Datos_CTDO_CCCP$Salinidad and Datos_CTDO_PNN$Salinidad
+W = 5543720, p-value < 2.2e-16
+alternative hypothesis: true location shift is not equal to 0
+
+wilcox.test(subset(Datos_CTDO_CCCP$Salinidad,Datos_CTDO_CCCP$Marea=="Alta") , subset(Datos_CTDO_PNN$Salinidad,Datos_CTDO_PNN$Marea=="Alta"), paired=FALSE)
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  subset(Datos_CTDO_CCCP$Salinidad, Datos_CTDO_CCCP$Marea == "Alta") and subset(Datos_CTDO_PNN$Salinidad, Datos_CTDO_PNN$Marea == "Alta")
+W = 1341988, p-value < 2.2e-16
+alternative hypothesis: true location shift is not equal to 0
+
+wilcox.test(subset(Datos_CTDO_CCCP$Salinidad,Datos_CTDO_CCCP$Marea=="Baja") , subset(Datos_CTDO_PNN$Salinidad,Datos_CTDO_PNN$Marea=="Baja"), paired=FALSE)
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  subset(Datos_CTDO_CCCP$Salinidad, Datos_CTDO_CCCP$Marea == "Baja") and subset(Datos_CTDO_PNN$Salinidad, Datos_CTDO_PNN$Marea == "Baja")
+W = 1429183, p-value = 8.669e-08
+alternative hypothesis: true location shift is not equal to 0
+
+
+
+
+
+> wilcox.test(Datos_CTDO_CCCP$Densidad, Datos_CTDO_PNN$Densidad, paired=FALSE)
+Wilcoxon rank sum test with continuity correction
+
+data:  Datos_CTDO_CCCP$Densidad and Datos_CTDO_PNN$Densidad
+W = 5823675, p-value < 2.2e-16
+alternative hypothesis: true location shift is not equal to 0
+
+
+
+
+> wilcox.test(subset(Datos_Quimica$NO2,Datos_Quimica$Marea=="Baja") , subset(Datos_Quimica$NO2,Datos_Quimica$Marea=="Alta"), paired=TRUE)
+
+	Wilcoxon signed rank test with continuity correction
+
+data:  subset(Datos_Quimica$NO2, Datos_Quimica$Marea == "Baja") and subset(Datos_Quimica$NO2, Datos_Quimica$Marea == "Alta")
+V = 153, p-value = 0.0003204
+alternative hypothesis: true location shift is not equal to 0
+
+
+>wilcox.test(subset(Datos_Quimica$NO3,Datos_Quimica$Marea=="Baja") , subset(Datos_Quimica$NO3,Datos_Quimica$Marea=="Alta"), paired=TRUE)
+
+	Wilcoxon signed rank exact test
+
+data:  subset(Datos_Quimica$NO3, Datos_Quimica$Marea == "Baja") and subset(Datos_Quimica$NO3, Datos_Quimica$Marea == "Alta")
+V = 147, p-value = 0.0056
+alternative hypothesis: true location shift is not equal to 0
+
+> wilcox.test(subset(Datos_Quimica$PO4,Datos_Quimica$Marea=="Baja") , subset(Datos_Quimica$PO4,Datos_Quimica$Marea=="Alta"), paired=TRUE)
+
+	Wilcoxon signed rank test with continuity correction
+
+data:  subset(Datos_Quimica$PO4, Datos_Quimica$Marea == "Baja") and subset(Datos_Quimica$PO4, Datos_Quimica$Marea == "Alta")
+V = 143, p-value = 0.013
+alternative hypothesis: true location shift is not equal to 0
+
+> wilcox.test(subset(Datos_Quimica$SiO2,Datos_Quimica$Marea=="Baja") , subset(Datos_Quimica$SiO2,Datos_Quimica$Marea=="Alta"), paired=TRUE)
+
+	Wilcoxon signed rank exact test
+
+data:  subset(Datos_Quimica$SiO2, Datos_Quimica$Marea == "Baja") and subset(Datos_Quimica$SiO2, Datos_Quimica$Marea == "Alta")
+V = 158, p-value = 0.0006714
+alternative hypothesis: true location shift is not equal to 0
+
+> wilcox.test(subset(Datos_Quimica$Clorofila,Datos_Quimica$Marea=="Baja") , subset(Datos_Quimica$Clorofila,Datos_Quimica$Marea=="Alta"), paired=TRUE)
+
+	Wilcoxon signed rank exact test
+
+data:  subset(Datos_Quimica$Clorofila, Datos_Quimica$Marea == "Baja") and subset(Datos_Quimica$Clorofila, Datos_Quimica$Marea == "Alta")
+V = 165, p-value = 0.0001068
+alternative hypothesis: true location shift is not equal to 0
+
+
+> wilcox.test(subset(Datos_Quimica$Salinidad,Datos_Quimica$Marea=="Baja") , subset(Datos_Quimica$Salinidad,Datos_Quimica$Marea=="Alta"), paired=TRUE)
+
+	Wilcoxon signed rank test with continuity correction
+
+data:  subset(Datos_Quimica$Salinidad, Datos_Quimica$Marea == "Baja") and subset(Datos_Quimica$Salinidad, Datos_Quimica$Marea == "Alta")
+V = 0, p-value = 0.0002134
+alternative hypothesis: true location shift is not equal to 0
+
+
+> wilcox.test(subset(Datos_Quimica$pH,Datos_Quimica$Marea=="Baja") , subset(Datos_Quimica$pH,Datos_Quimica$Marea=="Alta"), paired=TRUE)
+
+	Wilcoxon signed rank test with continuity correction
+
+data:  subset(Datos_Quimica$pH, Datos_Quimica$Marea == "Baja") and subset(Datos_Quimica$pH, Datos_Quimica$Marea == "Alta")
+V = 12, p-value = 0.002435
+alternative hypothesis: true location shift is not equal to 0
+
+> wilcox.test(subset(Datos_Quimica$OD,Datos_Quimica$Marea=="Baja") , subset(Datos_Quimica$OD,Datos_Quimica$Marea=="Alta"), paired=TRUE)
+
+	Wilcoxon signed rank test with continuity correction
+
+data:  subset(Datos_Quimica$OD, Datos_Quimica$Marea == "Baja") and subset(Datos_Quimica$OD, Datos_Quimica$Marea == "Alta")
+V = 0, p-value = 0.0002134
+alternative hypothesis: true location shift is not equal to 0
+
+
+> wilcox.test(subset(Datos_Quimica$Transparencia,Datos_Quimica$Marea=="Baja") , subset(Datos_Quimica$Transparencia,Datos_Quimica$Marea=="Alta"), paired=TRUE)
+
+	Wilcoxon signed rank test with continuity correction
+
+data:  subset(Datos_Quimica$Transparencia, Datos_Quimica$Marea == "Baja") and subset(Datos_Quimica$Transparencia, Datos_Quimica$Marea == "Alta")
+V = 6.5, p-value = 0.001603
+alternative hypothesis: true location shift is not equal to 0
+
+> wilcox.test(subset(Datos_Quimica$SST,Datos_Quimica$Marea=="Baja") , subset(Datos_Quimica$SST,Datos_Quimica$Marea=="Alta"), paired=TRUE)
+
+	Wilcoxon signed rank exact test
+
+data:  subset(Datos_Quimica$SST, Datos_Quimica$Marea == "Baja") and subset(Datos_Quimica$SST, Datos_Quimica$Marea == "Alta")
+V = 151, p-value = 0.002808
+alternative hypothesis: true location shift is not equal to 0
+

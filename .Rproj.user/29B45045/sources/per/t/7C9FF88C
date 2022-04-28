@@ -1,0 +1,28 @@
+{
+    "id": "7C9FF88C",
+    "path": null,
+    "project_path": null,
+    "type": "object_explorer",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1645712166573.0,
+    "source_on_save": false,
+    "relative_order": 9,
+    "properties": {
+        "id": "43682ccebe554709ad9b5da2cda45da4",
+        "name": "PO4_Quimica_Total",
+        "title": "PO4_Quimica_Total",
+        "language": "R",
+        "source_window_id": "",
+        "Source": "Source"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 8317129703536358254,
+    "encoding": "",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1645712166573,
+    "read_only": false,
+    "read_only_alternatives": []
+}

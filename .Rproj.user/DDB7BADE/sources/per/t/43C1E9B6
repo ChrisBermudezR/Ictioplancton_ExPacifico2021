@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1624933690348.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2823658427",
+    "id" : "43C1E9B6",
+    "lastKnownWriteTime" : 1625031043,
+    "last_content_update" : 1625031043796,
+    "path" : "D:/Documentos/Expedición Pacífico/2021/Informe_Salida/Analisis_Exp_Pac/Graficas_Fisica.R",
+    "project_path" : "Graficas_Fisica.R",
+    "properties" : {
+        "cursorPosition" : "222,0",
+        "scrollLine" : "202"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
