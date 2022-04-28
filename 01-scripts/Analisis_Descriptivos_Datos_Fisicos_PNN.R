@@ -69,13 +69,13 @@ Densidad_Total_PNN<-ggplot(Datos_CTDO_PNN, aes(x=Transecto, y=Densidad)) +
   theme_bw()+geom_jitter(width=0.1,alpha=0.2) +
   stat_summary(fun=mean, aes(y = Densidad,x=Transecto), geom="point", shape=20, size=4, color="red", position = position_dodge(width =0.8))
 
-tiff(filename = "01_Datos_Totales_PNN.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
+tiff(filename = "01_Datos_Totales_PNN.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=2, ncol=2, Temperatura_Total_PNN, 
              Salnidad_Total_PNN,Densidad_Total_PNN, 
              top="Datos totales")
 dev.off()
 
-tiff(filename = "01_BoxPlot_Totales.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
+tiff(filename = "01_BoxPlot_Totales.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=3, ncol=2, Temperatura_Total_PNN,  Temperatura_Total_CCCP, 
              Salnidad_Total_PNN, Salnidad_Total_CCCP,
              Densidad_Total_PNN, Densidad_Total_CCCP,
@@ -102,7 +102,7 @@ Densidad_Hist_PNN<-ggplot(Datos_CTDO_PNN, aes(x=Densidad)) +
        y = "Frecuencia", x = " [kg/m3]")+
   facet_grid(Marea~Transecto)
 
-tiff(filename = "02_Histogramas_PNN.tif", width = 40, height = 30, units = "cm", pointsize = 30, bg = "white", res = 300, compression = "lzw")
+tiff(filename = "02_Histogramas_PNN.tif", width = 40, height = 30, units = "cm", pointsize = 30, bg = "white", res = 300)
 grid.arrange(nrow=2, ncol=2,Temperatura_Hist_PNN, Salinidad_Hist_PNN, 
              Densidad_Hist_PNN)
 dev.off()
@@ -131,7 +131,7 @@ Densidad_boxplot_PNN<-ggplot(Datos_CTDO_PNN) +
        y = "Densidad [Kg/m3]", x = "Estaciones")+
   facet_grid(Marea~Transecto)
 
-tiff(filename = "03_Boxplot_PNN.tif", width = 20, height = 15, units = "cm", pointsize = 12, bg = "white", res = 300, compression = "lzw")
+tiff(filename = "03_Boxplot_PNN.tif", width = 20, height = 15, units = "cm", pointsize = 12, bg = "white", res = 300)
 grid.arrange(nrow=2, ncol=2,Temperatura_boxplot_PNN, Salinidad_boxplot_PNN, 
              Densidad_boxplot_PNN)
 dev.off()
@@ -202,7 +202,7 @@ Temp_A02B_PNN<-Estandar_75(A02B_PNN, "A02 - Marea Baja", A02B_PNN$Temperatura, A
 Temp_A01A_PNN<-Estandar_75(A01A_PNN, "A01 - Marea Alta", A01A_PNN$Temperatura, A01A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
 Temp_A01B_PNN<-Estandar_75(A01B_PNN, "A01 - Marea Baja", A01B_PNN$Temperatura, A01B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
 
-tiff(filename = "Temperatura_Transecto_Amarales_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
+tiff(filename = "Temperatura_Transecto_Amarales_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=6, ncol=2,Temp_A01A_PNN, Temp_A01B_PNN, Temp_A02A_PNN,Temp_A02B_PNN, Temp_A03A_PNN, Temp_A03B_PNN, Temp_A04A_PNN, Temp_A04B_PNN, Temp_A05A_PNN,Temp_A05B_PNN, Temp_A06A_PNN, Temp_A06B_PNN, top="Transecto Amarales")
 dev.off()
 
@@ -220,7 +220,7 @@ Sal_A02B_PNN<-Estandar_75(A02B_PNN, "A02 - Marea Baja", A02B_PNN$Salinidad, A02B
 Sal_A01A_PNN<-Estandar_75(A01A_PNN, "A01 - Marea Alta", A01A_PNN$Salinidad, A01A_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
 Sal_A01B_PNN<-Estandar_75(A01B_PNN, "A01 - Marea Baja", A01B_PNN$Salinidad, A01B_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
 
-tiff(filename = "Salinidad_Transecto_Amarales_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
+tiff(filename = "Salinidad_Transecto_Amarales_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=6, ncol=2,Sal_A01A_PNN, Sal_A01B_PNN, Sal_A02A_PNN,Sal_A02B_PNN, Sal_A03A_PNN, Sal_A03B_PNN, Sal_A04A_PNN, Sal_A04B_PNN, Sal_A05A_PNN,Sal_A05B_PNN, Sal_A06A_PNN, Sal_A06B_PNN, top="Transecto Amarales")
 dev.off()
 
@@ -237,7 +237,7 @@ Den_A02B_PNN<-Estandar_75(A02B_PNN, "A02 - Marea Baja", A02B_PNN$Densidad, A02B_
 Den_A01A_PNN<-Estandar_75(A01A_PNN, "A01 - Marea Alta", A01A_PNN$Densidad, A01A_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
 Den_A01B_PNN<-Estandar_75(A01B_PNN, "A01 - Marea Baja", A01B_PNN$Densidad, A01B_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
 
-tiff(filename = "Densidad_Transecto_Amarales_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
+tiff(filename = "Densidad_Transecto_Amarales_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=6, ncol=2,Den_A01A_PNN, Den_A01B_PNN, Den_A02A_PNN,Den_A02B_PNN, Den_A03A_PNN, Den_A03B_PNN, Den_A04A_PNN, Den_A04B_PNN, Den_A05A_PNN,Den_A05B_PNN, Den_A06A_PNN, Den_A06B_PNN, top="Transecto Amarales")
 dev.off()
 
@@ -256,7 +256,7 @@ Temp_S02B_PNN<-Estandar_75(S02B_PNN, "S02 - Marea Baja", S02B_PNN$Temperatura, S
 Temp_S01A_PNN<-Estandar_75(S01A_PNN, "S01 - Marea Alta", S01A_PNN$Temperatura, S01A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
 Temp_S01B_PNN<-Estandar_75(S01B_PNN, "S01 - Marea Baja", S01B_PNN$Temperatura, S01B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
 
-tiff(filename = "Temperatura_Transecto_Sanquianga_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
+tiff(filename = "Temperatura_Transecto_Sanquianga_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=6, ncol=2,Temp_S01A_PNN, Temp_S01B_PNN, Temp_S02A_PNN,Temp_S02B_PNN, Temp_S03A_PNN, Temp_S03B_PNN, Temp_S04A_PNN, Temp_S04B_PNN, Temp_S05A_PNN,Temp_S05B_PNN, Temp_S06A_PNN, Temp_S06B_PNN, top="Transecto Sanquianga")
 dev.off()
 
@@ -273,7 +273,7 @@ Sal_S02B_PNN<-Estandar_75(S02B_PNN, "S02 - Marea Baja", S02B_PNN$Salinidad, S02B
 Sal_S01A_PNN<-Estandar_75(S01A_PNN, "S01 - Marea Alta", S01A_PNN$Salinidad, S01A_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
 Sal_S01B_PNN<-Estandar_75(S01B_PNN, "S01 - Marea Baja", S01B_PNN$Salinidad, S01B_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
 
-tiff(filename = "Salinidad_Transecto_Sanquianga_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
+tiff(filename = "Salinidad_Transecto_Sanquianga_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=6, ncol=2,Sal_S01A_PNN, Sal_S01B_PNN, Sal_S02A_PNN,Sal_S02B_PNN, Sal_S03A_PNN, Sal_S03B_PNN, Sal_S04A_PNN, Sal_S04B_PNN, Sal_S05A_PNN,Sal_S05B_PNN, Sal_S06A_PNN, Sal_S06B_PNN, top="Transecto Sanquianga")
 dev.off()
 
@@ -291,7 +291,7 @@ Den_S01A_PNN<-Estandar_75(S01A_PNN, "S01 - Marea Alta", S01A_PNN$Densidad, S01A_
 Den_S01B_PNN<-Estandar_75(S01B_PNN, "S01 - Marea Baja", S01B_PNN$Densidad, S01B_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
 
 
-tiff(filename = "Densidad_Transecto_Sanquianga_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
+tiff(filename = "Densidad_Transecto_Sanquianga_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=6, ncol=2,Den_S01A_PNN, Den_S01B_PNN, Den_S02A_PNN,Den_S02B_PNN, Den_S03A_PNN, Den_S03B_PNN, Den_S04A_PNN, Den_S04B_PNN, Den_S05A_PNN,Den_S05B_PNN, Den_S06A_PNN, Den_S06B_PNN, top="Transecto Sanquianga")
 dev.off()
 
@@ -309,7 +309,7 @@ Oxi_S02B_PNN<-Estandar_75(S02B_PNN, "S02 - Marea Baja", S02B_PNN$Oxigeno, S02B_P
 Oxi_S01A_PNN<-Estandar_75(S01A_PNN, "S01 - Marea Alta", S01A_PNN$Oxigeno, S01A_PNN$Profundidad, "Oxigeno - [mg/L]", "Profundidad [m]")
 Oxi_S01B_PNN<-Estandar_75(S01B_PNN, "S01 - Marea Baja", S01B_PNN$Oxigeno, S01B_PNN$Profundidad, "Oxigeno - [mg/L]", "Profundidad [m]")
 
-tiff(filename = "Oxigeno_Transecto_Sanquianga_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
+tiff(filename = "Oxigeno_Transecto_Sanquianga_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=6, ncol=2,Oxi_S01A_PNN, Oxi_S01B_PNN, Oxi_S02A_PNN,Oxi_S02B_PNN, Oxi_S03A_PNN, Oxi_S03B_PNN, Oxi_S04A_PNN, Oxi_S04B_PNN, Oxi_S05A_PNN,Oxi_S05B_PNN, Oxi_S06A_PNN, Oxi_S06B_PNN, top="Transecto Sanquianga")
 dev.off()
 
@@ -327,7 +327,7 @@ Temp_G02B_PNN<-Estandar_75(G02B_PNN, "G02 - Marea Baja", G02B_PNN$Temperatura, G
 Temp_G01A_PNN<-Estandar_75(G01A_PNN, "G01 - Marea Alta", G01A_PNN$Temperatura, G01A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
 Temp_G01B_PNN<-Estandar_75(G01B_PNN, "G01 - Marea Baja", G01B_PNN$Temperatura, G01B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
 
-tiff(filename = "Temperatura_Transecto_Guascama_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
+tiff(filename = "Temperatura_Transecto_Guascama_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=6, ncol=2,Temp_G01A_PNN, Temp_G01B_PNN, Temp_G02A_PNN,Temp_G02B_PNN, Temp_G03A_PNN, Temp_G03B_PNN, Temp_G04A_PNN, Temp_G04B_PNN, Temp_G05A_PNN,Temp_G05B_PNN, Temp_G06A_PNN, Temp_G06B_PNN, top="Transecto Guascama")
 dev.off()
 
@@ -345,7 +345,7 @@ Sal_G01A_PNN<-Estandar_75(G01A_PNN, "G01 - Marea Alta", G01A_PNN$Salinidad, G01A
 Sal_G01B_PNN<-Estandar_75(G01B_PNN, "G01 - Marea Baja", G01B_PNN$Salinidad, G01B_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
 
 
-tiff(filename = "Salinidad_Transecto_Guascama_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
+tiff(filename = "Salinidad_Transecto_Guascama_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=6, ncol=2,Sal_G01A_PNN, Sal_G01B_PNN, Sal_G02A_PNN,Sal_G02B_PNN, Sal_G03A_PNN, Sal_G03B_PNN, Sal_G04A_PNN, Sal_G04B_PNN, Sal_G05A_PNN,Sal_G05B_PNN, Sal_G06A_PNN, Sal_G06B_PNN, top="Transecto Guascama")
 dev.off()
 
@@ -363,7 +363,7 @@ Den_G02B_PNN<-Estandar_75(G02B_PNN, "G02 - Marea Baja", G02B_PNN$Densidad, G02B_
 Den_G01A_PNN<-Estandar_75(G01A_PNN, "G01 - Marea Alta", G01A_PNN$Densidad, G01A_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
 Den_G01B_PNN<-Estandar_75(G01B_PNN, "G01 - Marea Baja", G01B_PNN$Densidad, G01B_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
 
-tiff(filename = "Densidad_Transecto_Guascama_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
+tiff(filename = "Densidad_Transecto_Guascama_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=6, ncol=2,Den_G01A_PNN, Den_G01B_PNN, Den_G02A_PNN,Den_G02B_PNN, Den_G03A_PNN, Den_G03B_PNN, Den_G04A_PNN, Den_G04B_PNN, Den_G05A_PNN,Den_G05B_PNN, Den_G06A_PNN, Den_G06B_PNN, top="Transecto Guascama")
 dev.off()
 
@@ -374,7 +374,7 @@ dev.off()
 Temp01_PNN<-grid.arrange(nrow=6, ncol=2,Temp_A01A_PNN, Temp_A01B_PNN, Temp_A02A_PNN,Temp_A02B_PNN, Temp_A03A_PNN, Temp_A03B_PNN, Temp_A04A_PNN, Temp_A04B_PNN, Temp_A05A_PNN,Temp_A05B_PNN, Temp_A06A_PNN, Temp_A06B_PNN, top="Transecto Amarales")
 Temp02_PNN<-grid.arrange(nrow=6, ncol=2,Temp_S01A_PNN, Temp_S01B_PNN, Temp_S02A_PNN,Temp_S02B_PNN, Temp_S03A_PNN, Temp_S03B_PNN, Temp_S04A_PNN, Temp_S04B_PNN, Temp_S05A_PNN,Temp_S05B_PNN, Temp_S06A_PNN, Temp_S06B_PNN, top="Transecto Sanquianga")
 Temp03_PNN<-grid.arrange(nrow=6, ncol=2,Temp_G01A_PNN, Temp_G01B_PNN, Temp_G02A_PNN,Temp_G02B_PNN, Temp_G03A_PNN, Temp_G03B_PNN, Temp_G04A_PNN, Temp_G04B_PNN, Temp_G05A_PNN,Temp_G05B_PNN, Temp_G06A_PNN, Temp_G06B_PNN, top="Transecto Guascama")
-tiff(filename = "Temperatura_Perfiles_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
+tiff(filename = "Temperatura_Perfiles_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=1, ncol=3,Temp01_PNN, Temp02_PNN, Temp03_PNN)
 dev.off() 
 
@@ -383,7 +383,7 @@ Sal01_PNN<-grid.arrange(nrow=6, ncol=2,Sal_S01A_PNN, Sal_S01B_PNN, Sal_S02A_PNN,
 Sal02_PNN<-grid.arrange(nrow=6, ncol=2,Sal_A01A_PNN, Sal_A01B_PNN, Sal_A02A_PNN,Sal_A02B_PNN, Sal_A03A_PNN, Sal_A03B_PNN, Sal_A04A_PNN, Sal_A04B_PNN, Sal_A05A_PNN,Sal_A05B_PNN, Sal_A06A_PNN, Sal_A06B_PNN, top="Transecto Amarales")
 Sal03_PNN<-grid.arrange(nrow=6, ncol=2,Sal_G01A_PNN, Sal_G01B_PNN, Sal_G02A_PNN,Sal_G02B_PNN, Sal_G03A_PNN, Sal_G03B_PNN, Sal_G04A_PNN, Sal_G04B_PNN, Sal_G05A_PNN,Sal_G05B_PNN, Sal_G06A_PNN, Sal_G06B_PNN, top="Transecto Guascama")
 
-tiff(filename = "Salinidad_Perfiles_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
+tiff(filename = "Salinidad_Perfiles_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=1, ncol=3,Sal01_PNN, Sal02_PNN, Sal03_PNN)
 dev.off()
 
@@ -391,7 +391,7 @@ Den01_PNN<-grid.arrange(nrow=6, ncol=2,Den_S01A_PNN, Den_S01B_PNN, Den_S02A_PNN,
 Den02_PNN<-grid.arrange(nrow=6, ncol=2,Den_A01A_PNN, Den_A01B_PNN, Den_A02A_PNN,Den_A02B_PNN, Den_A03A_PNN, Den_A03B_PNN, Den_A04A_PNN, Den_A04B_PNN, Den_A05A_PNN,Den_A05B_PNN, Den_A06A_PNN, Den_A06B_PNN, top="Transecto Amarales")
 Den03_PNN<-grid.arrange(nrow=6, ncol=2,Den_G01A_PNN, Den_G01B_PNN, Den_G02A_PNN,Den_G02B_PNN, Den_G03A_PNN, Den_G03B_PNN, Den_G04A_PNN, Den_G04B_PNN, Den_G05A_PNN,Den_G05B_PNN, Den_G06A_PNN, Den_G06B_PNN, top="Transecto Guascama")
 
-tiff(filename = "Densidad_Perfiles_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
+tiff(filename = "Densidad_Perfiles_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=1, ncol=3,Den01_PNN, Den02_PNN, Den03_PNN)
 dev.off()
 
@@ -421,17 +421,18 @@ hexbin_Dens_total<-grid.arrange(hexbin_Dens_CCCP, hexbin_Dens_PNN,  ncol=2, nrow
 dev.off()
 
 
-tiff(filename = "Temperatura_Perfiles_Total.tif", width = 40, height = 60, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
+tiff(filename = "Temperatura_Perfiles_Total.tif", width = 40, height = 60, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=2, ncol=3,Temp01_PNN, Temp02_PNN, Temp03_PNN, Temp01_CCCP, Temp02_CCCP, Temp03_CCCP)
 dev.off() 
 
-tiff(filename = "Salinidad_Perfiles_Total.tif", width = 40, height = 60, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
+tiff(filename = "Salinidad_Perfiles_Total.tif", width = 40, height = 60, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=2, ncol=3,Sal01_PNN, Sal02_PNN, Sal03_PNN,Sal01_CCCP, Sal02_CCCP, Sal03_CCCP)
 dev.off()
 
-tiff(filename = "Densidad_Perfiles_Total.tif", width = 40, height = 60, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
+tiff(filename = "Densidad_Perfiles_Total.tif", width = 40, height = 60, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=2, ncol=3,Den01_PNN, Den02_PNN, Den03_PNN,Den01_CCCP, Den02_CCCP, Den03_CCCP)
 dev.off()
+
 
 
 head(Datos_CTDO_PNN)
