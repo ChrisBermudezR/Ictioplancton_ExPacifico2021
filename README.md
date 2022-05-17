@@ -2,7 +2,7 @@
 [![Expedición Pacifico: Bocas de Sanquianga](/Imagenes_MD/Cabezote.png)](https://youtu.be/Rsuj0Ps-Ugk)
 
 <p align="center" width="100%">
-<img src = "/Imagenes_MD/cioh-p.jpg" width="350px" height="300px" style="float"/><img src = "/Imagenes_MD/PNN.png" width="250px" height="350px" style="float"/><img src = "/Imagenes_MD/univalle.png" width="300px" height="300px" style="float"/>.
+<img src = "/Imagenes_MD/cioh-p.jpg" width="250px" height="200px" style="float"/><img src = "/Imagenes_MD/PNN.png" width="150px" height="250px" style="float"/><img src = "/Imagenes_MD/univalle.png" width="200px" height="200px" style="float"/>.
 </p>
 
 ### En este repositorio se presentan los análisis del proyecto "Diversidad, abundancia y distribución del ictioplancton y su relación con las condiciones oceanográficas y los períodos mareales en la subregión Sanquianga-Gorgona, frente al delta del río Patía", llevados a cabo por el Centro de Investigaciones Oceanográficas e Hidrográficas del Pacífico (CCCP) , Parques Nacionales Naturales de Colombia  y la Universidad del Valle; enmarcado en la Expedición Científica Pacífico "*Bocas de Sanquianga*".
