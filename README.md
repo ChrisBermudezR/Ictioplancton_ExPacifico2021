@@ -35,10 +35,12 @@ Describir las condiciones oceanográficas en los eventos mareales de creciente a
 <b>Figura 1</b>. Distribución de las estaciones de toma de muestras en el área de estudio. 
 </p>
 
+<p align="center" width="100%">
+<b>Tabla 1</b>. Ubicación geográfica de las estaciones de muestreo.
+</p>
 
-**Tabla 1**. Ubicación geográfica de las estaciones de muestreo.
 Estación |	Latitud [dg]|	Longitud [dg]|	Latitud [hx]|	Longitud [hx]|
-|--|--|--|--|--|
+|:--:|:--:|:--:|:--:|:--:|
 A01|	2.85|	-78.22|	2° 50' 57.483" N|	78° 13' 21.223" W|	
 A02|	2.81|	-78.22|	2° 49' 0.383" N|	78° 13' 20.965" W|	
 A03|	2.78|	-78.22|	2° 47' 3.199" N|	78° 13' 20.862" W|	
