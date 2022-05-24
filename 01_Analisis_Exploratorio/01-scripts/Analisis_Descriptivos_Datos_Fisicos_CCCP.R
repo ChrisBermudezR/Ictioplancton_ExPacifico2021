@@ -12,28 +12,29 @@
 
 library(ggplot2)
 library(gridExtra)
+library(gsw)
 library(oce)
+library(dplyr)
+library(pastecs)
 
-
-Datos_CTDO_CCCP<-read.table("ExpPacifico2021.csv", header=TRUE, sep=",")
+Datos_CTDO_CCCP<-read.table("./02_Datos/Fisicos/Datos_CTDO_CCCP.csv", header=TRUE, sep=",")
 Datos_CTDO_CCCP$Estacion<-as.factor(Datos_CTDO_CCCP$Estacion)
 Datos_CTDO_CCCP$Marea<-as.factor(Datos_CTDO_CCCP$Marea)
 
 
 
 Datos_CTDO_CCCP$Separar<-Datos_CTDO_CCCP$Estacion
-Datos_CTDO_CCCP<-separate(Datos_CTDO_CCCP, Separar, c("Transecto", "No.Estacion"), sep = "0" )
 as.factor(Datos_CTDO_CCCP$Transecto)->Datos_CTDO_CCCP$Transecto
 as.factor(Datos_CTDO_CCCP$No.Estacion)->Datos_CTDO_CCCP$No.Estacion
+as.factor(Datos_CTDO_CCCP$Codigo)->Datos_CTDO_CCCP$Codigo
+
+####Estadistica descriptiva####
+  
 
 
+by_codigo <- Datos_CTDO_CCCP %>% group_by(Codigo)
+EstadisticasDescrip<-by_codigo %>% summarise_each(funs(mean(., na.rm = TRUE),   median(., na.rm = TRUE),n(),sd(., na.rm = TRUE), min(., na.rm = TRUE),max(., na.rm = TRUE)), Temperatura, Salinidad, Oxigeno, Densidad, Profundidad)
 
-
-Datos_CTDO_CCCP$Transecto <- recode_factor(Datos_CTDO_CCCP$Transecto, 
-                                     A = "Amarales", 
-                                     S = "Sanquianga", 
-                                     G = "Guascama")
-write.table(Datos_CTDO_CCCP, "Datos_CTDO_CCCP.csv", col.names = TRUE, sep=",")
 #########################
 
 Temperatura_Total_CCCP<-ggplot(Datos_CTDO_CCCP, aes(x=Transecto, y=Temperatura)) + 

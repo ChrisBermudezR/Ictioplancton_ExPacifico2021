@@ -9,7 +9,8 @@
 ####Librería####
 library(ggplot2)
 library(dplyr)
-library(lubridate)
+library(ggrepel)
+library(scales)
 
 
 ####Entrada de datos####
@@ -18,13 +19,14 @@ names(marea)<-c("combinada", "altura", "fecha", "hora")
 marea <- mutate(marea, fecha_Hora = paste(fecha, hora)) 
 marea$fecha_Hora<- as.POSIXct(marea$fecha_Hora)
 head(marea)
-
+write.table(marea, "Mareas_Gorgona_Event_10min.csv", sep = ",", col.names = TRUE)
 
 estaciones<-read.table("Alturas_Mareales_Estaciones.csv", header=TRUE, sep = ",")
 names(estaciones)<-c("codigo", "hora", "fecha", "altura")
 estaciones <- mutate(estaciones, fecha_Hora = paste(fecha, hora)) 
 estaciones$fecha_Hora<- as.POSIXct(estaciones$fecha_Hora)
 head(estaciones)
+write.table(estaciones, "Alturas_Mareales_Estaciones.csv", sep = ",", col.names = TRUE)
 
 
 ####Construcción de la gráfica####
@@ -39,7 +41,7 @@ grafica+
                    segment.color = 'black')+
   geom_line(data=marea, aes(x=fecha_Hora, y=altura),size=1, colour="grey")+
   geom_hline(yintercept = 1:3,linetype='dotted', col = 'red')+
-  labs(x = "dias", y = "Altura mareal (m)") +
+  labs(x = "dias", y = "Altura mareal referída al MLWS [m]") +
   theme_classic()+
   scale_x_datetime(
     breaks = seq(as.POSIXct("2021-04-29 00:00:00"),
