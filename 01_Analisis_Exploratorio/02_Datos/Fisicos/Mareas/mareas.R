@@ -1,4 +1,4 @@
-#Título del scrip: Gráfica del cambio mareal
+#Título del script: Gráfica del cambio mareal
 #Autores: Christian Bermúdez-Rivas 
 #Objetivo: construir la gráfica del cambio mareal en el área de Sanquianga-Gorgona
 #Lenguaje: R
