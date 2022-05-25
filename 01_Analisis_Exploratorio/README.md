@@ -1,6 +1,6 @@
 # Análisis Exploratorio de Datos.
 
-## Análisis de los datos tomados con el CTDO - SEABIRD v.19.PLUS
+## Análisis del comportamiento de la marea
 
 Durante la ejecución de la toma de muestras del proyecto, el comportamiento de la onda mareal desde el día jueves 29 de abril  hasta el día martes 04 de mayo del 2021 estuvo marcada por la pleamar coincidiendo los primeros días con la salida y la puesta del sol (aprox. 6.00 y 10:00) y la bajamar al medio día y a la media noche (aprox. 12:00 y 00:00) (Figura 1). Los dos primeros días estuvieron marcados tambien por el efecto de la marea de sicigia y los siguientes días marcados por la marea de cuadratura.
 
@@ -14,7 +14,7 @@ Durante la ejecución de la toma de muestras del proyecto, el comportamiento de 
 </p>
 
 
-
+## Análisis de los datos tomados con el CTDO - SEABIRD v.19.PLUS
 
 Las variables tomadas con el CTDO en cada transecto fueron las siguientes: Temperatura [$°C$], Salinidad [$PSU$], Densidad del agua [$kg/m^3$] y Oxígeno disuelto [$mg/L$].
 
@@ -39,4 +39,3 @@ Las variables tomadas con el CTDO en cada transecto fueron las siguientes: Tempe
 </p>
 
 
-02_Datos\Fisicos\Mareas
