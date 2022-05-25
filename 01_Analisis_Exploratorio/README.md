@@ -10,7 +10,7 @@ Durante la ejecución de la toma de muestras del proyecto, el comportamiento de 
     <img width="100%" src="/01_Analisis_Exploratorio/02_Datos/Fisicos/Mareas/onda_Mareal_Gorgona.png">
 </p>
 <p align="center" width="100%">
-<b>Figura 1</b>.Diagrama de la onda mareal medida entre el jueves 29 de abril  hasta el día martes 04 de mayo del 2021. En la gráfica, marcados en rojo, se identifican los eventos de toma de muestra, identificando el transecto por la letra (Sanquianga, Guascama y Amarales), la estación del transecto por el número (01 al 06) y el estado de marea por la letra mayuscula (Alta y Baja). La altura mareal está referida al nivel medio de las bajamares de sizigia (<i>mean low water springs</i>, <b>MLWS</b>).
+<b>Figura 1. </b>Diagrama de la onda mareal medida entre el jueves 29 de abril  hasta el día martes 04 de mayo del 2021. En la gráfica, marcados en rojo, se identifican los eventos de toma de muestra, identificando el transecto por la letra (Sanquianga, Guascama y Amarales), la estación del transecto por el número (01 al 06) y el estado de marea por la letra mayuscula (Alta y Baja). La altura mareal está referida al nivel medio de las bajamares de sizigia (<i>mean low water springs</i>, <b>MLWS</b>).
 </p>
 
 
@@ -26,7 +26,7 @@ Las variables tomadas con el CTDO en cada transecto fueron las siguientes: Tempe
     
 </p>
 <p align="center" width="100%">
-<b>Figura 2</b>.Diagrama de cajas de los perfiles de Temperatura [°C], Salinidad [PSU], Densidad del agua [kg/m<sup>3</sup>] y Oxígeno disuelto [mg/L] en cada uno de los transectos muestreados.
+<b>Figura 2. </b>Diagrama de cajas de los perfiles de Temperatura [°C], Salinidad [PSU], Densidad del agua [kg/m<sup>3</sup>] y Oxígeno disuelto [mg/L] en cada uno de los transectos muestreados.
 </p>
 
 
@@ -35,7 +35,7 @@ Las variables tomadas con el CTDO en cada transecto fueron las siguientes: Tempe
     
 </p>
 <p align="center" width="100%">
-<b>Figura 3</b>.Histograma de los datos de Temperatura [°C], Salinidad [PSU], Densidad del agua [kg/m<sup>3</sup>] y Oxígeno disuelto [mg/L] en cada uno de los transectos muestreados separados por los eventos mareales.
+<b>Figura 3. </b>Histograma de los datos de Temperatura [°C], Salinidad [PSU], Densidad del agua [kg/m<sup>3</sup>] y Oxígeno disuelto [mg/L] en cada uno de los transectos muestreados separados por los eventos mareales.
 </p>
 
 
@@ -44,5 +44,5 @@ Las variables tomadas con el CTDO en cada transecto fueron las siguientes: Tempe
     
 </p>
 <p align="center" width="100%">
-<b>Figura 4</b>.Diagrama de cajas de los perfiles de Temperatura [°C], Salinidad [PSU], Densidad del agua [kg/m<sup>3</sup>] y Oxígeno disuelto [mg/L] en cada estación de cada uno de los transectos, separados por los eventos mareales.
+<b>Figura 4. </b>Diagrama de cajas de los perfiles de Temperatura [°C], Salinidad [PSU], Densidad del agua [kg/m<sup>3</sup>] y Oxígeno disuelto [mg/L] en cada estación de cada uno de los transectos, separados por los eventos mareales.
 </p>
