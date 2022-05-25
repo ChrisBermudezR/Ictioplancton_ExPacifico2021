@@ -35,7 +35,14 @@ Las variables tomadas con el CTDO en cada transecto fueron las siguientes: Tempe
     
 </p>
 <p align="center" width="100%">
-<b>Figura 3</b>.Histograma de los datos de Temperatura [°C], Salinidad [PSU], Densidad del agua [kg/m<sup>3</sup>] y Oxígeno disuelto [mg/L] en cada uno de los transectos muestreados. separados por los eventos mareales.
+<b>Figura 3</b>.Histograma de los datos de Temperatura [°C], Salinidad [PSU], Densidad del agua [kg/m<sup>3</sup>] y Oxígeno disuelto [mg/L] en cada uno de los transectos muestreados separados por los eventos mareales.
 </p>
 
 
+<p align="center" width="100%">
+    <img width="75%" src="/01_Analisis_Exploratorio/03_Imagenes/03_Boxplot_CCCP.png.png">
+    
+</p>
+<p align="center" width="100%">
+<b>Figura 4</b>.Diagrama de cajas de los perfiles de Temperatura [°C], Salinidad [PSU], Densidad del agua [kg/m<sup>3</sup>] y Oxígeno disuelto [mg/L] en cada estación de cada uno de los transectos, separados por los eventos mareales.
+</p>
