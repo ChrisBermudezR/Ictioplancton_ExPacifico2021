@@ -34,7 +34,7 @@ Datos_CTDO_CCCP <- Datos_CTDO_CCCP %>% group_by(Codigo)
 
 EstadisticasDescrip<-Datos_CTDO_CCCP %>% summarise_each(funs(mean(., na.rm = TRUE),   median(., na.rm = TRUE),n(),sd(., na.rm = TRUE), min(., na.rm = TRUE),max(., na.rm = TRUE)), Temperatura, Salinidad, Oxigeno, Densidad, Profundidad)
 
-write_csv(EstadisticasDescrip, "./01_Resultados/EstadisticasDescrip_CCCP.csv", col_names = TRUE)
+write_csv(EstadisticasDescrip, "./01_Resultados/Fisicos_EstadisticasDescrip_CCCP.csv", col_names = TRUE)
 
 
 #########################
@@ -70,6 +70,15 @@ grid.arrange(nrow=2, ncol=2, Temperatura_Total_CCCP,
              top="Datos totales")
 dev.off()
 
+
+
+png(filename = "./03_Imagenes/01_Datos_Totales_CCCP.png", width = 20, height = 30, units = "cm", pointsize = 15, res = 300)
+grid.arrange(nrow=2, ncol=2, Temperatura_Total_CCCP, 
+             Salnidad_Total_CCCP,Densidad_Total_CCCP,Oxigeno_Total_CCCP, 
+             top="Datos totales")
+dev.off()
+
+
 Temperatura_Hist_CCCP<-ggplot(Datos_CTDO_CCCP, aes(x=Temperatura)) + 
   geom_histogram(aes(group=Marea))+  
   labs(title = "Histograma de la Temperatura [°C]",
@@ -97,6 +106,10 @@ Oxigeno_Hist_CCCP<-ggplot(Datos_CTDO_CCCP, aes(x=Oxigeno)) +
   facet_grid(Marea~Transecto)
 
 tiff(filename = "./03_Imagenes/02_Histogramas_CCCP.tif", width = 40, height = 30, units = "cm", pointsize = 30, bg = "white", res = 300, compression = "lzw")
+grid.arrange(nrow=2, ncol=2,Temperatura_Hist_CCCP, Salinidad_Hist_CCCP, Densidad_Hist_CCCP, Oxigeno_Hist_CCCP)
+dev.off()
+
+png(filename = "./03_Imagenes/02_Histogramas_CCCP.png", width = 40, height = 30, units = "cm", pointsize = 30, bg = "white", res = 300)
 grid.arrange(nrow=2, ncol=2,Temperatura_Hist_CCCP, Salinidad_Hist_CCCP, Densidad_Hist_CCCP, Oxigeno_Hist_CCCP)
 dev.off()
 
@@ -138,6 +151,10 @@ grid.arrange(nrow=2, ncol=2,Temperatura_boxplot_CCCP, Salinidad_boxplot_CCCP,
              Densidad_boxplot_CCCP, Oxigeno_boxplot_CCCP)
 dev.off()
 
+png(filename = "./03_Imagenes/03_Boxplot_CCCP.png", width = 20, height = 15, units = "cm", pointsize = 12, bg = "white", res = 300)
+grid.arrange(nrow=2, ncol=2,Temperatura_boxplot_CCCP, Salinidad_boxplot_CCCP, 
+             Densidad_boxplot_CCCP, Oxigeno_boxplot_CCCP)
+dev.off()
 
 
 
@@ -204,6 +221,9 @@ tiff(filename = "./03_Imagenes/Temperatura_Transecto_Amarales_CCCP.tif", width =
 grid.arrange(nrow=6, ncol=2,Temp_A01A_CCCP, Temp_A01B_CCCP, Temp_A02A_CCCP,Temp_A02B_CCCP, Temp_A03A_CCCP, Temp_A03B_CCCP, Temp_A04A_CCCP, Temp_A04B_CCCP, Temp_A05A_CCCP,Temp_A05B_CCCP, Temp_A06A_CCCP, Temp_A06B_CCCP, top="Transecto Amarales")
 dev.off()
 
+png(filename = "./03_Imagenes/Temperatura_Transecto_Amarales_CCCP.png", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
+grid.arrange(nrow=6, ncol=2,Temp_A01A_CCCP, Temp_A01B_CCCP, Temp_A02A_CCCP,Temp_A02B_CCCP, Temp_A03A_CCCP, Temp_A03B_CCCP, Temp_A04A_CCCP, Temp_A04B_CCCP, Temp_A05A_CCCP,Temp_A05B_CCCP, Temp_A06A_CCCP, Temp_A06B_CCCP, top="Transecto Amarales")
+dev.off()
 
 Sal_A06A_CCCP<-Estandar_15(A06A_CCCP, "A06 - Marea Alta", A06A_CCCP$Salinidad, A06A_CCCP$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
 Sal_A06B_CCCP<-Estandar_15(A06B_CCCP, "A06 - Marea Baja", A06B_CCCP$Salinidad, A06B_CCCP$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
@@ -407,16 +427,24 @@ dev.off()
 Temp01_CCCP<-grid.arrange(nrow=6, ncol=2,Temp_A01A_CCCP, Temp_A01B_CCCP, Temp_A02A_CCCP,Temp_A02B_CCCP, Temp_A03A_CCCP, Temp_A03B_CCCP, Temp_A04A_CCCP, Temp_A04B_CCCP, Temp_A05A_CCCP,Temp_A05B_CCCP, Temp_A06A_CCCP, Temp_A06B_CCCP, top="Transecto Amarales")
 Temp02_CCCP<-grid.arrange(nrow=6, ncol=2,Temp_S01A_CCCP, Temp_S01B_CCCP, Temp_S02A_CCCP,Temp_S02B_CCCP, Temp_S03A_CCCP, Temp_S03B_CCCP, Temp_S04A_CCCP, Temp_S04B_CCCP, Temp_S05A_CCCP,Temp_S05B_CCCP, Temp_S06A_CCCP, Temp_S06B_CCCP, top="Transecto Sanquianga")
 Temp03_CCCP<-grid.arrange(nrow=6, ncol=2,Temp_G01A_CCCP, Temp_G01B_CCCP, Temp_G02A_CCCP,Temp_G02B_CCCP, Temp_G03A_CCCP, Temp_G03B_CCCP, Temp_G04A_CCCP, Temp_G04B_CCCP, Temp_G05A_CCCP,Temp_G05B_CCCP, Temp_G06A_CCCP, Temp_G06B_CCCP, top="Transecto Guascama")
+
 tiff(filename = "./03_Imagenes/Temperatura_Perfiles_CCCP.tif", width = 50, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
 grid.arrange(nrow=1, ncol=3,Temp01_CCCP, Temp02_CCCP, Temp03_CCCP)
 dev.off() 
 
+png(filename = "./03_Imagenes/Temperatura_Perfiles_CCCP.png", width = 50, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
+grid.arrange(nrow=1, ncol=3,Temp01_CCCP, Temp02_CCCP, Temp03_CCCP)
+dev.off() 
 
 Sal01_CCCP<-grid.arrange(nrow=6, ncol=2,Sal_S01A_CCCP, Sal_S01B_CCCP, Sal_S02A_CCCP,Sal_S02B_CCCP, Sal_S03A_CCCP, Sal_S03B_CCCP, Sal_S04A_CCCP, Sal_S04B_CCCP, Sal_S05A_CCCP,Sal_S05B_CCCP, Sal_S06A_CCCP, Sal_S06B_CCCP, top="Transecto Sanquianga")
 Sal02_CCCP<-grid.arrange(nrow=6, ncol=2,Sal_A01A_CCCP, Sal_A01B_CCCP, Sal_A02A_CCCP,Sal_A02B_CCCP, Sal_A03A_CCCP, Sal_A03B_CCCP, Sal_A04A_CCCP, Sal_A04B_CCCP, Sal_A05A_CCCP,Sal_A05B_CCCP, Sal_A06A_CCCP, Sal_A06B_CCCP, top="Transecto Amarales")
 Sal03_CCCP<-grid.arrange(nrow=6, ncol=2,Sal_G01A_CCCP, Sal_G01B_CCCP, Sal_G02A_CCCP,Sal_G02B_CCCP, Sal_G03A_CCCP, Sal_G03B_CCCP, Sal_G04A_CCCP, Sal_G04B_CCCP, Sal_G05A_CCCP,Sal_G05B_CCCP, Sal_G06A_CCCP, Sal_G06B_CCCP, top="Transecto Guascama")
 
 tiff(filename = "./03_Imagenes/Salinidad_Perfiles_CCCP.tif", width = 50, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
+grid.arrange(nrow=1, ncol=3,Sal01_CCCP, Sal02_CCCP, Sal03_CCCP)
+dev.off()
+
+png(filename = "./03_Imagenes/Salinidad_Perfiles_CCCP.png", width = 50, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=1, ncol=3,Sal01_CCCP, Sal02_CCCP, Sal03_CCCP)
 dev.off()
 
@@ -428,4 +456,16 @@ tiff(filename = "./03_Imagenes/Densidad_Perfiles_CCCP.tif", width = 50, height =
 grid.arrange(nrow=1, ncol=3,Den01_CCCP, Den02_CCCP, Den03_CCCP)
 dev.off()
 
+png(filename = "./03_Imagenes/Densidad_Perfiles_CCCP.png", width = 50, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
+grid.arrange(nrow=1, ncol=3,Den01_CCCP, Den02_CCCP, Den03_CCCP)
+dev.off()
 
+
+
+Oxi01_CCCP<-grid.arrange(nrow=6, ncol=2,Oxi_A01A_CCCP, Oxi_A01B_CCCP, Oxi_A02A_CCCP,Oxi_A02B_CCCP, Oxi_A03A_CCCP, Oxi_A03B_CCCP, Oxi_A04A_CCCP, Oxi_A04B_CCCP, Oxi_A05A_CCCP,Oxi_A05B_CCCP, Oxi_A06A_CCCP, Oxi_A06B_CCCP, top="Transecto Amarales")
+Oxi02_CCCP<-grid.arrange(nrow=6, ncol=2,Oxi_S01A_CCCP, Oxi_S01B_CCCP, Oxi_S02A_CCCP,Oxi_S02B_CCCP, Oxi_S03A_CCCP, Oxi_S03B_CCCP, Oxi_S04A_CCCP, Oxi_S04B_CCCP, Oxi_S05A_CCCP,Oxi_S05B_CCCP, Oxi_S06A_CCCP, Oxi_S06B_CCCP, top="Transecto Sanquianga")
+Oxi03_CCCP<-grid.arrange(nrow=6, ncol=2,Oxi_G01A_CCCP, Oxi_G01B_CCCP, Oxi_G02A_CCCP,Oxi_G02B_CCCP, Oxi_G03A_CCCP, Oxi_G03B_CCCP, Oxi_G04A_CCCP, Oxi_G04B_CCCP, Oxi_G05A_CCCP,Oxi_G05B_CCCP, Oxi_G06A_CCCP, Oxi_G06B_CCCP, top="Transecto Guascama")
+
+png(filename = "./03_Imagenes/Oxigeno_Perfiles_CCCP.png", width = 50, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
+grid.arrange(nrow=1, ncol=3,Oxi01_CCCP, Oxi02_CCCP, Oxi03_CCCP)
+dev.off()

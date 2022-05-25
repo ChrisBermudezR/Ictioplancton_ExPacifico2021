@@ -15,23 +15,14 @@ library(lattice)
 library(latticeExtra)
 library(GGally)
 
-Datos_Quimica<-read.table("Quimica.csv", header = TRUE, sep=",")
 
 
-Datos_Quimica$Separar<-Datos_Quimica$Estacion
-Datos_Quimica<-separate(Datos_Quimica, Separar, c("Transecto", "No.Estacion"), sep = "0" )
+Datos_Quimica<-read.table("./02_Datos/Quimicos/Datos_Quimica.csv", header = TRUE, sep=",")
+
 as.factor(Datos_Quimica$Transecto)->Datos_Quimica$Transecto
 as.numeric(Datos_Quimica$No.Estacion)->Datos_Quimica$No.Estacion
 
 
-
-Datos_Quimica$Transecto <- recode_factor(Datos_Quimica$Transecto, 
-                                     A = "Amarales", 
-                                     S = "Sanquianga", 
-                                     G = "Guascama")
-
-
-write.table(Datos_Quimica, "Datos_Quimica.csv", col.names = TRUE, sep=",")
 
 legend <- get_legend(NO2_Quimica)
 
@@ -102,7 +93,10 @@ grid.arrange(nrow=5, ncol=2, NO2_Quimica_Total, NO3_Quimica_Total, PO4_Quimica_T
              top="Datos totales")
 dev.off()
 
-
+png(filename = "./03_Imagenes/01_Datos_Quimica_Total.png", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
+grid.arrange(nrow=5, ncol=2, NO2_Quimica_Total, NO3_Quimica_Total, PO4_Quimica_Total, SiO2_Quimica_Total ,Clorofila_Quimica_Total, Salinidad_Quimica_Total,pH_Quimica_Total,OD_Quimica_Total,Transparencia_Quimica_Total,SST_Quimica_Total,
+             top="Datos totales")
+dev.off()
 
 NO2_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=NO2, color=Marea)) + 
   geom_boxplot()+ 
