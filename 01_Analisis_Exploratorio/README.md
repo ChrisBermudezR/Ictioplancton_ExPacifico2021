@@ -9,5 +9,5 @@ Las variables tomadas con el CTDO en cada transecto fueron las siguientes: Tempe
 </p>
 
 <p align="center" width="100%">
-    <img width="50%" src="/03_Imagenes/Logos.png">
+    <img width="50%" src="github_PNG90.png">
 </p>
