@@ -4,7 +4,7 @@
 
 - [Análisis Exploratorio de Datos](#análisis-exploratorio-de-datos)
     - [Análisis del comportamiento de la marea](#análisis-del-comportamiento-de-la-marea)
-    - [Análisis de los datos tomados con el CTDO - SEABIRD v.19.PLUS](#análisis-de-los-datos-tomados-con-el-ctdo---seabird-v19plus)
+    - [Análisis de datos físico: datos tomados con el CTDO - SEABIRD v.19.PLUS](#análisis-de-los-datos-tomados-con-el-ctdo---seabird-v19plus)
 
 ## Análisis del comportamiento de la marea
 
@@ -20,7 +20,7 @@ Durante la ejecución de la toma de muestras del proyecto, el comportamiento de 
 </p>
 
 
-## Análisis de los datos tomados con el CTDO - SEABIRD v.19.PLUS
+## Análisis de datos físico: datos tomados con el CTDO - SEABIRD v.19.PLUS
 
 Las variables tomadas con el CTDO en cada transecto fueron las siguientes: Temperatura [$°C$], Salinidad [$PSU$], Densidad del agua [$kg/m^3$] y Oxígeno disuelto [$mg/L$].
 
