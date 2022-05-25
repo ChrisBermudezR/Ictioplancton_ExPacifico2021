@@ -105,8 +105,8 @@ NO2_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=NO2, color=Marea)) +
   theme_classic()+
   geom_point(position = position_jitterdodge()) 
 NO3_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=NO3, color=Marea)) + 
-  stat_summary(fun=mean, aes(y = NO3, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) +
   geom_boxplot()+ 
+  stat_summary(fun=mean, aes(y = NO3, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) +
   labs( y = "NO3 [µM]", x = "Transecto")+
   theme_classic()+
   geom_point(position = position_jitterdodge()) 
@@ -165,7 +165,10 @@ grid.arrange(nrow=5, ncol=2, NO2_Quimica, NO3_Quimica, PO4_Quimica,SiO2_Quimica,
              top="Datos totales")
 dev.off()
 
-
+png(filename = "./03_Imagenes/01_Datos_Quimica.png", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
+grid.arrange(nrow=5, ncol=2, NO2_Quimica, NO3_Quimica, PO4_Quimica,SiO2_Quimica,Clorofila_Quimica,Salinidad_Quimica,pH_Quimica,OD_Quimica,Transparencia_Quimica,SST_Quimica,
+             top="Datos totales")
+dev.off()
 
 NO2_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=NO2)) + 
   geom_line()+ 
