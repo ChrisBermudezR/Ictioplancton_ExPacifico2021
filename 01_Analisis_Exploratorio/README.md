@@ -14,6 +14,6 @@ El promedio de la temperatura fue fue superior en el transecto de *Amarales* y e
 
 
 <p align="center" width="100%">
-    <img width="100%" src="/03_Imagenes/02_Histogramas_CCCP.png">
+    <img width="100%" src="/03_Imagenes/github_PNG90.png">
 </p>
 
