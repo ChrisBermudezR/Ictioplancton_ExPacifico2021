@@ -31,7 +31,7 @@ Las variables tomadas con el CTDO en cada transecto fueron las siguientes: Tempe
 
 
 <p align="center" width="100%">
-    <img width="50%" src="/01_Analisis_Exploratorio/03_Imagenes/02_Histogramas_CCCP.png">
+    <img width="75%" src="/01_Analisis_Exploratorio/03_Imagenes/02_Histogramas_CCCP.png">
     
 </p>
 <p align="center" width="100%">
