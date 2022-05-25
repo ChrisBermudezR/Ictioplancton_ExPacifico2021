@@ -6,6 +6,4 @@ Las variables tomadas con el CTDO en cada transecto fueron las siguientes: Tempe
 
 El promedio de la temperatura fue fue superior en el transecto de *Amarales* y en este se presentaron los mayores registros de temperatura (![Fig01])
 
-
-
-![Fig01](/03_Imagenes/01_Datos_Totales_CCCP.png "Figura 1")
+![ ](/03_Imagenes/01_Datos_Totales_CCCP.png)
