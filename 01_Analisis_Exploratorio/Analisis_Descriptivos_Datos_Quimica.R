@@ -38,10 +38,7 @@ Datos_Fisica_Sup$Transecto<- recode_factor(Datos_Fisica_Sup$Transecto, A ="Amara
 Datos_Fisica_Sup$No.Estacion<- recode_factor(Datos_Fisica_Sup$No.Estacion, "01"=1, "02"=2, "03"=3, "04"=4, "05"=5, "06"=6)
 
 
-
-
-#Falta codificar los transectos
-
+####Datos Físicos####
 Temp_mean_Quimica_Total<-ggplot(Datos_Fisica_Sup, aes(x=Marea, y=Temperatura_mean, color=Marea)) + 
   geom_boxplot()+ 
   stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
@@ -50,10 +47,10 @@ Temp_mean_Quimica_Total<-ggplot(Datos_Fisica_Sup, aes(x=Marea, y=Temperatura_mea
 geom_point(position = position_jitterdodge()) 
 
 
-Temp_mean_Quimica<-ggplot(Datos_Fisica_Sup, aes(x=Transecto, y=NO2, color=Marea)) + 
+Temp_mean_Quimica<-ggplot(Datos_Fisica_Sup, aes(x=Transecto, y=Temperatura_mean, color=Marea)) + 
   geom_boxplot()+ 
-  stat_summary(fun=mean, aes(y = NO2, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) +
-  labs( y = "NO2 [µM]", x = "Transecto")+
+  stat_summary(fun=mean, aes(y = Temperatura_mean, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) +
+  labs( y = "Temperatura [°C]", x = "Transecto")+
   theme_classic()+
   geom_point(position = position_jitterdodge()) 
 
