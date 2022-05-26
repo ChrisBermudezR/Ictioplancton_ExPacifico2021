@@ -18,13 +18,47 @@ library(GGally)
 
 
 Datos_Quimica<-read.table("./02_Datos/Quimicos/Datos_Quimica.csv", header = TRUE, sep=",")
-
 as.factor(Datos_Quimica$Transecto)->Datos_Quimica$Transecto
 as.numeric(Datos_Quimica$No.Estacion)->Datos_Quimica$No.Estacion
 
+Datos_Fisica_Sup<-readr::read_csv("./01_Resultados/Fisicos_EstadisticasDescrip_CCCP.csv")
+as.factor(Datos_Fisica_Sup$Transecto)->Datos_Fisica_Sup$Transecto
+as.factor(Datos_Fisica_Sup$No.Estacion)->Datos_Fisica_Sup$No.Estacion
+
+Datos_Fisica_Sup$Codigo2<-Datos_Fisica_Sup$Codigo
+
+Datos_Fisica_Sup<-Datos_Fisica_Sup%>%
+  separate(Codigo, c("Codigo", "Marea"), sep=3)
+
+Datos_Fisica_Sup<-Datos_Fisica_Sup%>%
+  separate(Codigo, c("Transecto", "No.Estacion"), sep=1)
+
+Datos_Fisica_Sup$Marea<- recode_factor(Datos_Fisica_Sup$Marea, B ="Baja", A = "Alta")
+Datos_Fisica_Sup$Transecto<- recode_factor(Datos_Fisica_Sup$Transecto, A ="Amarales", G = "Guascama", S="Sanquianga")
+Datos_Fisica_Sup$No.Estacion<- recode_factor(Datos_Fisica_Sup$No.Estacion, "01"=1, "02"=2, "03"=3, "04"=4, "05"=5, "06"=6)
 
 
-legend <- get_legend(NO2_Quimica)
+
+
+#Falta codificar los transectos
+
+Temp_mean_Quimica_Total<-ggplot(Datos_Fisica_Sup, aes(x=Marea, y=Temperatura_mean, color=Marea)) + 
+  geom_boxplot()+ 
+  stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
+  labs( y = "Temperatura [°C]", x = "Marea")+
+  theme_classic()
+geom_point(position = position_jitterdodge()) 
+
+
+Temp_mean_Quimica<-ggplot(Datos_Fisica_Sup, aes(x=Transecto, y=NO2, color=Marea)) + 
+  geom_boxplot()+ 
+  stat_summary(fun=mean, aes(y = NO2, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) +
+  labs( y = "NO2 [µM]", x = "Transecto")+
+  theme_classic()+
+  geom_point(position = position_jitterdodge()) 
+
+
+####Datos Químicos####
 
 NO2_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=NO2, color=Marea)) + 
   geom_boxplot()+ 
