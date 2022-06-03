@@ -16,17 +16,16 @@ library(latticeExtra)
 library(GGally)
 
 
-
+#Carga de datos química
 Datos_Quimica<-read.table("./02_Datos/Quimicos/Datos_Quimica.csv", header = TRUE, sep=",")
 as.factor(Datos_Quimica$Transecto)->Datos_Quimica$Transecto
 as.numeric(Datos_Quimica$No.Estacion)->Datos_Quimica$No.Estacion
 
+#Cargade datos físicos asignados solo para la superficie
 Datos_Fisica_Sup<-readr::read_csv("./01_Resultados/Fisicos_EstadisticasDescrip_CCCP.csv")
-as.factor(Datos_Fisica_Sup$Transecto)->Datos_Fisica_Sup$Transecto
-as.factor(Datos_Fisica_Sup$No.Estacion)->Datos_Fisica_Sup$No.Estacion
 
-Datos_Fisica_Sup$Codigo2<-Datos_Fisica_Sup$Codigo
 
+#Creación de los codigos de evento muestreal y de marea
 Datos_Fisica_Sup<-Datos_Fisica_Sup%>%
   separate(Codigo, c("Codigo", "Marea"), sep=3)
 
@@ -36,18 +35,51 @@ Datos_Fisica_Sup<-Datos_Fisica_Sup%>%
 Datos_Fisica_Sup$Marea<- recode_factor(Datos_Fisica_Sup$Marea, B ="Baja", A = "Alta")
 Datos_Fisica_Sup$Transecto<- recode_factor(Datos_Fisica_Sup$Transecto, A ="Amarales", G = "Guascama", S="Sanquianga")
 Datos_Fisica_Sup$No.Estacion<- recode_factor(Datos_Fisica_Sup$No.Estacion, "01"=1, "02"=2, "03"=3, "04"=4, "05"=5, "06"=6)
+as.factor(Datos_Fisica_Sup$Transecto)->Datos_Fisica_Sup$Transecto
+as.factor(Datos_Fisica_Sup$No.Estacion)->Datos_Fisica_Sup$No.Estacion
+as.factor(Datos_Fisica_Sup$Marea)->Datos_Fisica_Sup$Marea
+Datos_Fisica_Sup$Codigo2<-Datos_Fisica_Sup$Codigo
+write_csv(Datos_Fisica_Sup,"./02_Datos/Datos_Fisica_Sup.csv", col_names = TRUE)
 
+
+####Creación de la visualización 
 
 ####Datos Físicos####
-Temp_mean_Quimica_Total<-ggplot(Datos_Fisica_Sup, aes(x=Marea, y=Temperatura_mean, color=Marea)) + 
+
+#Boxplot entre mareas
+Temp_mean_Total<-ggplot(Datos_Fisica_Sup, aes(x=Marea, y=Temperatura_mean, color=Marea)) + 
+  geom_boxplot()+ 
+  stat_summary(fun=mean, geom="point", shape=20, size=5, color="red", fill="red") +
+  labs( y = "Temperatura [°C]", x = "Marea")+
+  scale_x_discrete(limits=c("Alta","Baja"))+
+  scale_color_manual(values=c("chocolate1", "deepskyblue"))+
+  theme_bw()+
+  geom_point(position = position_jitterdodge())+
+  theme(legend.position = "none", legend.title = element_blank()) + 
+  guides(fill=guide_legend(reverse=TRUE)) 
+
+
+
+Salinidad_mean_Total<-ggplot(Datos_Fisica_Sup, aes(x=Marea, y=Salinidad_mean, color=Marea)) + 
   geom_boxplot()+ 
   stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
-  labs( y = "Temperatura [°C]", x = "Marea")+
-  theme_classic()
-geom_point(position = position_jitterdodge()) 
+  labs( y = "Salinidad [PSU]", x = "Marea")+
+  scale_x_discrete(limits=c("Alta","Baja"))+
+  scale_color_manual(values=c("chocolate1", "deepskyblue"))+
+  theme_bw()+
+  geom_point(position = position_jitterdodge())+
+  theme(legend.position = "none", legend.title = element_blank()) + 
+  guides(fill=guide_legend(reverse=TRUE)) 
 
 
-Temp_mean_Quimica<-ggplot(Datos_Fisica_Sup, aes(x=Transecto, y=Temperatura_mean, color=Marea)) + 
+
+
+
+
+
+
+#Boxplot por transecto
+Temp_mean_Transecto<-ggplot(Datos_Fisica_Sup, aes(x=Transecto, y=Temperatura_mean, color=Marea)) + 
   geom_boxplot()+ 
   stat_summary(fun=mean, aes(y = Temperatura_mean, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) +
   labs( y = "Temperatura [°C]", x = "Transecto")+
@@ -55,71 +87,105 @@ Temp_mean_Quimica<-ggplot(Datos_Fisica_Sup, aes(x=Transecto, y=Temperatura_mean,
   geom_point(position = position_jitterdodge()) 
 
 
-####Datos Químicos####
 
+
+
+
+####Datos Químicos####
+#Boxplot entre mareas
 NO2_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=NO2, color=Marea)) + 
   geom_boxplot()+ 
   stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
   labs( y = "NO2 [µM]", x = "Marea")+
-  theme_classic()
-  geom_point(position = position_jitterdodge()) 
+  scale_x_discrete(limits=c("Alta","Baja"))+
+  theme_bw()+
+  geom_point(position = position_jitterdodge())+
+  theme(legend.position = "none", legend.title = element_blank()) 
+
 NO3_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=NO3, color=Marea)) + 
   geom_boxplot()+ 
   stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
   labs( y = "NO3 [µM]", x = "Marea")+
-  theme_classic()+
-  geom_point(position = position_jitterdodge()) 
+  scale_x_discrete(limits=c("Alta","Baja"))+
+  theme_bw()+
+  geom_point(position = position_jitterdodge())+
+  theme(legend.position = "none", legend.title = element_blank()) + 
+  guides(fill=guide_legend(reverse=TRUE))  
 
 PO4_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=PO4, color=Marea)) + 
   geom_boxplot()+ 
   stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
   labs( y = "PO4 [µM]", x = "Marea")+
-  theme_classic()+
-  geom_point(position = position_jitterdodge())
+  scale_x_discrete(limits=c("Alta","Baja"))+
+  theme_bw()+
+  geom_point(position = position_jitterdodge())+
+  theme(legend.position = "none", legend.title = element_blank()) + 
+  guides(fill=guide_legend(reverse=TRUE)) 
 SiO2_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=SiO2, color=Marea)) + 
   geom_boxplot()+ 
   stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
   labs( y = "SiO2 [µM]", x = "Marea")+
-  theme_classic()+
-  geom_point(position = position_jitterdodge()) 
+  scale_x_discrete(limits=c("Alta","Baja"))+
+  theme_bw()+
+  geom_point(position = position_jitterdodge())+
+  theme(legend.position = "none", legend.title = element_blank()) + 
+  guides(fill=guide_legend(reverse=TRUE)) 
 Clorofila_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=Clorofila, color=Marea)) + 
   geom_boxplot()+ 
   stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
   labs( y = "Clorofila [mg/m3]", x = "Marea")+
-  theme_classic()+
-  geom_point(position = position_jitterdodge())
+  scale_x_discrete(limits=c("Alta","Baja"))+
+  theme_bw()+
+  geom_point(position = position_jitterdodge())+
+  theme(legend.position = "none", legend.title = element_blank()) + 
+  guides(fill=guide_legend(reverse=TRUE)) 
 Salinidad_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=Salinidad, color=Marea)) + 
   geom_boxplot()+ 
   stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
   labs( y = "Salinidad [PSU]", x = "Marea")+
-  theme_classic()+
-  geom_point(position = position_jitterdodge())
+  scale_x_discrete(limits=c("Alta","Baja"))+
+  theme_bw()+
+  geom_point(position = position_jitterdodge())+
+  theme(legend.position = "none", legend.title = element_blank()) + 
+  guides(fill=guide_legend(reverse=TRUE)) 
 pH_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=pH, color=Marea)) + 
   geom_boxplot()+ 
   stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
   labs( y = "pH", x = "Marea")+
-  theme_classic()+
-  geom_point(position = position_jitterdodge())
+  scale_x_discrete(limits=c("Alta","Baja"))+
+  theme_bw()+
+  geom_point(position = position_jitterdodge())+
+  theme(legend.position = "none", legend.title = element_blank()) + 
+  guides(fill=guide_legend(reverse=TRUE)) 
 OD_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=OD, color=Marea)) + 
   geom_boxplot()+ 
   stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
   labs( y = "Oxígeno Disuelto [mg/L]", x = "Marea")+
-  theme_classic()+
-  geom_point(position = position_jitterdodge())
+  scale_x_discrete(limits=c("Alta","Baja"))+
+  theme_bw()+
+  geom_point(position = position_jitterdodge())+
+  theme(legend.position = "none", legend.title = element_blank()) + 
+  guides(fill=guide_legend(reverse=TRUE)) 
 Transparencia_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=Transparencia, color=Marea)) + 
   geom_boxplot()+ 
   stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
   labs( y = "Transparencia [m]", x = "Marea")+
-  theme_classic()+
-  geom_point(position = position_jitterdodge())
+  scale_x_discrete(limits=c("Alta","Baja"))+
+  theme_bw()+
+  geom_point(position = position_jitterdodge())+
+  theme(legend.position = "none", legend.title = element_blank()) + 
+  guides(fill=guide_legend(reverse=TRUE)) 
 SST_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=SST, color=Marea)) + 
   geom_boxplot()+ 
   stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
   labs( y = "SST [mg/L]", x = "Marea")+
-  theme_classic()+
-  geom_point(position = position_jitterdodge())
+  scale_x_discrete(limits=c("Alta","Baja"))+
+  theme_bw()+
+  geom_point(position = position_jitterdodge())+
+  theme(legend.position = "none", legend.title = element_blank()) + 
+  guides(fill=guide_legend(reverse=TRUE)) 
 
-tiff(filename = "01_Datos_Quimica_Total.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
+tiff(filename = "./03_Imagenes/01_Datos_Quimica_Total.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=5, ncol=2, NO2_Quimica_Total, NO3_Quimica_Total, PO4_Quimica_Total, SiO2_Quimica_Total ,Clorofila_Quimica_Total, Salinidad_Quimica_Total,pH_Quimica_Total,OD_Quimica_Total,Transparencia_Quimica_Total,SST_Quimica_Total,
              top="Datos totales")
 dev.off()
