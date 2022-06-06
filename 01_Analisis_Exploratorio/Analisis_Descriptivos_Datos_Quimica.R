@@ -72,10 +72,30 @@ Salinidad_mean_Total<-ggplot(Datos_Fisica_Sup, aes(x=Marea, y=Salinidad_mean, co
   guides(fill=guide_legend(reverse=TRUE)) 
 
 
+Oxigeno_mean_Total<-ggplot(Datos_Fisica_Sup, aes(x=Marea, y=Oxigeno_mean, color=Marea)) + 
+  geom_boxplot()+ 
+  stat_summary(fun=mean, geom="point", shape=20, size=5, color="red", fill="red") +
+  labs( y = "Oxígeno disuelto [mg/L]", x = "Marea")+
+  scale_x_discrete(limits=c("Alta","Baja"))+
+  scale_color_manual(values=c("chocolate1", "deepskyblue"))+
+  theme_bw()+
+  geom_point(position = position_jitterdodge())+
+  theme(legend.position = "none", legend.title = element_blank()) + 
+  guides(fill=guide_legend(reverse=TRUE)) 
 
+Densidad_mean_Total<-ggplot(Datos_Fisica_Sup, aes(x=Marea, y=Densidad_mean, color=Marea)) + 
+  geom_boxplot()+ 
+  stat_summary(fun=mean, geom="point", shape=20, size=5, color="red", fill="red") +
+  labs( y = expression(Densidad~" "~"[Kg/" ~ m^3~"]"), x = "Marea")+
+  scale_x_discrete(limits=c("Alta","Baja"))+
+  scale_color_manual(values=c("chocolate1", "deepskyblue"))+
+  theme_bw()+
+  geom_point(position = position_jitterdodge())+
+  theme(legend.position = "none", legend.title = element_blank()) + 
+  guides(fill=guide_legend(reverse=TRUE)) 
 
-
-
+Densidad~" "~[kg/m^{3}]
+expression(Production~rate~" "~mu~moles~NO[3]^{"-"}-N~Kg^{-1})
 
 
 #Boxplot por transecto
@@ -133,7 +153,7 @@ SiO2_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=SiO2, color=Marea)) +
 Clorofila_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=Clorofila, color=Marea)) + 
   geom_boxplot()+ 
   stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
-  labs( y = "Clorofila [mg/m3]", x = "Marea")+
+  labs( y =expression(Clorofila~" "~"[mg/" ~ m^3~"]"), x = "Marea")+
   scale_x_discrete(limits=c("Alta","Baja"))+
   theme_bw()+
   geom_point(position = position_jitterdodge())+
