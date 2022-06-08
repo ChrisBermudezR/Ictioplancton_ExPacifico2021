@@ -29,9 +29,6 @@ Datos_CTDO_CCCP <- Datos_CTDO_CCCP %>% group_by(Codigo)
 
 ####Estadistica descriptiva####
   
-
-
-
 EstadisticasDescrip<-Datos_CTDO_CCCP %>% summarise_each(funs(mean(., na.rm = TRUE),   median(., na.rm = TRUE),n(),sd(., na.rm = TRUE), min(., na.rm = TRUE),max(., na.rm = TRUE)), Temperatura, Salinidad, Oxigeno, Densidad, Profundidad)
 
 write_csv(EstadisticasDescrip, "./01_Resultados/Fisicos_EstadisticasDescrip_CCCP.csv", col_names = TRUE)

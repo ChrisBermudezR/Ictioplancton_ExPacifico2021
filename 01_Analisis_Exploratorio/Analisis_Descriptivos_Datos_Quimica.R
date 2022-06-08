@@ -14,32 +14,117 @@ library(oce)
 library(lattice)
 library(latticeExtra)
 library(GGally)
+library(ggplot2)
 
 
 #Carga de datos química
 Datos_Quimica<-read.table("./02_Datos/Quimicos/Datos_Quimica.csv", header = TRUE, sep=",")
 as.factor(Datos_Quimica$Transecto)->Datos_Quimica$Transecto
 as.numeric(Datos_Quimica$No.Estacion)->Datos_Quimica$No.Estacion
-
+as.factor(Datos_Quimica$Codigo)->Datos_Quimica$Codigo
 #Cargade datos físicos asignados solo para la superficie
 Datos_Fisica_Sup<-readr::read_csv("./01_Resultados/Fisicos_EstadisticasDescrip_CCCP.csv")
 
 
-#Creación de los codigos de evento muestreal y de marea
-Datos_Fisica_Sup<-Datos_Fisica_Sup%>%
-  separate(Codigo, c("Codigo", "Marea"), sep=3)
+#Uniendo los dos conjuntos de datos
 
-Datos_Fisica_Sup<-Datos_Fisica_Sup%>%
-  separate(Codigo, c("Transecto", "No.Estacion"), sep=1)
+Datos_Totales <- merge(Datos_Quimica,Datos_Fisica_Sup,by="Codigo")
+colnames(Datos_Totales_Limpios)
 
-Datos_Fisica_Sup$Marea<- recode_factor(Datos_Fisica_Sup$Marea, B ="Baja", A = "Alta")
-Datos_Fisica_Sup$Transecto<- recode_factor(Datos_Fisica_Sup$Transecto, A ="Amarales", G = "Guascama", S="Sanquianga")
-Datos_Fisica_Sup$No.Estacion<- recode_factor(Datos_Fisica_Sup$No.Estacion, "01"=1, "02"=2, "03"=3, "04"=4, "05"=5, "06"=6)
-as.factor(Datos_Fisica_Sup$Transecto)->Datos_Fisica_Sup$Transecto
-as.factor(Datos_Fisica_Sup$No.Estacion)->Datos_Fisica_Sup$No.Estacion
-as.factor(Datos_Fisica_Sup$Marea)->Datos_Fisica_Sup$Marea
-Datos_Fisica_Sup$Codigo2<-Datos_Fisica_Sup$Codigo
-write_csv(Datos_Fisica_Sup,"./02_Datos/Datos_Fisica_Sup.csv", col_names = TRUE)
+Datos_Totales_Limpios<-Datos_Totales %>% select(
+  Codigo,
+  ID,
+  Transecto,
+  No.Estacion,
+  Estacion,           
+  latitud ,          
+  longitud,
+  Fecha,              
+  Hora ,              
+  Marea ,             
+  NO2,                
+  NO3,               
+  PO4,              
+  SiO2,
+  Clorofila,
+  Conductividad,
+  Salinidad, 
+  pH,
+  OD,
+  Transparencia,
+  SST,
+  TSI_Clor,
+  TSI_SECCHI,
+  Temperatura_mean,  
+  Salinidad_mean,
+  Oxigeno_mean,
+  Densidad_mean,
+  Temperatura_median,
+  Salinidad_median,
+  Oxigeno_median,
+  Densidad_median,
+  Temperatura_sd,
+  Salinidad_sd,
+  Oxigeno_sd,
+  Densidad_sd,
+  Temperatura_min,
+  Salinidad_min,
+  Oxigeno_min,
+  Densidad_min,
+  Temperatura_max,
+  Salinidad_max,
+  Oxigeno_max,
+  Densidad_max,
+  Profundidad_max  
+)
+colnames(Datos_Totales_Limpios)
+
+
+
+variables<-colnames(Datos_Totales_Limpios[11:44])
+etiqueta_para_y<-c(
+  "Exp_NO2",
+  "Exp_NO3",
+  "Exp_PO4",
+  "Exp_SiO2",
+  "Exp_Clorofila",
+  "Conductividad en superficie (mS/cm)",
+  "Salinidad en superficie [PSU]",
+  "pH en superficie ",
+  "Oxígeno disuelto en superficie [mg/L] ",
+  "Transparencia (m)",
+  "Sólidos Suspendidos Totales (mg/L)",
+  "TSI Clorofila (m)",
+  "TSI Disco Secchi (m)",
+  "Media de la Temperatura en la columna [°C]",
+  "Media de la Salinidad en la columna [PSU]",
+  "Media del Oxígeno disuelto en la columna [mg/L]",
+  "Exp_Densidad",
+  "Mediana de la Temperatura en la columna [°C]",
+  "Mediana de la Salinidad en la columna [PSU]",
+  "Mediana del Oxígeno disuelto en la columna [mg/L]",
+  "Exp_Densidad",
+  "Des.std de la Temperatura en la columna [°C]",
+  "Des.std  de la Salinidad en la columna [PSU]",
+  "Des.std  del Oxígeno disuelto en la columna [mg/L]",
+  "Exp_Densidad",
+  "Mínimo de la Temperatura en la columna [°C]",
+  "Mínimo de la Salinidad en la columna [PSU]",
+  "Mínimo del Oxígeno disuelto en la columna [mg/L]",
+  "Exp_Densidad",
+  "Máximo de la Temperatura en la columna [°C]",
+  "Máximo de la Salinidad en la columna [PSU]",
+  "Máximo del Oxígeno disuelto en la columna [mg/L]",
+  "Exp_Densidad",
+  "Máximo de la Profundidad [m]"
+)
+
+
+
+expression( bar(x))
+
+
+
 
 
 ####Creación de la visualización 
@@ -47,236 +132,203 @@ write_csv(Datos_Fisica_Sup,"./02_Datos/Datos_Fisica_Sup.csv", col_names = TRUE)
 ####Datos Físicos####
 
 #Boxplot entre mareas
-Temp_mean_Total<-ggplot(Datos_Fisica_Sup, aes(x=Marea, y=Temperatura_mean, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, geom="point", shape=20, size=5, color="red", fill="red") +
-  labs( y = "Temperatura [°C]", x = "Marea")+
-  scale_x_discrete(limits=c("Alta","Baja"))+
-  scale_color_manual(values=c("chocolate1", "deepskyblue"))+
-  theme_bw()+
-  geom_point(position = position_jitterdodge())+
-  theme(legend.position = "none", legend.title = element_blank()) + 
-  guides(fill=guide_legend(reverse=TRUE)) 
+
+boxplot_Marea<-function(datos,variable, y_etiqueta){
+  ggplot(datos, aes(x=Marea, y=variable, color=Marea)) + 
+    geom_boxplot()+ 
+    stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
+    labs( y = y_etiqueta, x = "Marea")+
+    scale_x_discrete(limits=c("Alta","Baja"))+
+    scale_color_manual(values=c("chocolate1", "deepskyblue"))+
+    theme_bw()+
+    geom_point(position = position_jitterdodge())+
+    theme(legend.position = "none", legend.title = element_blank()) + 
+    guides(fill=guide_legend(reverse=TRUE)) 
+}
+
+#ciclo para imprimir los objetos para ejecutar la función
+#Se debe tomar lo que imprime en la consola, copiarlo en el script y borrar el [1] y las comillas que encierran la expresión
+for (i in 1:34){
+  print(paste0(variables[i], "_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$",variables[i],", ","'",etiqueta_para_y[i],"'",")"))
+}
+
+ NO2_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$NO2, 'Exp_NO2')
+ NO3_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$NO3, 'Exp_NO3')
+ PO4_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$PO4, 'Exp_PO4')
+ SiO2_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$SiO2, 'Exp_SiO2')
+ Clorofila_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Clorofila, 'Exp_Clorofila')
+ Conductividad_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Conductividad, 'Conductividad en superficie (mS/cm)')
+ Salinidad_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad, 'Salinidad en superficie [PSU]')
+ pH_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$pH, 'pH en superficie ')
+ OD_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$OD, 'Oxígeno disuelto en superficie [mg/L] ')
+ Transparencia_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Transparencia, 'Transparencia (m)')
+ SST_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$SST, 'Sólidos Suspendidos Totales (mg/L)')
+ TSI_Clor_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$TSI_Clor, 'TSI Clorofila (m)')
+ TSI_SECCHI_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$TSI_SECCHI, 'TSI Disco Secchi (m)')
+ Temperatura_mean_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_mean, 'Media de la Temperatura en la columna [°C]')
+ Salinidad_mean_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_mean, 'Media de la Salinidad en la columna [PSU]')
+ Oxigeno_mean_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_mean, 'Media del Oxígeno disuelto en la columna [mg/L]')
+ Densidad_mean_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_mean, 'Exp_Densidad')
+ Temperatura_median_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_median, 'Mediana de la Temperatura en la columna [°C]')
+ Salinidad_median_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_median, 'Mediana de la Salinidad en la columna [PSU]')
+ Oxigeno_median_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_median, 'Mediana del Oxígeno disuelto en la columna [mg/L]')
+ Densidad_median_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_median, 'Exp_Densidad')
+ Temperatura_sd_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_sd, 'Des.std de la Temperatura en la columna [°C]')
+ Salinidad_sd_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_sd, 'Des.std de la Salinidad en la columna [PSU]')
+ Oxigeno_sd_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_sd, 'Des.std del Oxígeno disuelto en la columna [mg/L]')
+ Densidad_sd_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_sd, 'Exp_Densidad')
+ Temperatura_min_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_min, 'Mínimo de la Temperatura en la columna [°C]')
+ Salinidad_min_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_min, 'Mínimo de la Salinidad en la columna [PSU]')
+ Oxigeno_min_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_min, 'Mínimo del Oxígeno disuelto en la columna [mg/L]')
+ Densidad_min_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_min, 'Exp_Densidad')
+ Temperatura_max_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_max, 'Máximo de la Temperatura en la columna [°C]')
+ Salinidad_max_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_max, 'Máximo de la Salinidad en la columna [PSU]')
+ Oxigeno_max_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_max, 'Máximo del Oxígeno disuelto en la columna [mg/L]')
+ Densidad_max_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_max,'Exp_Densidad' )
+ Profundidad_max_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Profundidad_max, 'Máximo de la Profundidad [m]')
 
 
+ for (i in 1:34){
+   print(paste0(variables[i], "_boxplot_Mareas"))
+ }
+ 
+ 
+   
+   tiff(filename = "./03_Imagenes/boxplot_Mareas_01.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
+   grid.arrange(nrow=4, ncol=2, 
+                NO2_boxplot_Mareas, 
+                NO3_boxplot_Mareas, 
+                PO4_boxplot_Mareas, 
+                SiO2_boxplot_Mareas, 
+                Clorofila_boxplot_Mareas, 
+                Conductividad_boxplot_Mareas, 
+                Salinidad_boxplot_Mareas, 
+                pH_boxplot_Mareas,
+                top="Datos totales")
+   dev.off()
+ 
 
-Salinidad_mean_Total<-ggplot(Datos_Fisica_Sup, aes(x=Marea, y=Salinidad_mean, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
-  labs( y = "Salinidad [PSU]", x = "Marea")+
-  scale_x_discrete(limits=c("Alta","Baja"))+
-  scale_color_manual(values=c("chocolate1", "deepskyblue"))+
-  theme_bw()+
-  geom_point(position = position_jitterdodge())+
-  theme(legend.position = "none", legend.title = element_blank()) + 
-  guides(fill=guide_legend(reverse=TRUE)) 
-
-
-Oxigeno_mean_Total<-ggplot(Datos_Fisica_Sup, aes(x=Marea, y=Oxigeno_mean, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, geom="point", shape=20, size=5, color="red", fill="red") +
-  labs( y = "Oxígeno disuelto [mg/L]", x = "Marea")+
-  scale_x_discrete(limits=c("Alta","Baja"))+
-  scale_color_manual(values=c("chocolate1", "deepskyblue"))+
-  theme_bw()+
-  geom_point(position = position_jitterdodge())+
-  theme(legend.position = "none", legend.title = element_blank()) + 
-  guides(fill=guide_legend(reverse=TRUE)) 
-
-Densidad_mean_Total<-ggplot(Datos_Fisica_Sup, aes(x=Marea, y=Densidad_mean, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, geom="point", shape=20, size=5, color="red", fill="red") +
-  labs( y = expression(Densidad~" "~"[Kg/" ~ m^3~"]"), x = "Marea")+
-  scale_x_discrete(limits=c("Alta","Baja"))+
-  scale_color_manual(values=c("chocolate1", "deepskyblue"))+
-  theme_bw()+
-  geom_point(position = position_jitterdodge())+
-  theme(legend.position = "none", legend.title = element_blank()) + 
-  guides(fill=guide_legend(reverse=TRUE)) 
-
-Densidad~" "~[kg/m^{3}]
-expression(Production~rate~" "~mu~moles~NO[3]^{"-"}-N~Kg^{-1})
-
-
-#Boxplot por transecto
-Temp_mean_Transecto<-ggplot(Datos_Fisica_Sup, aes(x=Transecto, y=Temperatura_mean, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, aes(y = Temperatura_mean, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) +
-  labs( y = "Temperatura [°C]", x = "Transecto")+
-  theme_classic()+
-  geom_point(position = position_jitterdodge()) 
-
-
-
-
-
-
-####Datos Químicos####
-#Boxplot entre mareas
-NO2_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=NO2, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
-  labs( y = "NO2 [µM]", x = "Marea")+
-  scale_x_discrete(limits=c("Alta","Baja"))+
-  theme_bw()+
-  geom_point(position = position_jitterdodge())+
-  theme(legend.position = "none", legend.title = element_blank()) 
-
-NO3_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=NO3, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
-  labs( y = "NO3 [µM]", x = "Marea")+
-  scale_x_discrete(limits=c("Alta","Baja"))+
-  theme_bw()+
-  geom_point(position = position_jitterdodge())+
-  theme(legend.position = "none", legend.title = element_blank()) + 
-  guides(fill=guide_legend(reverse=TRUE))  
-
-PO4_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=PO4, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
-  labs( y = "PO4 [µM]", x = "Marea")+
-  scale_x_discrete(limits=c("Alta","Baja"))+
-  theme_bw()+
-  geom_point(position = position_jitterdodge())+
-  theme(legend.position = "none", legend.title = element_blank()) + 
-  guides(fill=guide_legend(reverse=TRUE)) 
-SiO2_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=SiO2, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
-  labs( y = "SiO2 [µM]", x = "Marea")+
-  scale_x_discrete(limits=c("Alta","Baja"))+
-  theme_bw()+
-  geom_point(position = position_jitterdodge())+
-  theme(legend.position = "none", legend.title = element_blank()) + 
-  guides(fill=guide_legend(reverse=TRUE)) 
-Clorofila_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=Clorofila, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
-  labs( y =expression(Clorofila~" "~"[mg/" ~ m^3~"]"), x = "Marea")+
-  scale_x_discrete(limits=c("Alta","Baja"))+
-  theme_bw()+
-  geom_point(position = position_jitterdodge())+
-  theme(legend.position = "none", legend.title = element_blank()) + 
-  guides(fill=guide_legend(reverse=TRUE)) 
-Salinidad_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=Salinidad, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
-  labs( y = "Salinidad [PSU]", x = "Marea")+
-  scale_x_discrete(limits=c("Alta","Baja"))+
-  theme_bw()+
-  geom_point(position = position_jitterdodge())+
-  theme(legend.position = "none", legend.title = element_blank()) + 
-  guides(fill=guide_legend(reverse=TRUE)) 
-pH_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=pH, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
-  labs( y = "pH", x = "Marea")+
-  scale_x_discrete(limits=c("Alta","Baja"))+
-  theme_bw()+
-  geom_point(position = position_jitterdodge())+
-  theme(legend.position = "none", legend.title = element_blank()) + 
-  guides(fill=guide_legend(reverse=TRUE)) 
-OD_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=OD, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
-  labs( y = "Oxígeno Disuelto [mg/L]", x = "Marea")+
-  scale_x_discrete(limits=c("Alta","Baja"))+
-  theme_bw()+
-  geom_point(position = position_jitterdodge())+
-  theme(legend.position = "none", legend.title = element_blank()) + 
-  guides(fill=guide_legend(reverse=TRUE)) 
-Transparencia_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=Transparencia, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
-  labs( y = "Transparencia [m]", x = "Marea")+
-  scale_x_discrete(limits=c("Alta","Baja"))+
-  theme_bw()+
-  geom_point(position = position_jitterdodge())+
-  theme(legend.position = "none", legend.title = element_blank()) + 
-  guides(fill=guide_legend(reverse=TRUE)) 
-SST_Quimica_Total<-ggplot(Datos_Quimica, aes(x=Marea, y=SST, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
-  labs( y = "SST [mg/L]", x = "Marea")+
-  scale_x_discrete(limits=c("Alta","Baja"))+
-  theme_bw()+
-  geom_point(position = position_jitterdodge())+
-  theme(legend.position = "none", legend.title = element_blank()) + 
-  guides(fill=guide_legend(reverse=TRUE)) 
-
-tiff(filename = "./03_Imagenes/01_Datos_Quimica_Total.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
-grid.arrange(nrow=5, ncol=2, NO2_Quimica_Total, NO3_Quimica_Total, PO4_Quimica_Total, SiO2_Quimica_Total ,Clorofila_Quimica_Total, Salinidad_Quimica_Total,pH_Quimica_Total,OD_Quimica_Total,Transparencia_Quimica_Total,SST_Quimica_Total,
-             top="Datos totales")
-dev.off()
-
-png(filename = "./03_Imagenes/01_Datos_Quimica_Total.png", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
-grid.arrange(nrow=5, ncol=2, NO2_Quimica_Total, NO3_Quimica_Total, PO4_Quimica_Total, SiO2_Quimica_Total ,Clorofila_Quimica_Total, Salinidad_Quimica_Total,pH_Quimica_Total,OD_Quimica_Total,Transparencia_Quimica_Total,SST_Quimica_Total,
-             top="Datos totales")
-dev.off()
-
-NO2_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=NO2, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, aes(y = NO2, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) +
-   labs( y = "NO2 [µM]", x = "Transecto")+
-  theme_classic()+
-  geom_point(position = position_jitterdodge()) 
-NO3_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=NO3, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, aes(y = NO3, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) +
-  labs( y = "NO3 [µM]", x = "Transecto")+
-  theme_classic()+
-  geom_point(position = position_jitterdodge()) 
-
-PO4_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=PO4, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, aes(y = PO4, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) +
-  labs( y = "PO4 [µM]", x = "Transecto")+
-  theme_classic()+
-  geom_point(position = position_jitterdodge())
-SiO2_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=SiO2, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, aes(y = SiO2, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) +
-  labs( y = "SiO2 [µM]", x = "Transecto")+
-  theme_classic()+
-  geom_point(position = position_jitterdodge()) 
-Clorofila_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=Clorofila, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, aes(y = Clorofila, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) +
-  labs( y = "Clorofila [mg/m3]", x = "Transecto")+
-  theme_classic()+
-  geom_point(position = position_jitterdodge())
-Salinidad_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=Salinidad, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, aes(y = Salinidad, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) + 
-  labs( y = "Salinidad [PSU]", x = "Transecto")+
-  theme_classic()+
-  geom_point(position = position_jitterdodge())
-pH_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=pH, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, aes(y = pH, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) + 
-  labs( y = "pH", x = "Transecto")+
-  theme_classic()+
-  geom_point(position = position_jitterdodge())
-OD_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=OD, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, aes(y = OD, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) + 
-  labs( y = "Oxígeno Disuelto [mg/L]", x = "Transecto")+
-  theme_classic()+
-  geom_point(position = position_jitterdodge())
-Transparencia_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=Transparencia, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, aes(y = Transparencia, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) + 
-  labs( y = "Transparencia [m]", x = "Transecto")+
-  theme_classic()+
-  geom_point(position = position_jitterdodge())
-SST_Quimica<-ggplot(Datos_Quimica, aes(x=Transecto, y=SST, color=Marea)) + 
-  geom_boxplot()+ 
-  stat_summary(fun=mean, aes(y = SST, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) +
-  labs( y = "SST [mg/L]", x = "Transecto")+
-  theme_classic()+
-  geom_point(position = position_jitterdodge())
-
+   tiff(filename = "./03_Imagenes/boxplot_Mareas_02.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
+   grid.arrange(nrow=4, ncol=2, 
+                OD_boxplot_Mareas, 
+                Transparencia_boxplot_Mareas, 
+                SST_boxplot_Mareas, 
+                TSI_Clor_boxplot_Mareas, 
+                TSI_SECCHI_boxplot_Mareas, 
+                Temperatura_mean_boxplot_Mareas, 
+                Salinidad_mean_boxplot_Mareas, 
+                Oxigeno_mean_boxplot_Mareas,
+                top="Datos totales")
+   dev.off()
+ 
+   
+   tiff(filename = "./03_Imagenes/boxplot_Mareas_03.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
+   grid.arrange(nrow=4, ncol=2, 
+                Densidad_mean_boxplot_Mareas, 
+                Temperatura_median_boxplot_Mareas, 
+                Salinidad_median_boxplot_Mareas, 
+                Oxigeno_median_boxplot_Mareas, 
+                Densidad_median_boxplot_Mareas, 
+                Temperatura_sd_boxplot_Mareas, 
+                Salinidad_sd_boxplot_Mareas, 
+                Oxigeno_sd_boxplot_Mareas,
+                top="Datos totales")
+   dev.off()
+   
+   tiff(filename = "./03_Imagenes/boxplot_Mareas_04.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
+   grid.arrange(nrow=5, ncol=2, 
+                Densidad_sd_boxplot_Mareas, 
+                Temperatura_min_boxplot_Mareas, 
+                Salinidad_min_boxplot_Mareas, 
+                Oxigeno_min_boxplot_Mareas, 
+                Densidad_min_boxplot_Mareas, 
+                Temperatura_max_boxplot_Mareas, 
+                Salinidad_max_boxplot_Mareas, 
+                Oxigeno_max_boxplot_Mareas,
+                Densidad_max_boxplot_Mareas,
+                Profundidad_max_boxplot_Mareas,
+                top="Datos totales")
+   dev.off()
+ 
+ png(filename = "./03_Imagenes/boxplot_Mareas_01.png", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
+ grid.arrange(nrow=4, ncol=2, 
+              NO2_boxplot_Mareas, 
+              NO3_boxplot_Mareas, 
+              PO4_boxplot_Mareas, 
+              SiO2_boxplot_Mareas, 
+              Clorofila_boxplot_Mareas, 
+              Conductividad_boxplot_Mareas, 
+              Salinidad_boxplot_Mareas, 
+              pH_boxplot_Mareas,
+              top="Datos totales")
+ dev.off()
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ #####
+ 
+ 
+boxplot_transecto<-function(datos,variable, y_etiqueta){
+  ggplot(datos, aes(x=Transecto, y=variable, color=Marea)) + 
+    geom_boxplot()+ 
+    stat_summary(fun=mean, aes(y = variable, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) +
+    labs( y = y_etiqueta, x = "Transecto")+
+    theme_classic()+
+    geom_point(position = position_jitterdodge()) 
+}
+ 
+ 
+ 
+ NO2_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$NO2, 'Exp_NO2')
+ NO3_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$NO3, 'Exp_NO3')
+ PO4_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$PO4, 'Exp_PO4')
+ SiO2_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$SiO2, 'Exp_SiO2')
+ Clorofila_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Clorofila, 'Exp_Clorofila')
+ Conductividad_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Conductividad, 'Conductividad en superficie (mS/cm)')
+ Salinidad_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad, 'Salinidad en superficie [PSU]')
+ pH_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$pH, 'pH en superficie ')
+ OD_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$OD, 'Oxígeno disuelto en superficie [mg/L] ')
+ Transparencia_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Transparencia, 'Transparencia (m)')
+ SST_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$SST, 'Sólidos Suspendidos Totales (mg/L)')
+ TSI_Clor_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$TSI_Clor, 'TSI Clorofila (m)')
+ TSI_SECCHI_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$TSI_SECCHI, 'TSI Disco Secchi (m)')
+ Temperatura_mean_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_mean, 'Media de la Temperatura en la columna [°C]')
+ Salinidad_mean_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_mean, 'Media de la Salinidad en la columna [PSU]')
+ Oxigeno_mean_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_mean, 'Media del Oxígeno disuelto en la columna [mg/L]')
+ Densidad_mean_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_mean, 'Exp_Densidad')
+ Temperatura_median_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_median, 'Mediana de la Temperatura en la columna [°C]')
+ Salinidad_median_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_median, 'Mediana de la Salinidad en la columna [PSU]')
+ Oxigeno_median_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_median, 'Mediana del Oxígeno disuelto en la columna [mg/L]')
+ Densidad_median_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_median, 'Exp_Densidad')
+ Temperatura_sd_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_sd, 'Des.std de la Temperatura en la columna [°C]')
+ Salinidad_sd_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_sd, 'Des.std de la Salinidad en la columna [PSU]')
+ Oxigeno_sd_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_sd, 'Des.std del Oxígeno disuelto en la columna [mg/L]')
+ Densidad_sd_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_sd, 'Exp_Densidad')
+ Temperatura_min_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_min, 'Mínimo de la Temperatura en la columna [°C]')
+ Salinidad_min_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_min, 'Mínimo de la Salinidad en la columna [PSU]')
+ Oxigeno_min_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_min, 'Mínimo del Oxígeno disuelto en la columna [mg/L]')
+ Densidad_min_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_min, 'Exp_Densidad')
+ Temperatura_max_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_max, 'Máximo de la Temperatura en la columna [°C]')
+ Salinidad_max_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_max, 'Máximo de la Salinidad en la columna [PSU]')
+ Oxigeno_max_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_max, 'Máximo del Oxígeno disuelto en la columna [mg/L]')
+ Densidad_max_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_max, 'Exp_Densidad')
+ Profundidad_max_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Profundidad_max, 'Máximo de la Profundidad [m]')
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 tiff(filename = "01_Datos_Quimica.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=5, ncol=2, NO2_Quimica, NO3_Quimica, PO4_Quimica,SiO2_Quimica,Clorofila_Quimica,Salinidad_Quimica,pH_Quimica,OD_Quimica,Transparencia_Quimica,SST_Quimica,
              top="Datos totales")
@@ -287,87 +339,56 @@ grid.arrange(nrow=5, ncol=2, NO2_Quimica, NO3_Quimica, PO4_Quimica,SiO2_Quimica,
              top="Datos totales")
 dev.off()
 
-NO2_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=NO2)) + 
+
+graf_lineas<-function(datos,variable, y_etiqueta){
+
+ggplot(datos, aes(x=No.Estacion, y=variable)) + 
   geom_line()+ 
   geom_point()+ 
-  labs( y = "NO2 [µM]")+
+  labs( y = y_etiqueta)+
   scale_x_discrete(name ="Transecto", 
                    limits=c("1", "2", "3", "4", "5", "6"))+
    theme_bw()+
   facet_grid(Marea~Transecto)
+}
 
-NO3_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=NO3)) + 
-  geom_line()+ 
-  geom_point()+ 
-  labs( y = "NO3 [µM]")+
-  scale_x_discrete(name ="Transecto", 
-                   limits=c("1", "2", "3", "4", "5", "6"))+
-  theme_bw()+
-  facet_grid(Marea~Transecto)
-PO4_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=PO4)) + 
-  geom_line()+ 
-  geom_point()+ 
-  labs( y = "PO4 [µM]")+
-  scale_x_discrete(name ="Transecto", 
-                   limits=c("1", "2", "3", "4", "5", "6"))+
-  theme_bw()+
-  facet_grid(Marea~Transecto)
-SiO2_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=SiO2)) + 
-  geom_line()+ 
-  geom_point()+ 
-  labs( y = "SiO2 [µM]")+
-  scale_x_discrete(name ="Transecto", 
-                   limits=c("1", "2", "3", "4", "5", "6"))+
-  theme_bw()+
-  facet_grid(Marea~Transecto)
-Clorofila_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=Clorofila)) + 
-  geom_line()+ 
-  geom_point()+ 
-  labs( y = "Clorofila [mg/m3]")+
-  scale_x_discrete(name ="Transecto", 
-                   limits=c("1", "2", "3", "4", "5", "6"))+
-  theme_bw()+
-  facet_grid(Marea~Transecto)
-Salinidad_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=Salinidad)) + 
-  geom_line()+ 
-  geom_point()+ 
-  labs( y = "Salinidad [PSU]")+
-  scale_x_discrete(name ="Transecto", 
-                   limits=c("1", "2", "3", "4", "5", "6"))+
-  theme_bw()+
-  facet_grid(Marea~Transecto)
-pH_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=pH)) + 
-  geom_line()+ 
-  geom_point()+ 
-  labs( y = "pH")+
-  scale_x_discrete(name ="Transecto", 
-                   limits=c("1", "2", "3", "4", "5", "6"))+
-  theme_bw()+
-  facet_grid(Marea~Transecto)
-OD_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=OD)) + 
-  geom_line()+ 
-  geom_point()+ 
-  labs( y = "Oxígeno Disuelto [mg/L]")+
-  scale_x_discrete(name ="Transecto", 
-                   limits=c("1", "2", "3", "4", "5", "6"))+
-  theme_bw()+
-  facet_grid(Marea~Transecto)
-Transparencia_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=Transparencia)) + 
-  geom_line()+ 
-  geom_point()+ 
-  labs( y = "Transparencia [m]")+
-  scale_x_discrete(name ="Transecto", 
-                   limits=c("1", "2", "3", "4", "5", "6"))+
-  theme_bw()+
-  facet_grid(Marea~Transecto)
-SST_line<-ggplot(Datos_Quimica, aes(x=No.Estacion, y=SST)) + 
-  geom_line()+ 
-  geom_point()+ 
-  labs( y = "SST [mg/L]")+
-  scale_x_discrete(name ="Transecto", 
-                   limits=c("1", "2", "3", "4", "5", "6"))+
-  theme_bw()+
-  facet_grid(Marea~Transecto)
+
+NO2_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$NO2, 'Exp_NO2')
+NO3_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$NO3, 'Exp_NO3')
+PO4_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$PO4, 'Exp_PO4')
+SiO2_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$SiO2, 'Exp_SiO2')
+Clorofila_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Clorofila, 'Exp_Clorofila')
+Conductividad_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Conductividad, 'Conductividad en superficie (mS/cm)')
+Salinidad_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad, 'Salinidad en superficie [PSU]')
+pH_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$pH, 'pH en superficie ')
+OD_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$OD, 'Oxígeno disuelto en superficie [mg/L] ')
+Transparencia_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Transparencia, 'Transparencia (m)')
+SST_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$SST, 'Sólidos Suspendidos Totales (mg/L)')
+TSI_Clor_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$TSI_Clor, 'TSI Clorofila (m)')
+TSI_SECCHI_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$TSI_SECCHI, 'TSI Disco Secchi (m)')
+Temperatura_mean_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_mean, 'Media de la Temperatura en la columna [°C]')
+Salinidad_mean_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_mean, 'Media de la Salinidad en la columna [PSU]')
+Oxigeno_mean_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_mean, 'Media del Oxígeno disuelto en la columna [mg/L]')
+Densidad_mean_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_mean, 'Exp_Densidad')
+Temperatura_median_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_median, 'Mediana de la Temperatura en la columna [°C]')
+Salinidad_median_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_median, 'Mediana de la Salinidad en la columna [PSU]')
+Oxigeno_median_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_median, 'Mediana del Oxígeno disuelto en la columna [mg/L]')
+Densidad_median_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_median, 'Exp_Densidad')
+Temperatura_sd_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_sd, 'Des.std de la Temperatura en la columna [°C]')
+Salinidad_sd_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_sd, 'Des.std de la Salinidad en la columna [PSU]')
+Oxigeno_sd_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_sd, 'Des.std del Oxígeno disuelto en la columna [mg/L]')
+Densidad_sd_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_sd, 'Exp_Densidad')
+Temperatura_min_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_min, 'Mínimo de la Temperatura en la columna [°C]')
+Salinidad_min_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_min, 'Mínimo de la Salinidad en la columna [PSU]')
+Oxigeno_min_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_min, 'Mínimo del Oxígeno disuelto en la columna [mg/L]')
+Densidad_min_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_min, 'Exp_Densidad')
+Temperatura_max_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_max, 'Máximo de la Temperatura en la columna [°C]')
+Salinidad_max_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_max, 'Máximo de la Salinidad en la columna [PSU]')
+Oxigeno_max_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_max, 'Máximo del Oxígeno disuelto en la columna [mg/L]')
+Densidad_max_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_max, 'Exp_Densidad')
+Profundidad_max_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Profundidad_max, 'Máximo de la Profundidad [m]')
+
+
 
 
 tiff(filename = "02_Quimica_Linea.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
