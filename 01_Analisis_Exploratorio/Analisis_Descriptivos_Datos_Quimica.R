@@ -15,7 +15,9 @@ library(lattice)
 library(latticeExtra)
 library(GGally)
 library(ggplot2)
+library(IctioExPacificoFunc)
 
+NO2_boxplot_Mareas<-IctioExPacificoFunc::IctioExPacificoFunc(Datos_Totales_Limpios, Datos_Totales_Limpios$NO2, 'Exp_NO2')
 
 #Carga de datos química
 Datos_Quimica<-read.table("./02_Datos/Quimicos/Datos_Quimica.csv", header = TRUE, sep=",")
