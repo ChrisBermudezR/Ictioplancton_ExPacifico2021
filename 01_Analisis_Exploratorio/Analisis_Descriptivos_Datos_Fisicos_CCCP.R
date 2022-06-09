@@ -178,7 +178,7 @@ for(i in seq_along(niveles_Codigo)){
 
 library(devtools)
 
-devtools::install_github("ChrisBermudezR/IctioExPacificoFunc")
+devtools::install_github("ChrisBermudezR/Ictioplancton_ExPacifico2021/tree/main/IctioExPacificoFunc")
 library(IctioExPacificoAnalisisPack)
 
 
