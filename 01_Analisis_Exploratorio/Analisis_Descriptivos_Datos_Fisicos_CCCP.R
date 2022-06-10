@@ -178,7 +178,7 @@ for(i in seq_along(niveles_Codigo)){
 
 library(devtools)
 
-devtools::install_github("ChrisBermudezR/Ictioplancton_ExPacifico2021/tree/main/IctioExPacificoFunc")
+devtools::install_github("ChrisBermudezR/IctioExPacificoAnalisisPack")
 library(IctioExPacificoAnalisisPack)
 
 
@@ -199,7 +199,7 @@ for (i in 1:36){
   print(paste0("Den_",lista_codigos[[i]],"<-perfil_en_profundidad(",lista_codigos[[i]],",", lista_codigos[[i]],"$Codigo,", lista_codigos[[i]],"$Marea,", lista_codigos[[i]],"$Densidad,", lista_codigos[[i]],"$Profundidad,"," 'Densidad - (kg/m3)', 'Profundidad [m]')"))
 }
 
- Temp_A01A_CCCP<-perfil_en_profundidad(A01A_CCCP,A01A_CCCP$Codigo,A01A_CCCP$Marea,A01A_CCCP$Temperatura,A01A_CCCP$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+ Temp_A01A_CCCP<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A01A_CCCP,A01A_CCCP$Codigo,A01A_CCCP$Marea,A01A_CCCP$Temperatura,A01A_CCCP$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
  Temp_A01B_CCCP<-perfil_en_profundidad(A01B_CCCP,A01B_CCCP$Codigo,A01B_CCCP$Marea,A01B_CCCP$Temperatura,A01B_CCCP$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
  Temp_A02A_CCCP<-perfil_en_profundidad(A02A_CCCP,A02A_CCCP$Codigo,A02A_CCCP$Marea,A02A_CCCP$Temperatura,A02A_CCCP$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
  Temp_A02B_CCCP<-perfil_en_profundidad(A02B_CCCP,A02B_CCCP$Codigo,A02B_CCCP$Marea,A02B_CCCP$Temperatura,A02B_CCCP$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
