@@ -17,8 +17,11 @@ library(oce)
 library(pastecs)
 library(devtools)
 
-devtools::install_github("ChrisBermudezR/IctioExPacificoFunc")
+
+
+devtools::install_github("ChrisBermudezR/IctioExPacificoAnalisisPack")
 library(IctioExPacificoAnalisisPack)
+
 
 #####Manejo del conjunto de datos####
 #Cargar el archivo de datos
@@ -175,11 +178,6 @@ for(i in seq_along(niveles_Codigo)){
 
 
 
-
-library(devtools)
-
-devtools::install_github("ChrisBermudezR/IctioExPacificoAnalisisPack")
-library(IctioExPacificoAnalisisPack)
 
 
 
@@ -469,3 +467,4 @@ Oxi03_CCCP<-grid.arrange(nrow=6, ncol=2,Oxi_G01A_CCCP, Oxi_G01B_CCCP, Oxi_G02A_C
 png(filename = "./03_Imagenes/Oxigeno_Perfiles_CCCP.png", width = 50, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=1, ncol=3,Oxi01_CCCP, Oxi02_CCCP, Oxi03_CCCP)
 dev.off()
+
