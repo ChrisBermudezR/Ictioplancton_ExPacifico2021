@@ -7,54 +7,46 @@
 ###############################################################################################################################
 
 ####Librería####
-library(ggplot2)
+library(tidyverse)
 library(dplyr)
 library(ggrepel)
 library(scales)
-
+library(IctioExPacificoAnalisisPack)
 
 ####Entrada de datos####
 marea<-read.table("Mareas_Gorgona_Event_10min.csv", header=TRUE, sep = ",")
-names(marea)<-c("combinada", "altura", "fecha", "hora")
-marea <- mutate(marea, fecha_Hora = paste(fecha, hora)) 
+#names(marea)<-c("combinada", "altura", "fecha", "hora")
+#marea <- dplyr::mutate(marea, fecha_Hora= paste(fecha, hora)) 
 marea$fecha_Hora<- as.POSIXct(marea$fecha_Hora)
 head(marea)
 write.table(marea, "Mareas_Gorgona_Event_10min.csv", sep = ",", col.names = TRUE)
 
 estaciones<-read.table("Alturas_Mareales_Estaciones.csv", header=TRUE, sep = ",")
-names(estaciones)<-c("codigo", "hora", "fecha", "altura")
-estaciones <- mutate(estaciones, fecha_Hora = paste(fecha, hora)) 
+#names(estaciones)<-c("codigo", "hora", "fecha", "altura")
+#estaciones <- mutate(estaciones, fecha_Hora = paste(fecha, hora)) 
 estaciones$fecha_Hora<- as.POSIXct(estaciones$fecha_Hora)
 head(estaciones)
 write.table(estaciones, "Alturas_Mareales_Estaciones.csv", sep = ",", col.names = TRUE)
 
 
 ####Construcción de la gráfica####
-grafica<-ggplot2::ggplot(data=estaciones, aes(x=as.POSIXct(fecha_Hora), y=altura))+
-    geom_point(color = "red", size = 4)
-   
+ciclo<-IctioExPacificoAnalisisPack::ciclo_mareal(marea, marea$fecha_Hora, marea$altura)
+
 tiff("onda_Mareal_Gorgona.tif", width = 4000, height = 2000, res = "300", units = "px", pointsize = 12, compression = c("lzw"))
-grafica+
-  geom_label_repel(aes(label = codigo),
-                   box.padding   = 0.35, 
-                   point.padding = 0.5,
-                   segment.color = 'black')+
-  geom_line(data=marea, aes(x=fecha_Hora, y=altura),size=1, colour="grey")+
-  geom_hline(yintercept = 1:3,linetype='dotted', col = 'red')+
-  labs(x = "dias", y = "Altura mareal referída al MLWS [m]") +
-  theme_classic()+
-  scale_x_datetime(
-    breaks = seq(as.POSIXct("2021-04-29 00:00:00"),
-                 as.POSIXct("2021-05-05 00:00:00"), "6 hours"),
-    labels = date_format("%a-%d\n%H:%M", tz = ""),
-    expand = c(0, 0),
-    limits = c(
-      as.POSIXct("2021-04-29 00:00:00"),
-      as.POSIXct("2021-05-05 00:00:00")
-    )
-  )
+ciclo+
+  geom_point(data=estaciones, aes(x=as.POSIXct(fecha_Hora), y=altura,color = "red", size = 4))+
+  geom_label_repel(aes(x=as.POSIXct(estaciones$fecha_Hora), y=estaciones$altura,label = estaciones$codigo),box.padding   = 0.35, 
+                                       point.padding = 0.5,
+                                       segment.color = 'black')+
+  theme(legend.position = "none")
 dev.off()
 
- 
 
-  
+png(filename ="onda_Mareal_Gorgona.png", width = 4000, height = 2000, res = "300", units = "px", pointsize = 15)
+ciclo+
+  geom_point(data=estaciones, aes(x=as.POSIXct(fecha_Hora), y=altura,color = "red", size = 4))+
+  geom_label_repel(aes(x=as.POSIXct(estaciones$fecha_Hora), y=estaciones$altura,label = estaciones$codigo),box.padding   = 0.35, 
+                   point.padding = 0.5,
+                   segment.color = 'black')+
+  theme(legend.position = "none")
+dev.off()

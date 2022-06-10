@@ -14,10 +14,9 @@ library(oce)
 library(lattice)
 library(latticeExtra)
 library(GGally)
-library(ggplot2)
-library(IctioExPacificoFunc)
+library(IctioExPacificoAnalisisPack)
 
-NO2_boxplot_Mareas<-IctioExPacificoFunc::IctioExPacificoFunc(Datos_Totales_Limpios, Datos_Totales_Limpios$NO2, 'Exp_NO2')
+
 
 #Carga de datos química
 Datos_Quimica<-read.table("./02_Datos/Quimicos/Datos_Quimica.csv", header = TRUE, sep=",")
@@ -121,13 +120,49 @@ etiqueta_para_y<-c(
   "Máximo de la Profundidad [m]"
 )
 
+#Expresiones para las leyendas de las variables
+
+Exp_NO2= expression(paste("[NO"[2]^"-","] (",mu,"M)"))
+
+Exp_NO3= expression(paste("[NO"[3]^"-","] (",mu,"M)"))
+
+Exp_PO4= expression(paste("[PO"[4]^"-3","] (",mu,"M)"))
+
+Exp_SiO2= expression(paste("[SiO"[2],"] (",mu,"M)"))
+
+'Conductividad en superficie (mS/cm)'
 
 
-expression( bar(x))
-
-
-
-
+Exp_Clorofila=
+Exp_Conductividad="Conductividad en superficie (mS/cm)"
+Exp_Salinidad="Salinidad en superficie (PSU)"
+Exp_pH="pH en superficie "
+Exp_OD=expression(paste("Oxígeno disuelto en superficie [mg O"[2],"/L]"))
+Exp_Transparencia="Transparencia (m)"
+Exp_SST="Sólidos Suspendidos Totales [mg/L]"
+Exp_TSIClorofila="TSI Clorofila (m)"
+Exp_TSIDiscoSecchi="TSI Disco Secchi (m)"
+Exp_meanTemp=expression(paste(bar(x)," de la temp en prof. (°C)"))
+Exp_meansal=expression(paste(bar(x)," de la sal en prof. (PSU)"))
+Exp_meansal=expression(paste(bar(x)," de la OD en prof. [mg O"[2],"/L]"))
+Exp_Densidad=expression(paste("Densidad (kg/m"^3,")"))
+Exp_meanTemp=expression(paste(bar(x)," de la temp en prof. (°C)"))
+Exp_meansal=expression(paste(bar(x)," de la sal en prof. (PSU)"))
+Exp_meansal=expression(paste(bar(x)," de la OD en prof. [mg O"[2],"/L]"))
+Exp_Densidad=expression(paste("Densidad (kg/m"^3,")"))
+"Des.std de la Temperatura en la columna [°C]"
+"Des.std  de la Salinidad en la columna [PSU]"
+"Des.std  del Oxígeno disuelto en la columna [mg/L]"
+"Exp_Densidad"
+"Mínimo de la Temperatura en la columna [°C]"
+"Mínimo de la Salinidad en la columna [PSU]"
+"Mínimo del Oxígeno disuelto en la columna [mg/L]"
+"Exp_Densidad"
+"Máximo de la Temperatura en la columna [°C]"
+"Máximo de la Salinidad en la columna [PSU]"
+"Máximo del Oxígeno disuelto en la columna [mg/L]"
+"Exp_Densidad"
+"Máximo de la Profundidad [m]"
 
 ####Creación de la visualización 
 
@@ -135,18 +170,6 @@ expression( bar(x))
 
 #Boxplot entre mareas
 
-boxplot_Marea<-function(datos,variable, y_etiqueta){
-  ggplot(datos, aes(x=Marea, y=variable, color=Marea)) + 
-    geom_boxplot()+ 
-    stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
-    labs( y = y_etiqueta, x = "Marea")+
-    scale_x_discrete(limits=c("Alta","Baja"))+
-    scale_color_manual(values=c("chocolate1", "deepskyblue"))+
-    theme_bw()+
-    geom_point(position = position_jitterdodge())+
-    theme(legend.position = "none", legend.title = element_blank()) + 
-    guides(fill=guide_legend(reverse=TRUE)) 
-}
 
 #ciclo para imprimir los objetos para ejecutar la función
 #Se debe tomar lo que imprime en la consola, copiarlo en el script y borrar el [1] y las comillas que encierran la expresión
@@ -154,39 +177,39 @@ for (i in 1:34){
   print(paste0(variables[i], "_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$",variables[i],", ","'",etiqueta_para_y[i],"'",")"))
 }
 
- NO2_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$NO2, 'Exp_NO2')
- NO3_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$NO3, 'Exp_NO3')
- PO4_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$PO4, 'Exp_PO4')
- SiO2_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$SiO2, 'Exp_SiO2')
- Clorofila_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Clorofila, 'Exp_Clorofila')
+ NO2_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$NO2, Exp_NO2)
+ NO3_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$NO3, Exp_NO3)
+ PO4_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$PO4, Exp_PO4)
+ SiO2_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$SiO2, Exp_SiO2)
+ Clorofila_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Clorofila, Exp_Clorofila)
  Conductividad_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Conductividad, 'Conductividad en superficie (mS/cm)')
  Salinidad_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad, 'Salinidad en superficie [PSU]')
  pH_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$pH, 'pH en superficie ')
- OD_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$OD, 'Oxígeno disuelto en superficie [mg/L] ')
+ OD_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$OD, Exp_Oxi)
  Transparencia_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Transparencia, 'Transparencia (m)')
  SST_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$SST, 'Sólidos Suspendidos Totales (mg/L)')
  TSI_Clor_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$TSI_Clor, 'TSI Clorofila (m)')
  TSI_SECCHI_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$TSI_SECCHI, 'TSI Disco Secchi (m)')
- Temperatura_mean_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_mean, 'Media de la Temperatura en la columna [°C]')
+ Temperatura_mean_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_mean, Exp_meanTemp)
  Salinidad_mean_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_mean, 'Media de la Salinidad en la columna [PSU]')
  Oxigeno_mean_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_mean, 'Media del Oxígeno disuelto en la columna [mg/L]')
- Densidad_mean_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_mean, 'Exp_Densidad')
+ Densidad_mean_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_mean, Exp_Densidad)
  Temperatura_median_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_median, 'Mediana de la Temperatura en la columna [°C]')
  Salinidad_median_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_median, 'Mediana de la Salinidad en la columna [PSU]')
  Oxigeno_median_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_median, 'Mediana del Oxígeno disuelto en la columna [mg/L]')
- Densidad_median_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_median, 'Exp_Densidad')
+ Densidad_median_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_median, Exp_Densidad)
  Temperatura_sd_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_sd, 'Des.std de la Temperatura en la columna [°C]')
  Salinidad_sd_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_sd, 'Des.std de la Salinidad en la columna [PSU]')
  Oxigeno_sd_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_sd, 'Des.std del Oxígeno disuelto en la columna [mg/L]')
- Densidad_sd_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_sd, 'Exp_Densidad')
+ Densidad_sd_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_sd, Exp_Densidad)
  Temperatura_min_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_min, 'Mínimo de la Temperatura en la columna [°C]')
  Salinidad_min_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_min, 'Mínimo de la Salinidad en la columna [PSU]')
  Oxigeno_min_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_min, 'Mínimo del Oxígeno disuelto en la columna [mg/L]')
- Densidad_min_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_min, 'Exp_Densidad')
+ Densidad_min_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_min, Exp_Densidad)
  Temperatura_max_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_max, 'Máximo de la Temperatura en la columna [°C]')
  Salinidad_max_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_max, 'Máximo de la Salinidad en la columna [PSU]')
  Oxigeno_max_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_max, 'Máximo del Oxígeno disuelto en la columna [mg/L]')
- Densidad_max_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_max,'Exp_Densidad' )
+ Densidad_max_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_max,Exp_Densidad )
  Profundidad_max_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Profundidad_max, 'Máximo de la Profundidad [m]')
 
 
@@ -277,27 +300,15 @@ for (i in 1:34){
  
  #####
  
- 
-boxplot_transecto<-function(datos,variable, y_etiqueta){
-  ggplot(datos, aes(x=Transecto, y=variable, color=Marea)) + 
-    geom_boxplot()+ 
-    stat_summary(fun=mean, aes(y = variable, group=Marea), geom="point", shape=20, size=3, color="blue", position = position_dodge(width = 0.8)) +
-    labs( y = y_etiqueta, x = "Transecto")+
-    theme_classic()+
-    geom_point(position = position_jitterdodge()) 
-}
- 
- 
- 
  NO2_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$NO2, 'Exp_NO2')
- NO3_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$NO3, 'Exp_NO3')
- PO4_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$PO4, 'Exp_PO4')
- SiO2_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$SiO2, 'Exp_SiO2')
- Clorofila_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Clorofila, 'Exp_Clorofila')
+ NO3_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$NO3, Exp_NO3)
+ PO4_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$PO4, Exp_PO4)
+ SiO2_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$SiO2, Exp_SiO2)
+ Clorofila_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Clorofila, Exp_Clorofila)
  Conductividad_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Conductividad, 'Conductividad en superficie (mS/cm)')
  Salinidad_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad, 'Salinidad en superficie [PSU]')
  pH_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$pH, 'pH en superficie ')
- OD_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$OD, 'Oxígeno disuelto en superficie [mg/L] ')
+ OD_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$OD, Exp_Oxi)
  Transparencia_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Transparencia, 'Transparencia (m)')
  SST_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$SST, 'Sólidos Suspendidos Totales (mg/L)')
  TSI_Clor_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$TSI_Clor, 'TSI Clorofila (m)')
@@ -305,23 +316,23 @@ boxplot_transecto<-function(datos,variable, y_etiqueta){
  Temperatura_mean_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_mean, 'Media de la Temperatura en la columna [°C]')
  Salinidad_mean_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_mean, 'Media de la Salinidad en la columna [PSU]')
  Oxigeno_mean_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_mean, 'Media del Oxígeno disuelto en la columna [mg/L]')
- Densidad_mean_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_mean, 'Exp_Densidad')
+ Densidad_mean_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_mean, Exp_Densidad)
  Temperatura_median_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_median, 'Mediana de la Temperatura en la columna [°C]')
  Salinidad_median_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_median, 'Mediana de la Salinidad en la columna [PSU]')
  Oxigeno_median_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_median, 'Mediana del Oxígeno disuelto en la columna [mg/L]')
- Densidad_median_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_median, 'Exp_Densidad')
+ Densidad_median_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_median, Exp_Densidad)
  Temperatura_sd_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_sd, 'Des.std de la Temperatura en la columna [°C]')
  Salinidad_sd_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_sd, 'Des.std de la Salinidad en la columna [PSU]')
  Oxigeno_sd_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_sd, 'Des.std del Oxígeno disuelto en la columna [mg/L]')
- Densidad_sd_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_sd, 'Exp_Densidad')
+ Densidad_sd_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_sd, Exp_Densidad)
  Temperatura_min_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_min, 'Mínimo de la Temperatura en la columna [°C]')
  Salinidad_min_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_min, 'Mínimo de la Salinidad en la columna [PSU]')
  Oxigeno_min_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_min, 'Mínimo del Oxígeno disuelto en la columna [mg/L]')
- Densidad_min_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_min, 'Exp_Densidad')
+ Densidad_min_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_min, Exp_Densidad)
  Temperatura_max_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_max, 'Máximo de la Temperatura en la columna [°C]')
  Salinidad_max_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_max, 'Máximo de la Salinidad en la columna [PSU]')
  Oxigeno_max_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_max, 'Máximo del Oxígeno disuelto en la columna [mg/L]')
- Densidad_max_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_max, 'Exp_Densidad')
+ Densidad_max_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_max, Exp_Densidad)
  Profundidad_max_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Profundidad_max, 'Máximo de la Profundidad [m]')
  
  
@@ -342,28 +353,17 @@ grid.arrange(nrow=5, ncol=2, NO2_Quimica, NO3_Quimica, PO4_Quimica,SiO2_Quimica,
 dev.off()
 
 
-graf_lineas<-function(datos,variable, y_etiqueta){
-
-ggplot(datos, aes(x=No.Estacion, y=variable)) + 
-  geom_line()+ 
-  geom_point()+ 
-  labs( y = y_etiqueta)+
-  scale_x_discrete(name ="Transecto", 
-                   limits=c("1", "2", "3", "4", "5", "6"))+
-   theme_bw()+
-  facet_grid(Marea~Transecto)
-}
 
 
 NO2_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$NO2, 'Exp_NO2')
-NO3_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$NO3, 'Exp_NO3')
-PO4_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$PO4, 'Exp_PO4')
-SiO2_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$SiO2, 'Exp_SiO2')
-Clorofila_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Clorofila, 'Exp_Clorofila')
+NO3_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$NO3, Exp_NO3)
+PO4_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$PO4, Exp_PO4)
+SiO2_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$SiO2, Exp_SiO2)
+Clorofila_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Clorofila, Exp_Clorofila)
 Conductividad_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Conductividad, 'Conductividad en superficie (mS/cm)')
 Salinidad_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad, 'Salinidad en superficie [PSU]')
 pH_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$pH, 'pH en superficie ')
-OD_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$OD, 'Oxígeno disuelto en superficie [mg/L] ')
+OD_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$OD, Exp_Oxi)
 Transparencia_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Transparencia, 'Transparencia (m)')
 SST_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$SST, 'Sólidos Suspendidos Totales (mg/L)')
 TSI_Clor_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$TSI_Clor, 'TSI Clorofila (m)')
@@ -371,23 +371,23 @@ TSI_SECCHI_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios
 Temperatura_mean_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_mean, 'Media de la Temperatura en la columna [°C]')
 Salinidad_mean_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_mean, 'Media de la Salinidad en la columna [PSU]')
 Oxigeno_mean_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_mean, 'Media del Oxígeno disuelto en la columna [mg/L]')
-Densidad_mean_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_mean, 'Exp_Densidad')
+Densidad_mean_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_mean, Exp_Densidad)
 Temperatura_median_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_median, 'Mediana de la Temperatura en la columna [°C]')
 Salinidad_median_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_median, 'Mediana de la Salinidad en la columna [PSU]')
 Oxigeno_median_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_median, 'Mediana del Oxígeno disuelto en la columna [mg/L]')
-Densidad_median_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_median, 'Exp_Densidad')
+Densidad_median_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_median, Exp_Densidad)
 Temperatura_sd_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_sd, 'Des.std de la Temperatura en la columna [°C]')
 Salinidad_sd_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_sd, 'Des.std de la Salinidad en la columna [PSU]')
 Oxigeno_sd_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_sd, 'Des.std del Oxígeno disuelto en la columna [mg/L]')
-Densidad_sd_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_sd, 'Exp_Densidad')
+Densidad_sd_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_sd, Exp_Densidad)
 Temperatura_min_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_min, 'Mínimo de la Temperatura en la columna [°C]')
 Salinidad_min_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_min, 'Mínimo de la Salinidad en la columna [PSU]')
 Oxigeno_min_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_min, 'Mínimo del Oxígeno disuelto en la columna [mg/L]')
-Densidad_min_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_min, 'Exp_Densidad')
+Densidad_min_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_min, Exp_Densidad)
 Temperatura_max_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_max, 'Máximo de la Temperatura en la columna [°C]')
 Salinidad_max_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_max, 'Máximo de la Salinidad en la columna [PSU]')
 Oxigeno_max_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_max, 'Máximo del Oxígeno disuelto en la columna [mg/L]')
-Densidad_max_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_max, 'Exp_Densidad')
+Densidad_max_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_max, Exp_Densidad)
 Profundidad_max_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Profundidad_max, 'Máximo de la Profundidad [m]')
 
 
