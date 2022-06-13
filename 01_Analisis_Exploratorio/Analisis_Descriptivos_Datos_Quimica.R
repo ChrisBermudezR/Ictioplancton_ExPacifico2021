@@ -15,7 +15,8 @@ library(lattice)
 library(latticeExtra)
 library(GGally)
 library(devtools)
-
+library(raster)
+library(rgdal)
 
 devtools::install_github("ChrisBermudezR/IctioExPacificoAnalisisPack")
 library(IctioExPacificoAnalisisPack)
@@ -647,68 +648,58 @@ png(filename = "./03_Imagenes/graf_lineas_04.png", width = 20, height = 30, unit
    dev.off()
  
  
- 
+ ################################################
 
-   
-   ggplot(Datos_Totales_Limpios, aes(x = NO2, y = latitud, z=Profundidad_max)) +
-     geom_point() +
-     geom_density_2d_filled(alpha = 0.4) +
-     geom_density_2d(colour = "black") 
-   
-   
-   
-   ggplot(Datos_Totales_Limpios, aes(x = NO2, y = Clorofila, z=NO2)) +
-     stat_contour(bins = 10) 
-   
-   install.packages("metR")
-   library(metR)
-   ggplot(marea_alta, aes(longitud, latitud)) +
-     geom_contour_fill(aes(z = Profundidad_max), kriging = TRUE)
-   
-   ggplot(marea_altagra, aes(longitud, latitud, z = Profundidad_max)) +
-     geom_contour_fill() +
-     scale_fill_divergent() 
-   
    
    marea_alta<-Datos_Totales_Limpios%>% filter(Marea=="Alta")
-   marea_altagra<-marea_alta%>%select(longitud, latitud, Profundidad_max)
+   marea_baja<-Datos_Totales_Limpios%>% filter(Marea=="Baja")
    
-   pts.grid <- interpBarnes(as.data.frame(marea_altagra)$longitud, as.data.frame(marea_altagra)$latitud, as.data.frame(marea_altagra)$Profundidad_max)
-   pts.grid2 <- expand.grid(x=pts.grid$x, y=pts.grid$y)
-   pts.grid2$z <- as.vector(pts.grid$zg)
-   
- uno<-  ggplot(pts.grid2, aes(x, y, z = z)) +
-     geom_contour_fill() +
-     scale_fill_divergent()
-     #geom_polygon(data=costa, aes(x= long, y= lat, group=group), colour="grey", fill="grey") 
-   
-   
-   NO2_WIRE<- interpBarnes(Datos_Totales_Limpios$longitud, Datos_Totales_Limpios$latitud, Datos_Totales_Limpios$NO2)  
-   NO2_WIRE2 <- expand.grid(x=NO2_WIRE$x, y=NO2_WIRE$y)
-   NO2_WIRE2$z <- as.vector(NO2_WIRE$zg)
-   
-   ggplot(NO2_WIRE2, aes(x, y)) +
-        geom_raster(aes(fill = z  ))
-     
-library(rgdal)
-   library(sf)
-costa<-readOGR("C:/Documentos/Expedición Pacífico/2021/Ictioplancton/Analisis_Exp_Pac/Ictioplancton_ExPacifico2021/SIG_Datos/costa.shp")
-rios<-readOGR("C:/Documentos/Expedición Pacífico/2021/Ictioplancton/Analisis_Exp_Pac/Ictioplancton_ExPacifico2021/SIG_Datos/rios_wgs84.shp")
-estaciones<-readOGR("C:/Documentos/Expedición Pacífico/2021/Ictioplancton/Analisis_Exp_Pac/Ictioplancton_ExPacifico2021/SIG_Datos/estaciones.shp")
-areas_protegidas<-readOGR("C:/Documentos/Expedición Pacífico/2021/Ictioplancton/Analisis_Exp_Pac/Ictioplancton_ExPacifico2021/SIG_Datos/areas_protegidas.shp")
-
+   costa<-readOGR("../SIG_Datos/costa.shp")
+   rios<-readOGR("../SIG_Datos/rios_wgs84.shp")
+   estaciones<-readOGR("../SIG_Datos/estaciones.shp")
+   areas_protegidas<-readOGR("../SIG_Datos/areas_protegidas.shp")
  
-ggplot(NO2_WIRE2, aes(x, y)) +
-  geom_raster(aes(fill = z  ))+
+
+ rasterizar_Variable<-function(nombre_variable,longitud, latitud, variable, marea){
+  assign("WIRE",interpBarnes(longitud, latitud, variable), envir = parent.frame())
+  assign(paste0("pts.grid"),expand.grid(Longitud=WIRE$x, Latitud=WIRE$y), envir = parent.frame())
+  assign(paste0("pts.grid"), mutate(pts.grid, variable=as.vector(WIRE$zg)), envir = parent.frame())
+  assign(paste0("export"),  raster::rasterFromXYZ(pts.grid), envir = parent.frame())
+  assign(paste0(nombre_variable,"_",marea,"_pts.grid"),  rasterFromXYZ(pts.grid), envir = parent.frame())
+  raster::writeRaster(export, filename=paste(nombre_variable,"_",marea, ".tif", sep = ""),overwrite=TRUE)
+  
+  ggplot(pts.grid, aes(Longitud, Latitud)) +
+    geom_raster(aes(fill = variable))+
+    geom_polygon(data=costa, aes(x= long, y= lat, group=group), colour="grey", fill="grey") +
+    geom_polygon(data=rios, aes(x= long, y= lat, group=group), colour="dodgerblue", fill="dodgerblue") +
+    coord_sf(xlim = c(-78.4055, -78.217), ylim = c(2.55, 2.853), expand = FALSE)+   
+    geom_polygon(data=areas_protegidas, aes(x= long, y= lat, group=group), colour="red", fill="transparent") +
+    theme_bw()+
+    scale_fill_gradientn(colours = terrain.colors(7))+
+    geom_point(data=marea_altagra, aes(x= longitud, y= latitud))
+}
+ 
+ 
+ rasterizar_Variable("Temperatura_mean", marea_baja$longitud, marea_baja$latitud, marea_baja$Temperatura_mean, "Baja")
+ 
+ 
+ plot(Clorofila_Alta_pts.grid)
+ library(ggrepel)
+ 
+ggplot(ClorofilaAlta_pts.grid, aes(longitud, latitud)) +
+  geom_raster(aes(fill = variable))+
      geom_polygon(data=costa, aes(x= long, y= lat, group=group), colour="grey", fill="grey") +
      geom_polygon(data=rios, aes(x= long, y= lat, group=group), colour="dodgerblue", fill="dodgerblue") +
-      coord_sf(xlim = c(-78.405, -78.22), ylim = c(2.55, 2.853), expand = FALSE)+   
+      coord_sf(xlim = range(ClorofilaAlta_pts.grid$longitud), ylim = range(ClorofilaAlta_pts.grid$latitud), expand = FALSE)+   
     geom_polygon(data=areas_protegidas, aes(x= long, y= lat, group=group), colour="red", fill="transparent") +
     theme_bw()+
   scale_fill_gradientn(colours = terrain.colors(7))+
-  geom_point(data=marea_altagra, aes(x= longitud, y= latitud))
+  geom_point(data=marea_altagra, aes(x= longitud, y= latitud,color = "red", size = 4))+
+  geom_label_repel(aes(x=marea_alta$longitud, y=marea_alta$latitud,label = marea_alta$Codigo),box.padding   = 0.35, 
+                  point.padding = 0.5,
+                  segment.color = 'black')
   
-  scale_fill_distiller(palette = "YlOrBr")
+
   
 ggplot()+
   geom_point(data=marea_altagra, aes(x= longitud, y= latitud))
