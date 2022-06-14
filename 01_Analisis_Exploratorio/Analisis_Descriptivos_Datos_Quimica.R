@@ -797,19 +797,82 @@ png(filename = "./03_Imagenes/graf_lineas_04.png", width = 20, height = 30, unit
  Densidad_max_AltaGrid<-rasterizar_Variable('Densidad_max', marea_alta$longitud, marea_alta$latitud, marea_alta$Densidad_max, 'Alta',  Exp_Densidad_max)
  Profundidad_max_AltaGrid<-rasterizar_Variable('Profundidad_max', marea_alta$longitud, marea_alta$latitud, marea_alta$Profundidad_max, 'Alta',  Exp_Profundidad_max)
 
- tiff(filename = "./03_Imagenes/prueba.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
+ tiff(filename = "./03_Imagenes/grid_grafica_01.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
  grid.arrange(nrow=4, ncol=2, 
-                        NO2_AltaGrid, NO2_BajaGrid,
+              NO2_AltaGrid, NO2_BajaGrid,
               NO3_AltaGrid, NO3_BajaGrid,
               PO4_AltaGrid, PO4_BajaGrid,
               SiO2_AltaGrid, SiO2_BajaGrid,
               top="mareas", left="Alta", right="baja")
  dev.off()
  
- tiff(filename = "./03_Imagenes/clorofila_BAja_Grafica.tif", width = 30, height = 20, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
- grid.arrange(nrow=1, ncol=2, 
-              Clorofila_AltaGrid,  Clorofila_BajaGrid,
-              
+ tiff(filename = "./03_Imagenes/grid_grafica_02.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
+ grid.arrange(nrow=4, ncol=2, 
+              Clorofila_AltaGrid, Clorofila_BajaGrid,
+              Conductividad_AltaGrid, Conductividad_BajaGrid,
+              Salinidad_AltaGrid, Salinidad_BajaGrid,
+              pH_AltaGrid, pH_BajaGrid,
+              top="mareas", left="Alta", right="baja")
+ dev.off()
+ 
+ tiff(filename = "./03_Imagenes/grid_grafica_03.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
+ grid.arrange(nrow=4, ncol=2, 
+              OD_AltaGrid, OD_BajaGrid,
+              Transparencia_AltaGrid, Transparencia_BajaGrid,
+              SST_AltaGrid, SST_BajaGrid,
+              TSI_Clor_AltaGrid, TSI_Clor_BajaGrid,
+              top="mareas", left="Alta", right="baja")
+ dev.off()
+ 
+ tiff(filename = "./03_Imagenes/grid_grafica_04.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
+ grid.arrange(nrow=4, ncol=2, 
+              TSI_SECCHI_AltaGrid, TSI_SECCHI_BajaGrid,
+              Temperatura_mean_AltaGrid, Temperatura_mean_BajaGrid,
+              Salinidad_mean_AltaGrid, Salinidad_mean_BajaGrid,
+              Oxigeno_mean_AltaGrid, Oxigeno_mean_BajaGrid,
+              top="mareas", left="Alta", right="baja")
+ dev.off()
+ 
+ tiff(filename = "./03_Imagenes/grid_grafica_05.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
+ grid.arrange(nrow=4, ncol=2, 
+              Densidad_mean_AltaGrid, Densidad_mean_BajaGrid,
+              Temperatura_median_AltaGrid, Temperatura_median_BajaGrid,
+              Salinidad_median_AltaGrid, Salinidad_median_BajaGrid,
+              Oxigeno_median_AltaGrid, Oxigeno_median_BajaGrid,
+              top="mareas", left="Alta", right="baja")
+ dev.off()
+ 
+ tiff(filename = "./03_Imagenes/grid_grafica_06.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
+ grid.arrange(nrow=4, ncol=2, 
+              Densidad_median_AltaGrid, Densidad_median_BajaGrid,
+              Temperatura_sd_AltaGrid, Temperatura_sd_BajaGrid,
+              Salinidad_sd_AltaGrid, Salinidad_sd_BajaGrid,
+              Oxigeno_sd_AltaGrid, Oxigeno_sd_BajaGrid,
+              top="mareas", left="Alta", right="baja")
+ dev.off()
+ 
+ tiff(filename = "./03_Imagenes/grid_grafica_07.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
+ grid.arrange(nrow=4, ncol=2, 
+              Densidad_sd_AltaGrid, Densidad_sd_BajaGrid,
+              Temperatura_min_AltaGrid, Temperatura_min_BajaGrid,
+              Salinidad_min_AltaGrid, Salinidad_min_BajaGrid,
+              Oxigeno_min_AltaGrid, Oxigeno_min_BajaGrid,
+              top="mareas", left="Alta", right="baja")
+ dev.off()
+ 
+ tiff(filename = "./03_Imagenes/grid_grafica_08.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
+ grid.arrange(nrow=4, ncol=2, 
+              Densidad_min_AltaGrid, Densidad_min_BajaGrid,
+              Temperatura_max_AltaGrid, Temperatura_max_BajaGrid,
+              Salinidad_max_AltaGrid, Salinidad_max_BajaGrid,
+              Oxigeno_max_AltaGrid, Oxigeno_max_BajaGrid,
+              top="mareas", left="Alta", right="baja")
+ dev.off()
+ 
+ tiff(filename = "./03_Imagenes/grid_grafica_09.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
+ grid.arrange(nrow=4, ncol=2, 
+              Densidad_max_AltaGrid, Densidad_max_BajaGrid,
+              Profundidad_max_AltaGrid, Profundidad_max_BajaGrid,
               top="mareas", left="Alta", right="baja")
  dev.off()
  
@@ -856,99 +919,4 @@ ggpairs(Datos_Quimica,columns = 7:17,
 
 
 
-
-###############################Caluculo de Correlacion Espacial
-#Calculo de distancias####
-
-install.packages("geoR")
-library(ape)
-library(gstat)
-
-
-geo_dis<-as.matrix(dist(cbind(marea_alta$longitud, marea_alta$latitud)))
-geo_Inv_Dist_alta<-1/geo_dis
-diag(geo_Inv_Dist_alta)<-0
-
-
-
-#Calculo de Indice de Moran
-
-ape::Moran.I(marea_alta$NO2, geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$NO3, geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$PO4 , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$SiO2 , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Clorofila, geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Conductividad , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Salinidad , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$pH , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$OD , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Transparencia , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$SST , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$TSI_Clor , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$TSI_SECCHI , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Temperatura_mean , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Salinidad_mean , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Oxigeno_mean , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Densidad_mean , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Temperatura_median , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Salinidad_median , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Oxigeno_median , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Densidad_median , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Temperatura_sd , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Salinidad_sd , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Oxigeno_sd , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Densidad_sd , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Temperatura_min , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Salinidad_min , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Oxigeno_min , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Temperatura_max , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Salinidad_max , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Oxigeno_max , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Densidad_max , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_alta$Profundidad_max , geo_Inv_Dist_Baja, na.rm =TRUE)
-
-semiv_emp <- variogram(Profundidad_max ~ 1, 
-                       marea_alta, 
-                       cutoff = 400)
-
-
-
-geo_dis<-as.matrix(dist(cbind(marea_baja$longitud, marea_baja$latitud)))
-geo_Inv_Dist_Baja<-1/geo_dis
-diag(geo_Inv_Dist_Baja)<-0
-
-
-Moran.I(marea_baja$NO2, geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$NO3, geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$PO4 , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$SiO2 , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Clorofila, geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Conductividad , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Salinidad , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$pH , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$OD , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Transparencia , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$SST , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$TSI_Clor , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$TSI_SECCHI , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Temperatura_mean , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Salinidad_mean , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Oxigeno_mean , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Densidad_mean , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Temperatura_median , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Salinidad_median , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Oxigeno_median , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Densidad_median , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Temperatura_sd , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Salinidad_sd , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Oxigeno_sd , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Densidad_sd , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Temperatura_min , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Salinidad_min , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Oxigeno_min , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Temperatura_max , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Salinidad_max , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Oxigeno_max , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Densidad_max , geo_Inv_Dist_Baja, na.rm =TRUE)
-Moran.I(marea_baja$Profundidad_max , geo_Inv_Dist_Baja, na.rm =TRUE)
 
