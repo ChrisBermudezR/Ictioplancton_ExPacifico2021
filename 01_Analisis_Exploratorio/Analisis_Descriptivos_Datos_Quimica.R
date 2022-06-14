@@ -162,6 +162,41 @@ Exp_maxnoxi=expression(paste("max del Ox. D. en prof. [mg O"[2],"/L]"))
 Exp_maxden=expression(paste("max de la Den. (kg/m"^3,")"))
 Exp_maxProf="Máximo de la Profundidad [m]"
 
+Exp_NO2= expression(paste("[NO"[2]^"-","] [",mu,"M]"))
+Exp_NO3= expression(paste("[NO"[3]^"-","] [",mu,"M]"))
+Exp_PO4= expression(paste("[PO"[4]^"-3","] [",mu,"M]"))
+Exp_SiO2= expression(paste("[SiO"[2],"] [",mu,"M]"))
+Exp_Clorofila2=expression(paste("[",mu,"g/L]"))
+Exp_Conductividad2="(mS/cm)"
+Exp_Salinidad2=" (PSU)"
+Exp_pH2="pH"
+Exp_OD2=expression(paste("[mg O"[2],"/L]"))
+Exp_Transparencia2="(m)"
+Exp_SST2="[mg/L]"
+Exp_TSI_Clor="(m)"
+Exp_TSI_SECCHI="(m)"
+Exp_Temperatura_mean=expression(paste(" (°C)"))
+Exp_Salinidad_mean=expression(paste(" (PSU)"))
+Exp_Oxigeno_mean=expression(paste(" [mg O"[2],"/L]"))
+Exp_Densidad_mean=expression(paste(" (kg/m"^3,")"))
+Exp_Temperatura_median=expression(paste("(°C)"))
+Exp_Salinidad_median=expression(paste("(PSU)"))
+Exp_Oxigeno_median=expression(paste("[mg O"[2],"/L]"))
+Exp_Densidad_median=expression(paste("(kg/m"^3,")"))
+Exp_Temperatura_sd=expression(paste("(°C)"))
+Exp_Salinidad_sd=expression(paste("(PSU)"))
+Exp_Oxigeno_sd=expression(paste("[mg O"[2],"/L]"))
+Exp_Densidad_sd=expression(paste("(kg/m"^3,")"))
+Exp_Temperatura_min=expression(paste("(°C)"))
+Exp_Salinidad_min=expression(paste("(PSU)"))
+Exp_Oxigeno_min=expression(paste("[mg O"[2],"/L]"))
+Exp_Densidad_min=expression(paste("(kg/m"^3,")"))
+Exp_Temperatura_max=expression(paste("(°C)"))
+Exp_Salinidad_max=expression(paste("(PSU)"))
+Exp_Oxigeno_max=expression(paste("[mg O"[2],"/L]"))
+Exp_Densidad_max=expression(paste("(kg/m"^3,")"))
+Exp_Profundidad_max="[m]"
+
 ####Creación de la visualización 
 
 ####Datos Físicos####
@@ -660,13 +695,13 @@ png(filename = "./03_Imagenes/graf_lineas_04.png", width = 20, height = 30, unit
    areas_protegidas<-readOGR("../SIG_Datos/areas_protegidas.shp")
  
 
- rasterizar_Variable<-function(nombre_variable,longitud, latitud, variable, marea){
+ rasterizar_Variable<-function(nombre_variable,longitud, latitud, variable, marea, leyenda){
   assign("WIRE",interpBarnes(longitud, latitud, variable), envir = parent.frame())
   assign(paste0("pts.grid"),expand.grid(Longitud=WIRE$x, Latitud=WIRE$y), envir = parent.frame())
   assign(paste0("pts.grid"), mutate(pts.grid, variable=as.vector(WIRE$zg)), envir = parent.frame())
   assign(paste0("export"),  raster::rasterFromXYZ(pts.grid), envir = parent.frame())
   assign(paste0(nombre_variable,"_",marea,"_pts.grid"),  rasterFromXYZ(pts.grid), envir = parent.frame())
-  raster::writeRaster(export, filename=paste(nombre_variable,"_",marea, ".tif", sep = ""),overwrite=TRUE)
+  raster::writeRaster(export, filename=paste("../SIG_Datos/grids/",nombre_variable,"_",marea, ".tif", sep = ""),overwrite=TRUE)
   
   ggplot(pts.grid, aes(Longitud, Latitud)) +
     geom_raster(aes(fill = variable))+
@@ -676,117 +711,110 @@ png(filename = "./03_Imagenes/graf_lineas_04.png", width = 20, height = 30, unit
     geom_polygon(data=areas_protegidas, aes(x= long, y= lat, group=group), colour="red", fill="transparent") +
     theme_bw()+
     scale_fill_gradientn(colours = terrain.colors(7))+
-    geom_point(data=marea_altagra, aes(x= longitud, y= latitud))
+    geom_point(data=marea_altagra, aes(x= longitud, y= latitud))+
+    labs(fill=leyenda)
+    #ggrepel::geom_text_repel(data=marea_alta,aes(x=longitud, y=latitud,label = Estacion),box.padding   = 0.3, direction = "x")
 }
+
+ 
+ rasterizar_Variable("NO2", marea_baja$longitud, marea_baja$latitud, marea_baja$NO2, "Baja",Exp_NO2)
+ 
+
+ for (i in colnames(marea_baja)[11:44]){
+   print(paste0(i, "_BajaGrid<-rasterizar_Variable('",i,"', marea_baja$longitud, marea_baja$latitud, marea_baja$",i,", 'Baja',  Exp_", i, ")"))
+   
+ }
  
  
- rasterizar_Variable("Temperatura_mean", marea_baja$longitud, marea_baja$latitud, marea_baja$Temperatura_mean, "Baja")
+ NO2_BajaGrid<-rasterizar_Variable('NO2', marea_baja$longitud, marea_baja$latitud, marea_baja$NO2, 'Baja',  Exp_NO2)
+ NO3_BajaGrid<-rasterizar_Variable('NO3', marea_baja$longitud, marea_baja$latitud, marea_baja$NO3, 'Baja',  Exp_NO3)
+ PO4_BajaGrid<-rasterizar_Variable('PO4', marea_baja$longitud, marea_baja$latitud, marea_baja$PO4, 'Baja',  Exp_PO4)
+ SiO2_BajaGrid<-rasterizar_Variable('SiO2', marea_baja$longitud, marea_baja$latitud, marea_baja$SiO2, 'Baja',  Exp_SiO2)
+ Clorofila_BajaGrid<-rasterizar_Variable('Clorofila', marea_baja$longitud, marea_baja$latitud, marea_baja$Clorofila, 'Baja',  Exp_Clorofila2)
+ Conductividad_BajaGrid<-rasterizar_Variable('Conductividad', marea_baja$longitud, marea_baja$latitud, marea_baja$Conductividad, 'Baja',  Exp_Conductividad2)
+ Salinidad_BajaGrid<-rasterizar_Variable('Salinidad', marea_baja$longitud, marea_baja$latitud, marea_baja$Salinidad, 'Baja',  Exp_Salinidad2)
+ pH_BajaGrid<-rasterizar_Variable('pH', marea_baja$longitud, marea_baja$latitud, marea_baja$pH, 'Baja',  Exp_pH2)
+ OD_BajaGrid<-rasterizar_Variable('OD', marea_baja$longitud, marea_baja$latitud, marea_baja$OD, 'Baja',  Exp_OD2)
+ Transparencia_BajaGrid<-rasterizar_Variable('Transparencia', marea_baja$longitud, marea_baja$latitud, marea_baja$Transparencia, 'Baja',  Exp_Transparencia2)
+ SST_BajaGrid<-rasterizar_Variable('SST', marea_baja$longitud, marea_baja$latitud, marea_baja$SST, 'Baja',  Exp_SST2)
+ TSI_Clor_BajaGrid<-rasterizar_Variable('TSI_Clor', marea_baja$longitud, marea_baja$latitud, marea_baja$TSI_Clor, 'Baja',  Exp_TSI_Clor)
+ TSI_SECCHI_BajaGrid<-rasterizar_Variable('TSI_SECCHI', marea_baja$longitud, marea_baja$latitud, marea_baja$TSI_SECCHI, 'Baja',  Exp_TSI_SECCHI)
+ Temperatura_mean_BajaGrid<-rasterizar_Variable('Temperatura_mean', marea_baja$longitud, marea_baja$latitud, marea_baja$Temperatura_mean, 'Baja',  Exp_Temperatura_mean)
+ Salinidad_mean_BajaGrid<-rasterizar_Variable('Salinidad_mean', marea_baja$longitud, marea_baja$latitud, marea_baja$Salinidad_mean, 'Baja',  Exp_Salinidad_mean)
+ Oxigeno_mean_BajaGrid<-rasterizar_Variable('Oxigeno_mean', marea_baja$longitud, marea_baja$latitud, marea_baja$Oxigeno_mean, 'Baja',  Exp_Oxigeno_mean)
+ Densidad_mean_BajaGrid<-rasterizar_Variable('Densidad_mean', marea_baja$longitud, marea_baja$latitud, marea_baja$Densidad_mean, 'Baja',  Exp_Densidad_mean)
+ Temperatura_median_BajaGrid<-rasterizar_Variable('Temperatura_median', marea_baja$longitud, marea_baja$latitud, marea_baja$Temperatura_median, 'Baja',  Exp_Temperatura_median)
+ Salinidad_median_BajaGrid<-rasterizar_Variable('Salinidad_median', marea_baja$longitud, marea_baja$latitud, marea_baja$Salinidad_median, 'Baja',  Exp_Salinidad_median)
+ Oxigeno_median_BajaGrid<-rasterizar_Variable('Oxigeno_median', marea_baja$longitud, marea_baja$latitud, marea_baja$Oxigeno_median, 'Baja',  Exp_Oxigeno_median)
+ Densidad_median_BajaGrid<-rasterizar_Variable('Densidad_median', marea_baja$longitud, marea_baja$latitud, marea_baja$Densidad_median, 'Baja',  Exp_Densidad_median)
+ Temperatura_sd_BajaGrid<-rasterizar_Variable('Temperatura_sd', marea_baja$longitud, marea_baja$latitud, marea_baja$Temperatura_sd, 'Baja',  Exp_Temperatura_sd)
+ Salinidad_sd_BajaGrid<-rasterizar_Variable('Salinidad_sd', marea_baja$longitud, marea_baja$latitud, marea_baja$Salinidad_sd, 'Baja',  Exp_Salinidad_sd)
+ Oxigeno_sd_BajaGrid<-rasterizar_Variable('Oxigeno_sd', marea_baja$longitud, marea_baja$latitud, marea_baja$Oxigeno_sd, 'Baja',  Exp_Oxigeno_sd)
+ Densidad_sd_BajaGrid<-rasterizar_Variable('Densidad_sd', marea_baja$longitud, marea_baja$latitud, marea_baja$Densidad_sd, 'Baja',  Exp_Densidad_sd)
+ Temperatura_min_BajaGrid<-rasterizar_Variable('Temperatura_min', marea_baja$longitud, marea_baja$latitud, marea_baja$Temperatura_min, 'Baja',  Exp_Temperatura_min)
+ Salinidad_min_BajaGrid<-rasterizar_Variable('Salinidad_min', marea_baja$longitud, marea_baja$latitud, marea_baja$Salinidad_min, 'Baja',  Exp_Salinidad_min)
+ Oxigeno_min_BajaGrid<-rasterizar_Variable('Oxigeno_min', marea_baja$longitud, marea_baja$latitud, marea_baja$Oxigeno_min, 'Baja',  Exp_Oxigeno_min)
+ Densidad_min_BajaGrid<-rasterizar_Variable('Densidad_min', marea_baja$longitud, marea_baja$latitud, marea_baja$Densidad_min, 'Baja',  Exp_Densidad_min)
+ Temperatura_max_BajaGrid<-rasterizar_Variable('Temperatura_max', marea_baja$longitud, marea_baja$latitud, marea_baja$Temperatura_max, 'Baja',  Exp_Temperatura_max)
+ Salinidad_max_BajaGrid<-rasterizar_Variable('Salinidad_max', marea_baja$longitud, marea_baja$latitud, marea_baja$Salinidad_max, 'Baja',  Exp_Salinidad_max)
+ Oxigeno_max_BajaGrid<-rasterizar_Variable('Oxigeno_max', marea_baja$longitud, marea_baja$latitud, marea_baja$Oxigeno_max, 'Baja',  Exp_Oxigeno_max)
+ Densidad_max_BajaGrid<-rasterizar_Variable('Densidad_max', marea_baja$longitud, marea_baja$latitud, marea_baja$Densidad_max, 'Baja',  Exp_Densidad_max)
+ Profundidad_max_BajaGrid<-rasterizar_Variable('Profundidad_max', marea_baja$longitud, marea_baja$latitud, marea_baja$Profundidad_max, 'Baja',  Exp_Profundidad_max)
+
+ 
+ NO2_AltaGrid<-rasterizar_Variable('NO2', marea_alta$longitud, marea_alta$latitud, marea_alta$NO2, 'Alta',  Exp_NO2)
+ NO3_AltaGrid<-rasterizar_Variable('NO3', marea_alta$longitud, marea_alta$latitud, marea_alta$NO3, 'Alta',  Exp_NO3)
+ PO4_AltaGrid<-rasterizar_Variable('PO4', marea_alta$longitud, marea_alta$latitud, marea_alta$PO4, 'Alta',  Exp_PO4)
+ SiO2_AltaGrid<-rasterizar_Variable('SiO2', marea_alta$longitud, marea_alta$latitud, marea_alta$SiO2, 'Alta',  Exp_SiO2)
+ Clorofila_AltaGrid<-rasterizar_Variable('Clorofila', marea_alta$longitud, marea_alta$latitud, marea_alta$Clorofila, 'Alta',  Exp_Clorofila2)
+ Conductividad_AltaGrid<-rasterizar_Variable('Conductividad', marea_alta$longitud, marea_alta$latitud, marea_alta$Conductividad, 'Alta',  Exp_Conductividad2)
+ Salinidad_AltaGrid<-rasterizar_Variable('Salinidad', marea_alta$longitud, marea_alta$latitud, marea_alta$Salinidad, 'Alta',  Exp_Salinidad2)
+ pH_AltaGrid<-rasterizar_Variable('pH', marea_alta$longitud, marea_alta$latitud, marea_alta$pH, 'Alta',  Exp_pH2)
+ OD_AltaGrid<-rasterizar_Variable('OD', marea_alta$longitud, marea_alta$latitud, marea_alta$OD, 'Alta',  Exp_OD2)
+ Transparencia_AltaGrid<-rasterizar_Variable('Transparencia', marea_alta$longitud, marea_alta$latitud, marea_alta$Transparencia, 'Alta',  Exp_Transparencia2)
+ SST_AltaGrid<-rasterizar_Variable('SST', marea_alta$longitud, marea_alta$latitud, marea_alta$SST, 'Alta',  Exp_SST2)
+ TSI_Clor_AltaGrid<-rasterizar_Variable('TSI_Clor', marea_alta$longitud, marea_alta$latitud, marea_alta$TSI_Clor, 'Alta',  Exp_TSI_Clor)
+ TSI_SECCHI_AltaGrid<-rasterizar_Variable('TSI_SECCHI', marea_alta$longitud, marea_alta$latitud, marea_alta$TSI_SECCHI, 'Alta',  Exp_TSI_SECCHI)
+ Temperatura_mean_AltaGrid<-rasterizar_Variable('Temperatura_mean', marea_alta$longitud, marea_alta$latitud, marea_alta$Temperatura_mean, 'Alta',  Exp_Temperatura_mean)
+ Salinidad_mean_AltaGrid<-rasterizar_Variable('Salinidad_mean', marea_alta$longitud, marea_alta$latitud, marea_alta$Salinidad_mean, 'Alta',  Exp_Salinidad_mean)
+ Oxigeno_mean_AltaGrid<-rasterizar_Variable('Oxigeno_mean', marea_alta$longitud, marea_alta$latitud, marea_alta$Oxigeno_mean, 'Alta',  Exp_Oxigeno_mean)
+ Densidad_mean_AltaGrid<-rasterizar_Variable('Densidad_mean', marea_alta$longitud, marea_alta$latitud, marea_alta$Densidad_mean, 'Alta',  Exp_Densidad_mean)
+ Temperatura_median_AltaGrid<-rasterizar_Variable('Temperatura_median', marea_alta$longitud, marea_alta$latitud, marea_alta$Temperatura_median, 'Alta',  Exp_Temperatura_median)
+ Salinidad_median_AltaGrid<-rasterizar_Variable('Salinidad_median', marea_alta$longitud, marea_alta$latitud, marea_alta$Salinidad_median, 'Alta',  Exp_Salinidad_median)
+ Oxigeno_median_AltaGrid<-rasterizar_Variable('Oxigeno_median', marea_alta$longitud, marea_alta$latitud, marea_alta$Oxigeno_median, 'Alta',  Exp_Oxigeno_median)
+ Densidad_median_AltaGrid<-rasterizar_Variable('Densidad_median', marea_alta$longitud, marea_alta$latitud, marea_alta$Densidad_median, 'Alta',  Exp_Densidad_median)
+ Temperatura_sd_AltaGrid<-rasterizar_Variable('Temperatura_sd', marea_alta$longitud, marea_alta$latitud, marea_alta$Temperatura_sd, 'Alta',  Exp_Temperatura_sd)
+ Salinidad_sd_AltaGrid<-rasterizar_Variable('Salinidad_sd', marea_alta$longitud, marea_alta$latitud, marea_alta$Salinidad_sd, 'Alta',  Exp_Salinidad_sd)
+ Oxigeno_sd_AltaGrid<-rasterizar_Variable('Oxigeno_sd', marea_alta$longitud, marea_alta$latitud, marea_alta$Oxigeno_sd, 'Alta',  Exp_Oxigeno_sd)
+ Densidad_sd_AltaGrid<-rasterizar_Variable('Densidad_sd', marea_alta$longitud, marea_alta$latitud, marea_alta$Densidad_sd, 'Alta',  Exp_Densidad_sd)
+ Temperatura_min_AltaGrid<-rasterizar_Variable('Temperatura_min', marea_alta$longitud, marea_alta$latitud, marea_alta$Temperatura_min, 'Alta',  Exp_Temperatura_min)
+ Salinidad_min_AltaGrid<-rasterizar_Variable('Salinidad_min', marea_alta$longitud, marea_alta$latitud, marea_alta$Salinidad_min, 'Alta',  Exp_Salinidad_min)
+ Oxigeno_min_AltaGrid<-rasterizar_Variable('Oxigeno_min', marea_alta$longitud, marea_alta$latitud, marea_alta$Oxigeno_min, 'Alta',  Exp_Oxigeno_min)
+ Densidad_min_AltaGrid<-rasterizar_Variable('Densidad_min', marea_alta$longitud, marea_alta$latitud, marea_alta$Densidad_min, 'Alta',  Exp_Densidad_min)
+ Temperatura_max_AltaGrid<-rasterizar_Variable('Temperatura_max', marea_alta$longitud, marea_alta$latitud, marea_alta$Temperatura_max, 'Alta',  Exp_Temperatura_max)
+ Salinidad_max_AltaGrid<-rasterizar_Variable('Salinidad_max', marea_alta$longitud, marea_alta$latitud, marea_alta$Salinidad_max, 'Alta',  Exp_Salinidad_max)
+ Oxigeno_max_AltaGrid<-rasterizar_Variable('Oxigeno_max', marea_alta$longitud, marea_alta$latitud, marea_alta$Oxigeno_max, 'Alta',  Exp_Oxigeno_max)
+ Densidad_max_AltaGrid<-rasterizar_Variable('Densidad_max', marea_alta$longitud, marea_alta$latitud, marea_alta$Densidad_max, 'Alta',  Exp_Densidad_max)
+ Profundidad_max_AltaGrid<-rasterizar_Variable('Profundidad_max', marea_alta$longitud, marea_alta$latitud, marea_alta$Profundidad_max, 'Alta',  Exp_Profundidad_max)
+
+ tiff(filename = "./03_Imagenes/prueba.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
+ grid.arrange(nrow=4, ncol=2, 
+                        NO2_AltaGrid, NO2_BajaGrid,
+              NO3_AltaGrid, NO3_BajaGrid,
+              PO4_AltaGrid, PO4_BajaGrid,
+              SiO2_AltaGrid, SiO2_BajaGrid,
+              top="mareas", left="Alta", right="baja")
+ dev.off()
+ 
+ tiff(filename = "./03_Imagenes/clorofila_BAja_Grafica.tif", width = 30, height = 20, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
+ grid.arrange(nrow=1, ncol=2, 
+              Clorofila_AltaGrid,  Clorofila_BajaGrid,
+              
+              top="mareas", left="Alta", right="baja")
+ dev.off()
  
  
- plot(Clorofila_Alta_pts.grid)
- library(ggrepel)
  
-ggplot(ClorofilaAlta_pts.grid, aes(longitud, latitud)) +
-  geom_raster(aes(fill = variable))+
-     geom_polygon(data=costa, aes(x= long, y= lat, group=group), colour="grey", fill="grey") +
-     geom_polygon(data=rios, aes(x= long, y= lat, group=group), colour="dodgerblue", fill="dodgerblue") +
-      coord_sf(xlim = range(ClorofilaAlta_pts.grid$longitud), ylim = range(ClorofilaAlta_pts.grid$latitud), expand = FALSE)+   
-    geom_polygon(data=areas_protegidas, aes(x= long, y= lat, group=group), colour="red", fill="transparent") +
-    theme_bw()+
-  scale_fill_gradientn(colours = terrain.colors(7))+
-  geom_point(data=marea_altagra, aes(x= longitud, y= latitud,color = "red", size = 4))+
-  geom_label_repel(aes(x=marea_alta$longitud, y=marea_alta$latitud,label = marea_alta$Codigo),box.padding   = 0.35, 
-                  point.padding = 0.5,
-                  segment.color = 'black')
-  
-
-  
-ggplot()+
-  geom_point(data=marea_altagra, aes(x= longitud, y= latitud))
-
-
-bahty__plot<-ggplot()+
-  geom_polygon(data=Countries, aes(x= long, y= lat, group=group), colour="black", fill="white")+
-  geom_raster(data=DF_Car, aes(x=x, y=y, fill=Bathymetry)) +
-  geom_raster(data=DF_Pac, aes(x=x, y=y, fill=Bathymetry)) +
-  scale_fill_gradient2(low = "blue", high = "red1", mid = "#00FFFF", midpoint = -2500) +
-  geom_polygon(data=Countries, aes(x= long, y= lat, group=group), colour="black", fill="white")+
-  coord_sf(xlim = c(-85.90, -68.973206), ylim = c(0.963013, 17.007507), expand = FALSE)+
-  geom_path(data=CPC, aes(x=long, y=lat, group = group))+
-  geom_path(data=CCC, aes(x=long, y=lat, group = group))+
-  theme_bw()+
-  theme(legend.position = "bottom",legend.key.height= unit(1, 'line'),
-        legend.key.width= unit(2, 'line'))
-
-
-
-
-
-
-
-
-
-
-
-
-
-#Revisar despues
-NO2_WIRE<- interpBarnes(Datos_Totales_Limpios$longitud, Datos_Totales_Limpios$latitud, Datos_Totales_Limpios$NO2)
-NO2_WIRE_Graf<-wireframe(NO2_WIRE$zg, xlab="Longitud", ylab=list("Latitud", rot = 0), zlab=list("NO2", rot = 90), main= "Temperatura Superficial", cex=5, zoom=0.8, screen = list(z = 15, x = -50, y = -1), colorkey=TRUE, drape=TRUE)
-NO2_contour<-contour(NO2_WIRE$xg, NO2_WIRE$yg, NO2_WIRE$zg, xlab="Lon", ylab="Lat", labcex=1)
-filled.contour(NO2_WIRE$zg, plot.axes = {
-  axis(NO2_WIRE$xg)
-  axis(NO2_WIRE$yg)
-  contour(NO2_contour, add = TRUE, lwd = 2)
-}
-)
-
-
-
-
-cols <- hcl.colors(10, "Spectral")
-
-Profundidad_max_WIRE<- interpBarnes(Datos_Totales_Limpios$longitud, Datos_Totales_Limpios$latitud, Datos_Totales_Limpios$Profundidad_max)
-Profundidad_max_WIRE_Graf<-wireframe(Profundidad_max_WIRE$zg, xlab="Longitud", ylab=list("Latitud", rot = 0), zlab=list("Profundidad", rot = 90), main= "Profundidad", cex=5, zoom=0.8, screen = list(z = 15, x = -50, y = -1), colorkey=TRUE, drape=TRUE)
-Profundidad_max_contour<-contour(Profundidad_max_WIRE$xg, Profundidad_max_WIRE$yg, Profundidad_max_WIRE$zg, xlab="Lon", ylab="Lat", main="Profundidad",labcex=1,  col = cols)
-
-
-
-
-filled.contour(Profundidad_max_WIRE$zg, plot.axes = {
-  axis(Profundidad_max_WIRE$xg)
-  axis(Profundidad_max_WIRE$yg)
-  contour(Profundidad_max_contour, add = TRUE, lwd = 2)
-}
-)
-
-
-
-png(filename = "./03_Imagenes/mallas.png", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
-grid.arrange(nrow=1, ncol=2, 
-             NO2_WIRE_Graf, 
-             Profundidad_max_WIRE_Graf
-)
-dev.off()
-
-
-
-cols <- hcl.colors(10, "Spectral")
-
-contour(NO2_WIRE$zg,
-        col = cols)
-
-cols <- hcl.colors(10, "Spectral")
-
-contour(Profundidad_max_WIRE$zg,
-        col = cols)
-
-ggpairs(Datos_Totales_Limpios,          # Data frame
-        columns = 11:44) # Columns
-Datos_Totales_Limpios %>% ggpairs(columns = 11:44,upper = list(continuous = wrap("cor", method = "spearman")))
-
-
-
 printVar = function(x,y){
   vals = cor.test(x,y,
                   method="spearman")[c("estimate","p.value")]
@@ -825,3 +853,102 @@ ggpairs(Datos_Quimica,columns = 7:17,
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour = "black"))
+
+
+
+
+###############################Caluculo de Correlacion Espacial
+#Calculo de distancias####
+
+install.packages("geoR")
+library(ape)
+library(gstat)
+
+
+geo_dis<-as.matrix(dist(cbind(marea_alta$longitud, marea_alta$latitud)))
+geo_Inv_Dist_alta<-1/geo_dis
+diag(geo_Inv_Dist_alta)<-0
+
+
+
+#Calculo de Indice de Moran
+
+ape::Moran.I(marea_alta$NO2, geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$NO3, geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$PO4 , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$SiO2 , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Clorofila, geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Conductividad , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Salinidad , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$pH , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$OD , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Transparencia , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$SST , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$TSI_Clor , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$TSI_SECCHI , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Temperatura_mean , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Salinidad_mean , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Oxigeno_mean , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Densidad_mean , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Temperatura_median , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Salinidad_median , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Oxigeno_median , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Densidad_median , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Temperatura_sd , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Salinidad_sd , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Oxigeno_sd , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Densidad_sd , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Temperatura_min , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Salinidad_min , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Oxigeno_min , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Temperatura_max , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Salinidad_max , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Oxigeno_max , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Densidad_max , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_alta$Profundidad_max , geo_Inv_Dist_Baja, na.rm =TRUE)
+
+semiv_emp <- variogram(Profundidad_max ~ 1, 
+                       marea_alta, 
+                       cutoff = 400)
+
+
+
+geo_dis<-as.matrix(dist(cbind(marea_baja$longitud, marea_baja$latitud)))
+geo_Inv_Dist_Baja<-1/geo_dis
+diag(geo_Inv_Dist_Baja)<-0
+
+
+Moran.I(marea_baja$NO2, geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$NO3, geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$PO4 , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$SiO2 , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Clorofila, geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Conductividad , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Salinidad , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$pH , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$OD , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Transparencia , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$SST , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$TSI_Clor , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$TSI_SECCHI , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Temperatura_mean , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Salinidad_mean , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Oxigeno_mean , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Densidad_mean , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Temperatura_median , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Salinidad_median , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Oxigeno_median , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Densidad_median , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Temperatura_sd , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Salinidad_sd , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Oxigeno_sd , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Densidad_sd , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Temperatura_min , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Salinidad_min , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Oxigeno_min , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Temperatura_max , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Salinidad_max , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Oxigeno_max , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Densidad_max , geo_Inv_Dist_Baja, na.rm =TRUE)
+Moran.I(marea_baja$Profundidad_max , geo_Inv_Dist_Baja, na.rm =TRUE)
+
