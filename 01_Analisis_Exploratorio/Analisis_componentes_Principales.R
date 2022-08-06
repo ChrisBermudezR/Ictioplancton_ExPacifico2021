@@ -1,3 +1,13 @@
+#Título del script: Análisis de Componentes principales, MRPP y Correlaciones de los datos fisicoquímicos.
+#Autores: Christian Bermúdez-Rivas 
+#Objetivo: Realizar los análisis de los datos fisico químicos.
+#Lenguaje: R
+#Fecha: Junio 2022
+#Notas: No olvidar instalar los paquetes necesarios para correr el script
+###############################################################################################################################
+
+
+
 #library(Rcpp)
 install.packages("factoextra")
 library(gridExtra)
@@ -32,6 +42,39 @@ colnames(Comp_var)<-c("PC01", "PC02",
                        "PC33","PC34"
                       )
 write.table(Comp_var, "Componentes_principales_valores_Var.csv", dec = ".", sep=",")
+
+
+
+
+
+
+
+
+
+######Gráficas de los componentes principales#####
+library("corrplot")
+var <- get_pca_var(data_completo.pca)
+#Gráfica de correlación entre lasvariables y los componentes
+var$cos2
+
+corrplot(var$cor, is.corr=TRUE)
+
+graf01<-factoextra::fviz_eig(data_completo.pca,addlabels = TRUE,hjust = -0.3,linecolor ="red")+
+  labs(title="PCA - Screeplot",x="Dimensiones (PC)", y="% explicado de var.")+
+  ylim(c(0,65))
+
+graf02
+
+
+
+
+
+
+
+
+
+
+
 
 
 
