@@ -1,6 +1,6 @@
-#library(Rcpp)
-install.packages("factoextra")
-library(gridExtra)
-library(ggplot2)
-library(factoextra)
 
+
+install.packages("entropart")
+install.packages("iNEXT")
+install.packages("vegan")
+install.packages("dplyr")

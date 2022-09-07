@@ -9,361 +9,274 @@
 
 library(tidyverse)
 library(gridExtra)
+library(gsw)
 library(oce)
-
-Datos_CTDO_List<-list.files("./ctd_BOCAS_DE SANQUIANGA_2021", pattern =".csv$", full.names = TRUE)
-Datos_CTDO_names<-list.files("./ctd_BOCAS_DE SANQUIANGA_2021", pattern =".csv$", full.names = FALSE)
-
-
-for(Archivos in 1:length(Datos_CTDO_names)) assign(Datos_CTDO_names[Archivos], read.table(Datos_CTDO_List[Archivos], header = TRUE, sep = ',',quote ="", fill = TRUE ))
-
-Datos_CTDO_PNN<-rbind(CC1404006_20210429_152542.csv, CC1404006_20210429_161317.csv, CC1404006_20210429_210545.csv, CC1404006_20210429_215804.csv, 
-                      CC1404006_20210430_113001.csv, CC1404006_20210430_120427.csv, CC1404006_20210430_165824.csv, CC1404006_20210430_174538.csv, 
-                      CC1404006_20210501_114507.csv, CC1404006_20210501_120432.csv, CC1404006_20210501_123136.csv, CC1404006_20210501_175834.csv, 
-                      CC1404006_20210501_182239.csv, CC1404006_20210501_185340.csv, CC1404006_20210502_123624.csv, CC1404006_20210502_125742.csv, 
-                      CC1404006_20210502_132230.csv, CC1404006_20210502_185059.csv, CC1404006_20210502_191939.csv, CC1404006_20210502_194349.csv, 
-                      CC1404006_20210503_132454.csv, CC1404006_20210503_134226.csv, CC1404006_20210503_140418.csv, CC1404006_20210503_142615.csv, 
-                      CC1404006_20210503_192013.csv, CC1404006_20210503_194704.csv, CC1404006_20210503_201354.csv, CC1404006_20210503_204023.csv, 
-                      CC1404006_20210504_143258.csv, CC1404006_20210504_145158.csv, CC1404006_20210504_152900.csv, CC1404006_20210504_155646.csv, 
-                      CC1404006_20210504_203322.csv, CC1404006_20210504_210020.csv, CC1404006_20210504_213110.csv, CC1404006_20210504_215433.csv )
-colnames(Datos_CTDO_PNN)<-c("Presion",             "Profundidad",                "Temperatura",         
-                             "Conductividad" ,        "Conductancia", "Salinidad",            
-                             "Vel_Sonido",       "Densidad",              "Latitud",             
-                             "Longitud",             "Fecha",                "Hora",                
-                             "Estacion", "Marea")
+library(pastecs)
+library(devtools)
 
 
-Datos_CTDO_PNN$Separar<-Datos_CTDO_PNN$Estacion
-Datos_CTDO_PNN<-separate(Datos_CTDO_PNN, Separar, c("Transecto", "No.Estacion"), sep = "0" )
-as.factor(Datos_CTDO_PNN$Transecto)->Datos_CTDO_PNN$Transecto
-as.factor(Datos_CTDO_PNN$No.Estacion)->Datos_CTDO_PNN$No.Estacion
+
+devtools::install_github("ChrisBermudezR/IctioExPacificoAnalisisPack")
+library(IctioExPacificoAnalisisPack)
+
+#####Manejo del conjunto de datos####
+#Cargar el archivo de datos
+Datos_CTDO_PNN<-readr::read_csv("./02_Datos/Fisicos/Datos_CTDO_PNN.csv")
+#Asignar factores al evento de muestreo que en este caso está descrito por la variable "Codigo"
+Datos_CTDO_PNN$No.Estacion<-as.factor(Datos_CTDO_PNN$No.Estacion)
+Datos_CTDO_PNN$Marea<-as.factor(Datos_CTDO_PNN$Marea)
+Datos_CTDO_PNN$Codigo<-as.factor(Datos_CTDO_PNN$Codigo)
+Datos_CTDO_PNN <- Datos_CTDO_PNN %>% group_by(Codigo)
+
+####Estadistica descriptiva####
+
+EstadisticasDescrip<-Datos_CTDO_PNN %>% summarise_each(funs(mean(., na.rm = TRUE),   median(., na.rm = TRUE),n(),sd(., na.rm = TRUE), min(., na.rm = TRUE),max(., na.rm = TRUE)), Temperatura, Salinidad,  Densidad, Profundidad)
+
+write_csv(EstadisticasDescrip, "./01_Resultados/Fisicos_EstadisticasDescrip_PNN.csv", col_names = TRUE)
 
 
 
 
-Datos_CTDO_PNN$Transecto <- recode_factor(Datos_CTDO_PNN$Transecto, 
-                                     A = "Amarales", 
-                                     S = "Sanquianga", 
-                                     G = "Guascama")
-write.table(Datos_CTDO_PNN, "Datos_CTDO_PNN.csv", col.names = TRUE, sep=",")
+Temperatura_Total_PNN<-IctioExPacificoAnalisisPack::boxplot_CTDO(Datos_CTDO_PNN, Datos_CTDO_PNN$Transecto, Datos_CTDO_PNN$Temperatura, "Transectos", "Temperatura (°C)")
+Salinidad_Total_PNN<-IctioExPacificoAnalisisPack::boxplot_CTDO(Datos_CTDO_PNN, Datos_CTDO_PNN$Transecto, Datos_CTDO_PNN$Salinidad, "Transectos", "Salinidad (PSU)")
+Densidad_Total_PNN<-IctioExPacificoAnalisisPack::boxplot_CTDO(Datos_CTDO_PNN, Datos_CTDO_PNN$Transecto, Datos_CTDO_PNN$Densidad, "Transectos", "Densidad (KG/m3)")
 
 
-#####BoxPlot
 
 
-Temperatura_Total_PNN<-ggplot(Datos_CTDO_PNN, aes(x=Transecto, y=Temperatura)) + 
-  geom_boxplot()+ 
-  theme_bw()+
-  geom_jitter(width=0.1,alpha=0.2) +
-  stat_summary(fun=mean, aes(y = Temperatura,x=Transecto), geom="point", shape=20, size=4, color="red", position = position_dodge(width =0.8)) +
-  labs( y = "Temperatura [°C]", x = "Transectos")
-  
-Salnidad_Total_PNN<-ggplot(Datos_CTDO_PNN, aes(x=Transecto, y=Salinidad)) + 
-  geom_boxplot()+ 
-  labs( y = "Salinidad [PSU]", x = "Transectos")+
-  theme_bw()+geom_jitter(width=0.1,alpha=0.2) +
-  stat_summary(fun=mean, aes(y = Salinidad,x=Transecto), geom="point", shape=20, size=4, color="red", position = position_dodge(width =0.8))
-Densidad_Total_PNN<-ggplot(Datos_CTDO_PNN, aes(x=Transecto, y=Densidad)) + 
-  geom_boxplot()+  
-  labs( y = "Densidad [kg/m3]", x = "Transectos")+
-  theme_bw()+geom_jitter(width=0.1,alpha=0.2) +
-  stat_summary(fun=mean, aes(y = Densidad,x=Transecto), geom="point", shape=20, size=4, color="red", position = position_dodge(width =0.8))
 
-tiff(filename = "01_Datos_Totales_PNN.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
+tiff(filename = "./03_Imagenes/01_Datos_Totales_PNN.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
 grid.arrange(nrow=2, ncol=2, Temperatura_Total_PNN, 
-             Salnidad_Total_PNN,Densidad_Total_PNN, 
-             top="Datos totales")
-dev.off()
-
-tiff(filename = "01_BoxPlot_Totales.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
-grid.arrange(nrow=3, ncol=2, Temperatura_Total_PNN,  Temperatura_Total_CCCP, 
-             Salnidad_Total_PNN, Salnidad_Total_CCCP,
-             Densidad_Total_PNN, Densidad_Total_CCCP,
+             Salinidad_Total_PNN,Densidad_Total_PNN,
              top="Datos totales")
 dev.off()
 
 
-Temperatura_Hist_PNN<-ggplot(Datos_CTDO_PNN, aes(x=Temperatura)) + 
-  geom_histogram(aes(group=Marea))+  
-    labs(title = "Histograma de la Temperatura [°C]",
-       subtitle = "(Distribuido por los Transectos)",
-       y = "Frecuencia", x = "[°C]")+
-  facet_grid(Marea~Transecto)
-Salinidad_Hist_PNN<-ggplot(Datos_CTDO_PNN, aes(x=Salinidad)) + 
-  geom_histogram(aes(group=Marea))+  
-  labs(title = "Histograma de la Salinidad [PSU]",
-       subtitle = "(Distribuido por los Transectos)",
-       y = "Frecuencia", x = "[PSU]")+
-  facet_grid(Marea~Transecto)
-Densidad_Hist_PNN<-ggplot(Datos_CTDO_PNN, aes(x=Densidad)) + 
-  geom_histogram(aes(group=Marea))+  
-  labs(title = "Histograma de la Densidad [kg/m3]",
-       subtitle = "(Distribuido por los Transectos)",
-       y = "Frecuencia", x = " [kg/m3]")+
-  facet_grid(Marea~Transecto)
 
-tiff(filename = "02_Histogramas_PNN.tif", width = 40, height = 30, units = "cm", pointsize = 30, bg = "white", res = 300)
-grid.arrange(nrow=2, ncol=2,Temperatura_Hist_PNN, Salinidad_Hist_PNN, 
-             Densidad_Hist_PNN)
+png(filename = "./03_Imagenes/01_Datos_Totales_PNN.png", width = 20, height = 30, units = "cm", pointsize = 15, res = 300)
+grid.arrange(nrow=2, ncol=2, Temperatura_Total_PNN, 
+             Salinidad_Total_PNN,Densidad_Total_PNN, 
+             top="Datos totales")
 dev.off()
 
-Temperatura_boxplot_PNN<-ggplot(Datos_CTDO_PNN) + 
-  geom_boxplot(aes(x=No.Estacion, y=Temperatura))+ 
-  theme_bw()+
-  stat_summary(fun=mean, aes(y = Temperatura,x=No.Estacion), geom="point", shape=20, size=2, color="red", position = position_dodge(width =0.8)) +
-  labs(title = "Boxplot de la Temperatura [°C]",
-       y = "Temperatura [°C]", x = "Estaciones")+
-  facet_grid(Marea~Transecto)
 
-Salinidad_boxplot_PNN<-ggplot(Datos_CTDO_PNN) + 
-  geom_boxplot(aes(x=No.Estacion, y=Salinidad))+ 
-  theme_bw()+
-  stat_summary(fun=mean, aes(y = Salinidad,x=No.Estacion), geom="point", shape=20, size=2, color="red", position = position_dodge(width =0.8)) +
-  labs(title = "Boxplot de la Salinidad [PSU]",
-       y = "Salinidad [PSU]", x = "Estaciones")+
-    facet_grid(Marea~Transecto)
 
-Densidad_boxplot_PNN<-ggplot(Datos_CTDO_PNN) + 
-  geom_boxplot(aes(x=No.Estacion, y=Densidad))+ 
-  theme_bw()+
-  stat_summary(fun=mean, aes(y = Densidad,x=No.Estacion), geom="point", shape=20, size=2, color="red", position = position_dodge(width =0.8)) +
-  labs(title = "Boxplot de la Densidad [Kg/m3]",
-       y = "Densidad [Kg/m3]", x = "Estaciones")+
-  facet_grid(Marea~Transecto)
+Temperatura_Hist_PNN<-IctioExPacificoAnalisisPack::histograma_Transecto(Datos_CTDO_PNN, Datos_CTDO_PNN$Marea, Datos_CTDO_PNN$Transecto, Datos_CTDO_PNN$Temperatura, "Temperatura (°C)")
+Salinidad_Hist_PNN<-IctioExPacificoAnalisisPack::histograma_Transecto(Datos_CTDO_PNN, Datos_CTDO_PNN$Marea, Datos_CTDO_PNN$Transecto, Datos_CTDO_PNN$Salinidad, "Salinidad (PSU)")
+Densidad_Hist_PNN<-IctioExPacificoAnalisisPack::histograma_Transecto(Datos_CTDO_PNN, Datos_CTDO_PNN$Marea, Datos_CTDO_PNN$Transecto, Datos_CTDO_PNN$Densidad, "Densidad (KG/m3)")
 
-tiff(filename = "03_Boxplot_PNN.tif", width = 20, height = 15, units = "cm", pointsize = 12, bg = "white", res = 300)
+
+
+tiff(filename = "./03_Imagenes/02_Histogramas_PNN.tif", width = 40, height = 30, units = "cm", pointsize = 30, bg = "white", res = 300, compression = "lzw")
+grid.arrange(nrow=2, ncol=2,Temperatura_Hist_PNN, Salinidad_Hist_PNN, Densidad_Hist_PNN)
+dev.off()
+
+png(filename = "./03_Imagenes/02_Histogramas_PNN.png", width = 40, height = 30, units = "cm", pointsize = 30, bg = "white", res = 300)
+grid.arrange(nrow=2, ncol=2,Temperatura_Hist_PNN, Salinidad_Hist_PNN, Densidad_Hist_PNN, Oxigeno_Hist_PNN)
+dev.off()
+
+
+
+Temperatura_boxplot_PNN<-IctioExPacificoAnalisisPack::IctioExPacificoAnalisisPack::boxplot_profundidad(Datos_CTDO_PNN,Datos_CTDO_PNN$No.Estacion,Datos_CTDO_PNN$Temperatura,"Temperatura (°C)")
+Salinidad_boxplot_PNN<-IctioExPacificoAnalisisPack::boxplot_profundidad(Datos_CTDO_PNN,Datos_CTDO_PNN$No.Estacion,Datos_CTDO_PNN$Salinidad,"Salinidad (PSU)")
+Densidad_boxplot_PNN<-IctioExPacificoAnalisisPack::boxplot_profundidad(Datos_CTDO_PNN,Datos_CTDO_PNN$No.Estacion,Datos_CTDO_PNN$Densidad,"Densidad (KG/m3)")
+
+
+
+
+tiff(filename = "./03_Imagenes/03_Boxplot_PNN.tif", width = 20, height = 15, units = "cm", pointsize = 12, bg = "white", res = 300, compression = "lzw")
+grid.arrange(nrow=2, ncol=2,Temperatura_boxplot_PNN, Salinidad_boxplot_PNN, 
+             Densidad_boxplot_PNN)
+dev.off()
+
+png(filename = "./03_Imagenes/03_Boxplot_PNN.png", width = 20, height = 15, units = "cm", pointsize = 12, bg = "white", res = 300)
 grid.arrange(nrow=2, ncol=2,Temperatura_boxplot_PNN, Salinidad_boxplot_PNN, 
              Densidad_boxplot_PNN)
 dev.off()
 
 
 
-#####Función para filtrado de datos
+#Crear una lista con los niveles del código de evento de muestreo
+niveles_Codigo<-as.list(levels(Datos_CTDO_PNN$Codigo))
 
-Filtrado<-function(Set_Datos, Value1, Value2){
-filter(Set_Datos, Estacion == Value1 & Marea == Value2)
-  }
+#Ciclo para asignar objetos a un filtro de datos por cada evento de muestreo
+for(i in seq_along(niveles_Codigo)){
+  assign(paste0(niveles_Codigo[[i]], "_PNN"),dplyr::filter(Datos_CTDO_PNN, Codigo==niveles_Codigo[[i]]))
+}
 
+lista_codigos<- list()
 
-A06A_PNN<-Filtrado(Datos_CTDO_PNN,"A06","Alta")
-A05A_PNN<-Filtrado(Datos_CTDO_PNN,"A05","Alta")
-A04A_PNN<-Filtrado(Datos_CTDO_PNN,"A04","Alta")
-A03A_PNN<-Filtrado(Datos_CTDO_PNN,"A03","Alta")
-A02A_PNN<-Filtrado(Datos_CTDO_PNN,"A02","Alta")
-A01A_PNN<-Filtrado(Datos_CTDO_PNN,"A01","Alta")
+for(i in seq_along(niveles_Codigo)){
+  lista_codigos[[i]]<-print(paste0(niveles_Codigo[[i]], "_PNN"))
+}
 
-A06B_PNN<-Filtrado(Datos_CTDO_PNN,"A06","Baja")
-A05B_PNN<-Filtrado(Datos_CTDO_PNN,"A05","Baja")
-A04B_PNN<-Filtrado(Datos_CTDO_PNN,"A04","Baja")
-A03B_PNN<-Filtrado(Datos_CTDO_PNN,"A03","Baja")
-A02B_PNN<-Filtrado(Datos_CTDO_PNN,"A02","Baja")
-A01B_PNN<-Filtrado(Datos_CTDO_PNN,"A01","Baja")
+for (i in 1:36){
+  print(paste0("Temp_",lista_codigos[[i]],"<-IctioExPacificoAnalisisPack::perfil_en_profundidad(",lista_codigos[[i]],",", lista_codigos[[i]],"$Codigo,", lista_codigos[[i]],"$Marea,", lista_codigos[[i]],"$Temperatura,", lista_codigos[[i]],"$Profundidad,"," 'Temperatura - (°C)', 'Profundidad [m]')"))
+}
 
+for (i in 1:36){
+  print(paste0("Sal_",lista_codigos[[i]],"<-IctioExPacificoAnalisisPack::perfil_en_profundidad(",lista_codigos[[i]],",", lista_codigos[[i]],"$Codigo,", lista_codigos[[i]],"$Marea,", lista_codigos[[i]],"$Salinidad,", lista_codigos[[i]],"$Profundidad,"," 'Salinidad - (PSU)', 'Profundidad [m]')"))
+}
 
-S06A_PNN<-Filtrado(Datos_CTDO_PNN,"S06","Alta")
-S05A_PNN<-Filtrado(Datos_CTDO_PNN,"S05","Alta")
-S04A_PNN<-Filtrado(Datos_CTDO_PNN,"S04","Alta")
-S03A_PNN<-Filtrado(Datos_CTDO_PNN,"S03","Alta")
-S02A_PNN<-Filtrado(Datos_CTDO_PNN,"S02","Alta")
-S01A_PNN<-Filtrado(Datos_CTDO_PNN,"S01","Alta")
+for (i in 1:36){
+  print(paste0("Oxi_",lista_codigos[[i]],"<-IctioExPacificoAnalisisPack::perfil_en_profundidad(",lista_codigos[[i]],",", lista_codigos[[i]],"$Codigo,", lista_codigos[[i]],"$Marea,", lista_codigos[[i]],"$Oxigeno,", lista_codigos[[i]],"$Profundidad,"," 'Oxígeno disuelto - (mg/L)', 'Profundidad [m]')"))
+}
 
-S06B_PNN<-Filtrado(Datos_CTDO_PNN,"S06","Baja")
-S05B_PNN<-Filtrado(Datos_CTDO_PNN,"S05","Baja")
-S04B_PNN<-Filtrado(Datos_CTDO_PNN,"S04","Baja")
-S03B_PNN<-Filtrado(Datos_CTDO_PNN,"S03","Baja")
-S02B_PNN<-Filtrado(Datos_CTDO_PNN,"S02","Baja")
-S01B_PNN<-Filtrado(Datos_CTDO_PNN,"S01","Baja")
+for (i in 1:36){
+  print(paste0("Den_",lista_codigos[[i]],"<-IctioExPacificoAnalisisPack::perfil_en_profundidad(",lista_codigos[[i]],",", lista_codigos[[i]],"$Codigo,", lista_codigos[[i]],"$Marea,", lista_codigos[[i]],"$Densidad,", lista_codigos[[i]],"$Profundidad,"," 'Densidad - (kg/m3)', 'Profundidad [m]')"))
+}
 
-G06A_PNN<-Filtrado(Datos_CTDO_PNN,"G06","Alta")
-G05A_PNN<-Filtrado(Datos_CTDO_PNN,"G05","Alta")
-G04A_PNN<-Filtrado(Datos_CTDO_PNN,"G04","Alta")
-G03A_PNN<-Filtrado(Datos_CTDO_PNN,"G03","Alta")
-G02A_PNN<-Filtrado(Datos_CTDO_PNN,"G02","Alta")
-G01A_PNN<-Filtrado(Datos_CTDO_PNN,"G01","Alta")
+Temp_A01A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A01A_PNN,A01A_PNN$Codigo,A01A_PNN$Marea,A01A_PNN$Temperatura,A01A_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_A01B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A01B_PNN,A01B_PNN$Codigo,A01B_PNN$Marea,A01B_PNN$Temperatura,A01B_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_A02A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A02A_PNN,A02A_PNN$Codigo,A02A_PNN$Marea,A02A_PNN$Temperatura,A02A_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_A02B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A02B_PNN,A02B_PNN$Codigo,A02B_PNN$Marea,A02B_PNN$Temperatura,A02B_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_A03A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A03A_PNN,A03A_PNN$Codigo,A03A_PNN$Marea,A03A_PNN$Temperatura,A03A_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_A03B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A03B_PNN,A03B_PNN$Codigo,A03B_PNN$Marea,A03B_PNN$Temperatura,A03B_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_A04A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A04A_PNN,A04A_PNN$Codigo,A04A_PNN$Marea,A04A_PNN$Temperatura,A04A_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_A04B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A04B_PNN,A04B_PNN$Codigo,A04B_PNN$Marea,A04B_PNN$Temperatura,A04B_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_A05A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A05A_PNN,A05A_PNN$Codigo,A05A_PNN$Marea,A05A_PNN$Temperatura,A05A_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_A05B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A05B_PNN,A05B_PNN$Codigo,A05B_PNN$Marea,A05B_PNN$Temperatura,A05B_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_A06A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A06A_PNN,A06A_PNN$Codigo,A06A_PNN$Marea,A06A_PNN$Temperatura,A06A_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_A06B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A06B_PNN,A06B_PNN$Codigo,A06B_PNN$Marea,A06B_PNN$Temperatura,A06B_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_G01A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G01A_PNN,G01A_PNN$Codigo,G01A_PNN$Marea,G01A_PNN$Temperatura,G01A_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_G01B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G01B_PNN,G01B_PNN$Codigo,G01B_PNN$Marea,G01B_PNN$Temperatura,G01B_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_G02A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G02A_PNN,G02A_PNN$Codigo,G02A_PNN$Marea,G02A_PNN$Temperatura,G02A_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_G02B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G02B_PNN,G02B_PNN$Codigo,G02B_PNN$Marea,G02B_PNN$Temperatura,G02B_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_G03A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G03A_PNN,G03A_PNN$Codigo,G03A_PNN$Marea,G03A_PNN$Temperatura,G03A_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_G03B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G03B_PNN,G03B_PNN$Codigo,G03B_PNN$Marea,G03B_PNN$Temperatura,G03B_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_G04A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G04A_PNN,G04A_PNN$Codigo,G04A_PNN$Marea,G04A_PNN$Temperatura,G04A_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_G04B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G04B_PNN,G04B_PNN$Codigo,G04B_PNN$Marea,G04B_PNN$Temperatura,G04B_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_G05A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G05A_PNN,G05A_PNN$Codigo,G05A_PNN$Marea,G05A_PNN$Temperatura,G05A_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_G05B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G05B_PNN,G05B_PNN$Codigo,G05B_PNN$Marea,G05B_PNN$Temperatura,G05B_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_G06A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G06A_PNN,G06A_PNN$Codigo,G06A_PNN$Marea,G06A_PNN$Temperatura,G06A_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_G06B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G06B_PNN,G06B_PNN$Codigo,G06B_PNN$Marea,G06B_PNN$Temperatura,G06B_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_S01A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S01A_PNN,S01A_PNN$Codigo,S01A_PNN$Marea,S01A_PNN$Temperatura,S01A_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_S01B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S01B_PNN,S01B_PNN$Codigo,S01B_PNN$Marea,S01B_PNN$Temperatura,S01B_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_S02A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S02A_PNN,S02A_PNN$Codigo,S02A_PNN$Marea,S02A_PNN$Temperatura,S02A_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_S02B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S02B_PNN,S02B_PNN$Codigo,S02B_PNN$Marea,S02B_PNN$Temperatura,S02B_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_S03A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S03A_PNN,S03A_PNN$Codigo,S03A_PNN$Marea,S03A_PNN$Temperatura,S03A_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_S03B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S03B_PNN,S03B_PNN$Codigo,S03B_PNN$Marea,S03B_PNN$Temperatura,S03B_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_S04A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S04A_PNN,S04A_PNN$Codigo,S04A_PNN$Marea,S04A_PNN$Temperatura,S04A_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_S04B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S04B_PNN,S04B_PNN$Codigo,S04B_PNN$Marea,S04B_PNN$Temperatura,S04B_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_S05A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S05A_PNN,S05A_PNN$Codigo,S05A_PNN$Marea,S05A_PNN$Temperatura,S05A_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_S05B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S05B_PNN,S05B_PNN$Codigo,S05B_PNN$Marea,S05B_PNN$Temperatura,S05B_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_S06A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S06A_PNN,S06A_PNN$Codigo,S06A_PNN$Marea,S06A_PNN$Temperatura,S06A_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+Temp_S06B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S06B_PNN,S06B_PNN$Codigo,S06B_PNN$Marea,S06B_PNN$Temperatura,S06B_PNN$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
 
-G06B_PNN<-Filtrado(Datos_CTDO_PNN,"G06","Baja")
-G05B_PNN<-Filtrado(Datos_CTDO_PNN,"G05","Baja")
-G04B_PNN<-Filtrado(Datos_CTDO_PNN,"G04","Baja")
-G03B_PNN<-Filtrado(Datos_CTDO_PNN,"G03","Baja")
-G02B_PNN<-Filtrado(Datos_CTDO_PNN,"G02","Baja")
-G01B_PNN<-Filtrado(Datos_CTDO_PNN,"G01","Baja")
+Sal_A01A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A01A_PNN,A01A_PNN$Codigo,A01A_PNN$Marea,A01A_PNN$Salinidad,A01A_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_A01B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A01B_PNN,A01B_PNN$Codigo,A01B_PNN$Marea,A01B_PNN$Salinidad,A01B_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_A02A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A02A_PNN,A02A_PNN$Codigo,A02A_PNN$Marea,A02A_PNN$Salinidad,A02A_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_A02B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A02B_PNN,A02B_PNN$Codigo,A02B_PNN$Marea,A02B_PNN$Salinidad,A02B_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_A03A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A03A_PNN,A03A_PNN$Codigo,A03A_PNN$Marea,A03A_PNN$Salinidad,A03A_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_A03B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A03B_PNN,A03B_PNN$Codigo,A03B_PNN$Marea,A03B_PNN$Salinidad,A03B_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_A04A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A04A_PNN,A04A_PNN$Codigo,A04A_PNN$Marea,A04A_PNN$Salinidad,A04A_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_A04B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A04B_PNN,A04B_PNN$Codigo,A04B_PNN$Marea,A04B_PNN$Salinidad,A04B_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_A05A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A05A_PNN,A05A_PNN$Codigo,A05A_PNN$Marea,A05A_PNN$Salinidad,A05A_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_A05B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A05B_PNN,A05B_PNN$Codigo,A05B_PNN$Marea,A05B_PNN$Salinidad,A05B_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_A06A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A06A_PNN,A06A_PNN$Codigo,A06A_PNN$Marea,A06A_PNN$Salinidad,A06A_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_A06B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A06B_PNN,A06B_PNN$Codigo,A06B_PNN$Marea,A06B_PNN$Salinidad,A06B_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_G01A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G01A_PNN,G01A_PNN$Codigo,G01A_PNN$Marea,G01A_PNN$Salinidad,G01A_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_G01B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G01B_PNN,G01B_PNN$Codigo,G01B_PNN$Marea,G01B_PNN$Salinidad,G01B_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_G02A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G02A_PNN,G02A_PNN$Codigo,G02A_PNN$Marea,G02A_PNN$Salinidad,G02A_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_G02B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G02B_PNN,G02B_PNN$Codigo,G02B_PNN$Marea,G02B_PNN$Salinidad,G02B_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_G03A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G03A_PNN,G03A_PNN$Codigo,G03A_PNN$Marea,G03A_PNN$Salinidad,G03A_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_G03B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G03B_PNN,G03B_PNN$Codigo,G03B_PNN$Marea,G03B_PNN$Salinidad,G03B_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_G04A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G04A_PNN,G04A_PNN$Codigo,G04A_PNN$Marea,G04A_PNN$Salinidad,G04A_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_G04B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G04B_PNN,G04B_PNN$Codigo,G04B_PNN$Marea,G04B_PNN$Salinidad,G04B_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_G05A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G05A_PNN,G05A_PNN$Codigo,G05A_PNN$Marea,G05A_PNN$Salinidad,G05A_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_G05B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G05B_PNN,G05B_PNN$Codigo,G05B_PNN$Marea,G05B_PNN$Salinidad,G05B_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_G06A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G06A_PNN,G06A_PNN$Codigo,G06A_PNN$Marea,G06A_PNN$Salinidad,G06A_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_G06B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G06B_PNN,G06B_PNN$Codigo,G06B_PNN$Marea,G06B_PNN$Salinidad,G06B_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_S01A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S01A_PNN,S01A_PNN$Codigo,S01A_PNN$Marea,S01A_PNN$Salinidad,S01A_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_S01B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S01B_PNN,S01B_PNN$Codigo,S01B_PNN$Marea,S01B_PNN$Salinidad,S01B_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_S02A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S02A_PNN,S02A_PNN$Codigo,S02A_PNN$Marea,S02A_PNN$Salinidad,S02A_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_S02B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S02B_PNN,S02B_PNN$Codigo,S02B_PNN$Marea,S02B_PNN$Salinidad,S02B_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_S03A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S03A_PNN,S03A_PNN$Codigo,S03A_PNN$Marea,S03A_PNN$Salinidad,S03A_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_S03B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S03B_PNN,S03B_PNN$Codigo,S03B_PNN$Marea,S03B_PNN$Salinidad,S03B_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_S04A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S04A_PNN,S04A_PNN$Codigo,S04A_PNN$Marea,S04A_PNN$Salinidad,S04A_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_S04B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S04B_PNN,S04B_PNN$Codigo,S04B_PNN$Marea,S04B_PNN$Salinidad,S04B_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_S05A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S05A_PNN,S05A_PNN$Codigo,S05A_PNN$Marea,S05A_PNN$Salinidad,S05A_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_S05B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S05B_PNN,S05B_PNN$Codigo,S05B_PNN$Marea,S05B_PNN$Salinidad,S05B_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_S06A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S06A_PNN,S06A_PNN$Codigo,S06A_PNN$Marea,S06A_PNN$Salinidad,S06A_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
+Sal_S06B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S06B_PNN,S06B_PNN$Codigo,S06B_PNN$Marea,S06B_PNN$Salinidad,S06B_PNN$Profundidad, 'Salinidad - (PSU)', 'Profundidad [m]')
 
+Den_A01A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A01A_PNN,A01A_PNN$Codigo,A01A_PNN$Marea,A01A_PNN$Densidad,A01A_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_A01B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A01B_PNN,A01B_PNN$Codigo,A01B_PNN$Marea,A01B_PNN$Densidad,A01B_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_A02A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A02A_PNN,A02A_PNN$Codigo,A02A_PNN$Marea,A02A_PNN$Densidad,A02A_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_A02B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A02B_PNN,A02B_PNN$Codigo,A02B_PNN$Marea,A02B_PNN$Densidad,A02B_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_A03A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A03A_PNN,A03A_PNN$Codigo,A03A_PNN$Marea,A03A_PNN$Densidad,A03A_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_A03B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A03B_PNN,A03B_PNN$Codigo,A03B_PNN$Marea,A03B_PNN$Densidad,A03B_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_A04A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A04A_PNN,A04A_PNN$Codigo,A04A_PNN$Marea,A04A_PNN$Densidad,A04A_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_A04B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A04B_PNN,A04B_PNN$Codigo,A04B_PNN$Marea,A04B_PNN$Densidad,A04B_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_A05A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A05A_PNN,A05A_PNN$Codigo,A05A_PNN$Marea,A05A_PNN$Densidad,A05A_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_A05B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A05B_PNN,A05B_PNN$Codigo,A05B_PNN$Marea,A05B_PNN$Densidad,A05B_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_A06A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A06A_PNN,A06A_PNN$Codigo,A06A_PNN$Marea,A06A_PNN$Densidad,A06A_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_A06B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A06B_PNN,A06B_PNN$Codigo,A06B_PNN$Marea,A06B_PNN$Densidad,A06B_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_G01A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G01A_PNN,G01A_PNN$Codigo,G01A_PNN$Marea,G01A_PNN$Densidad,G01A_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_G01B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G01B_PNN,G01B_PNN$Codigo,G01B_PNN$Marea,G01B_PNN$Densidad,G01B_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_G02A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G02A_PNN,G02A_PNN$Codigo,G02A_PNN$Marea,G02A_PNN$Densidad,G02A_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_G02B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G02B_PNN,G02B_PNN$Codigo,G02B_PNN$Marea,G02B_PNN$Densidad,G02B_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_G03A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G03A_PNN,G03A_PNN$Codigo,G03A_PNN$Marea,G03A_PNN$Densidad,G03A_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_G03B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G03B_PNN,G03B_PNN$Codigo,G03B_PNN$Marea,G03B_PNN$Densidad,G03B_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_G04A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G04A_PNN,G04A_PNN$Codigo,G04A_PNN$Marea,G04A_PNN$Densidad,G04A_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_G04B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G04B_PNN,G04B_PNN$Codigo,G04B_PNN$Marea,G04B_PNN$Densidad,G04B_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_G05A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G05A_PNN,G05A_PNN$Codigo,G05A_PNN$Marea,G05A_PNN$Densidad,G05A_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_G05B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G05B_PNN,G05B_PNN$Codigo,G05B_PNN$Marea,G05B_PNN$Densidad,G05B_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_G06A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G06A_PNN,G06A_PNN$Codigo,G06A_PNN$Marea,G06A_PNN$Densidad,G06A_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_G06B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(G06B_PNN,G06B_PNN$Codigo,G06B_PNN$Marea,G06B_PNN$Densidad,G06B_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_S01A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S01A_PNN,S01A_PNN$Codigo,S01A_PNN$Marea,S01A_PNN$Densidad,S01A_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_S01B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S01B_PNN,S01B_PNN$Codigo,S01B_PNN$Marea,S01B_PNN$Densidad,S01B_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_S02A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S02A_PNN,S02A_PNN$Codigo,S02A_PNN$Marea,S02A_PNN$Densidad,S02A_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_S02B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S02B_PNN,S02B_PNN$Codigo,S02B_PNN$Marea,S02B_PNN$Densidad,S02B_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_S03A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S03A_PNN,S03A_PNN$Codigo,S03A_PNN$Marea,S03A_PNN$Densidad,S03A_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_S03B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S03B_PNN,S03B_PNN$Codigo,S03B_PNN$Marea,S03B_PNN$Densidad,S03B_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_S04A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S04A_PNN,S04A_PNN$Codigo,S04A_PNN$Marea,S04A_PNN$Densidad,S04A_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_S04B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S04B_PNN,S04B_PNN$Codigo,S04B_PNN$Marea,S04B_PNN$Densidad,S04B_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_S05A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S05A_PNN,S05A_PNN$Codigo,S05A_PNN$Marea,S05A_PNN$Densidad,S05A_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_S05B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S05B_PNN,S05B_PNN$Codigo,S05B_PNN$Marea,S05B_PNN$Densidad,S05B_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_S06A_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S06A_PNN,S06A_PNN$Codigo,S06A_PNN$Marea,S06A_PNN$Densidad,S06A_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
+Den_S06B_PNN<-IctioExPacificoAnalisisPack::perfil_en_profundidad(S06B_PNN,S06B_PNN$Codigo,S06B_PNN$Marea,S06B_PNN$Densidad,S06B_PNN$Profundidad, 'Densidad - (kg/m3)', 'Profundidad [m]')
 
-Temp_A06A_PNN<-Estandar_15(A06A_PNN, "A06 - Marea Alta", A06A_PNN$Temperatura, A06A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_A06B_PNN<-Estandar_15(A06B_PNN, "A06 - Marea Baja", A06B_PNN$Temperatura, A06B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_A05A_PNN<-Estandar_15(A05A_PNN, "A05 - Marea Alta", A05A_PNN$Temperatura, A05A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_A05B_PNN<-Estandar_15(A05B_PNN, "A05 - Marea Baja", A05B_PNN$Temperatura, A05B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_A04A_PNN<-Estandar_15(A04A_PNN, "A04 - Marea Alta", A04A_PNN$Temperatura, A04A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_A04B_PNN<-Estandar_15(A04B_PNN, "A04 - Marea Baja", A04B_PNN$Temperatura, A04B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_A03A_PNN<-Estandar_40(A03A_PNN, "A03 - Marea Alta", A03A_PNN$Temperatura, A03A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_A03B_PNN<-Estandar_40(A03B_PNN, "A03 - Marea Baja", A03B_PNN$Temperatura, A03B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_A02A_PNN<-Estandar_75(A02A_PNN, "A02 - Marea Alta", A02A_PNN$Temperatura, A02A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_A02B_PNN<-Estandar_75(A02B_PNN, "A02 - Marea Baja", A02B_PNN$Temperatura, A02B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_A01A_PNN<-Estandar_75(A01A_PNN, "A01 - Marea Alta", A01A_PNN$Temperatura, A01A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_A01B_PNN<-Estandar_75(A01B_PNN, "A01 - Marea Baja", A01B_PNN$Temperatura, A01B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-
-tiff(filename = "Temperatura_Transecto_Amarales_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
+tiff(filename = "./03_Imagenes/Temperatura_Transecto_Amarales_PNN.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
 grid.arrange(nrow=6, ncol=2,Temp_A01A_PNN, Temp_A01B_PNN, Temp_A02A_PNN,Temp_A02B_PNN, Temp_A03A_PNN, Temp_A03B_PNN, Temp_A04A_PNN, Temp_A04B_PNN, Temp_A05A_PNN,Temp_A05B_PNN, Temp_A06A_PNN, Temp_A06B_PNN, top="Transecto Amarales")
 dev.off()
 
+png(filename = "./03_Imagenes/Temperatura_Transecto_Amarales_PNN.png", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
+grid.arrange(nrow=6, ncol=2,Temp_A01A_PNN, Temp_A01B_PNN, Temp_A02A_PNN,Temp_A02B_PNN, Temp_A03A_PNN, Temp_A03B_PNN, Temp_A04A_PNN, Temp_A04B_PNN, Temp_A05A_PNN,Temp_A05B_PNN, Temp_A06A_PNN, Temp_A06B_PNN, top="Transecto Amarales")
+dev.off()
 
-Sal_A06A_PNN<-Estandar_15(A06A_PNN, "A06 - Marea Alta", A06A_PNN$Salinidad, A06A_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_A06B_PNN<-Estandar_15(A06B_PNN, "A06 - Marea Baja", A06B_PNN$Salinidad, A06B_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_A05A_PNN<-Estandar_15(A05A_PNN, "A05 - Marea Alta", A05A_PNN$Salinidad, A05A_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_A05B_PNN<-Estandar_15(A05B_PNN, "A05 - Marea Baja", A05B_PNN$Salinidad, A05B_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_A04A_PNN<-Estandar_15(A04A_PNN, "A04 - Marea Alta", A04A_PNN$Salinidad, A04A_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_A04B_PNN<-Estandar_15(A04B_PNN, "A04 - Marea Baja", A04B_PNN$Salinidad, A04B_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_A03A_PNN<-Estandar_40(A03A_PNN, "A03 - Marea Alta", A03A_PNN$Salinidad, A03A_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_A03B_PNN<-Estandar_40(A03B_PNN, "A03 - Marea Baja", A03B_PNN$Salinidad, A03B_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_A02A_PNN<-Estandar_75(A02A_PNN, "A02 - Marea Alta", A02A_PNN$Salinidad, A02A_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_A02B_PNN<-Estandar_75(A02B_PNN, "A02 - Marea Baja", A02B_PNN$Salinidad, A02B_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_A01A_PNN<-Estandar_75(A01A_PNN, "A01 - Marea Alta", A01A_PNN$Salinidad, A01A_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_A01B_PNN<-Estandar_75(A01B_PNN, "A01 - Marea Baja", A01B_PNN$Salinidad, A01B_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-
-tiff(filename = "Salinidad_Transecto_Amarales_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
+tiff(filename = "./03_Imagenes/Salinidad_Transecto_Amarales_PNN.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
 grid.arrange(nrow=6, ncol=2,Sal_A01A_PNN, Sal_A01B_PNN, Sal_A02A_PNN,Sal_A02B_PNN, Sal_A03A_PNN, Sal_A03B_PNN, Sal_A04A_PNN, Sal_A04B_PNN, Sal_A05A_PNN,Sal_A05B_PNN, Sal_A06A_PNN, Sal_A06B_PNN, top="Transecto Amarales")
 dev.off()
 
-Den_A06A_PNN<-Estandar_15(A06A_PNN, "A06 - Marea Alta", A06A_PNN$Densidad, A06A_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_A06B_PNN<-Estandar_15(A06B_PNN, "A06 - Marea Baja", A06B_PNN$Densidad, A06B_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_A05A_PNN<-Estandar_15(A05A_PNN, "A05 - Marea Alta", A05A_PNN$Densidad, A05A_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_A05B_PNN<-Estandar_15(A05B_PNN, "A05 - Marea Baja", A05B_PNN$Densidad, A05B_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_A04A_PNN<-Estandar_15(A04A_PNN, "A04 - Marea Alta", A04A_PNN$Densidad, A04A_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_A04B_PNN<-Estandar_15(A04B_PNN, "A04 - Marea Baja", A04B_PNN$Densidad, A04B_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_A03A_PNN<-Estandar_40(A03A_PNN, "A03 - Marea Alta", A03A_PNN$Densidad, A03A_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_A03B_PNN<-Estandar_40(A03B_PNN, "A03 - Marea Baja", A03B_PNN$Densidad, A03B_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_A02A_PNN<-Estandar_75(A02A_PNN, "A02 - Marea Alta", A02A_PNN$Densidad, A02A_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_A02B_PNN<-Estandar_75(A02B_PNN, "A02 - Marea Baja", A02B_PNN$Densidad, A02B_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_A01A_PNN<-Estandar_75(A01A_PNN, "A01 - Marea Alta", A01A_PNN$Densidad, A01A_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_A01B_PNN<-Estandar_75(A01B_PNN, "A01 - Marea Baja", A01B_PNN$Densidad, A01B_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
 
-tiff(filename = "Densidad_Transecto_Amarales_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
+tiff(filename = "./03_Imagenes/Densidad_Transecto_Amarales_PNN.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
 grid.arrange(nrow=6, ncol=2,Den_A01A_PNN, Den_A01B_PNN, Den_A02A_PNN,Den_A02B_PNN, Den_A03A_PNN, Den_A03B_PNN, Den_A04A_PNN, Den_A04B_PNN, Den_A05A_PNN,Den_A05B_PNN, Den_A06A_PNN, Den_A06B_PNN, top="Transecto Amarales")
 dev.off()
 
 
-
-Temp_S06A_PNN<-Estandar_15(S06A_PNN, "S06 - Marea Alta", S06A_PNN$Temperatura, S06A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_S06B_PNN<-Estandar_15(S06B_PNN, "S06 - Marea Baja", S06B_PNN$Temperatura, S06B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_S05A_PNN<-Estandar_15(S05A_PNN, "S05 - Marea Alta", S05A_PNN$Temperatura, S05A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_S05B_PNN<-Estandar_15(S05B_PNN, "S05 - Marea Baja", S05B_PNN$Temperatura, S05B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_S04A_PNN<-Estandar_15(S04A_PNN, "S04 - Marea Alta", S04A_PNN$Temperatura, S04A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_S04B_PNN<-Estandar_15(S04B_PNN, "S04 - Marea Baja", S04B_PNN$Temperatura, S04B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_S03A_PNN<-Estandar_40(S03A_PNN, "S03 - Marea Alta", S03A_PNN$Temperatura, S03A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_S03B_PNN<-Estandar_40(S03B_PNN, "S03 - Marea Baja", S03B_PNN$Temperatura, S03B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_S02A_PNN<-Estandar_75(S02A_PNN, "S02 - Marea Alta", S02A_PNN$Temperatura, S02A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_S02B_PNN<-Estandar_75(S02B_PNN, "S02 - Marea Baja", S02B_PNN$Temperatura, S02B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_S01A_PNN<-Estandar_75(S01A_PNN, "S01 - Marea Alta", S01A_PNN$Temperatura, S01A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_S01B_PNN<-Estandar_75(S01B_PNN, "S01 - Marea Baja", S01B_PNN$Temperatura, S01B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-
-tiff(filename = "Temperatura_Transecto_Sanquianga_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
+tiff(filename = "./03_Imagenes/Temperatura_Transecto_Sanquianga_PNN.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
 grid.arrange(nrow=6, ncol=2,Temp_S01A_PNN, Temp_S01B_PNN, Temp_S02A_PNN,Temp_S02B_PNN, Temp_S03A_PNN, Temp_S03B_PNN, Temp_S04A_PNN, Temp_S04B_PNN, Temp_S05A_PNN,Temp_S05B_PNN, Temp_S06A_PNN, Temp_S06B_PNN, top="Transecto Sanquianga")
 dev.off()
 
-Sal_S06A_PNN<-Estandar_15(S06A_PNN, "S06 - Marea Alta", S06A_PNN$Salinidad, S06A_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_S06B_PNN<-Estandar_15(S06B_PNN, "S06 - Marea Baja", S06B_PNN$Salinidad, S06B_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_S05A_PNN<-Estandar_15(S05A_PNN, "S05 - Marea Alta", S05A_PNN$Salinidad, S05A_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_S05B_PNN<-Estandar_15(S05B_PNN, "S05 - Marea Baja", S05B_PNN$Salinidad, S05B_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_S04A_PNN<-Estandar_15(S04A_PNN, "S04 - Marea Alta", S04A_PNN$Salinidad, S04A_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_S04B_PNN<-Estandar_15(S04B_PNN, "S04 - Marea Baja", S04B_PNN$Salinidad, S04B_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_S03A_PNN<-Estandar_40(S03A_PNN, "S03 - Marea Alta", S03A_PNN$Salinidad, S03A_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_S03B_PNN<-Estandar_40(S03B_PNN, "S03 - Marea Baja", S03B_PNN$Salinidad, S03B_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_S02A_PNN<-Estandar_75(S02A_PNN, "S02 - Marea Alta", S02A_PNN$Salinidad, S02A_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_S02B_PNN<-Estandar_75(S02B_PNN, "S02 - Marea Baja", S02B_PNN$Salinidad, S02B_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_S01A_PNN<-Estandar_75(S01A_PNN, "S01 - Marea Alta", S01A_PNN$Salinidad, S01A_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_S01B_PNN<-Estandar_75(S01B_PNN, "S01 - Marea Baja", S01B_PNN$Salinidad, S01B_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-
-tiff(filename = "Salinidad_Transecto_Sanquianga_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
+tiff(filename = "./03_Imagenes/Salinidad_Transecto_Sanquianga_PNN.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
 grid.arrange(nrow=6, ncol=2,Sal_S01A_PNN, Sal_S01B_PNN, Sal_S02A_PNN,Sal_S02B_PNN, Sal_S03A_PNN, Sal_S03B_PNN, Sal_S04A_PNN, Sal_S04B_PNN, Sal_S05A_PNN,Sal_S05B_PNN, Sal_S06A_PNN, Sal_S06B_PNN, top="Transecto Sanquianga")
 dev.off()
 
-Den_S06A_PNN<-Estandar_15(S06A_PNN, "S06 - Marea Alta", S06A_PNN$Densidad, S06A_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_S06B_PNN<-Estandar_15(S06B_PNN, "S06 - Marea Baja", S06B_PNN$Densidad, S06B_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_S05A_PNN<-Estandar_15(S05A_PNN, "S05 - Marea Alta", S05A_PNN$Densidad, S05A_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_S05B_PNN<-Estandar_15(S05B_PNN, "S05 - Marea Baja", S05B_PNN$Densidad, S05B_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_S04A_PNN<-Estandar_15(S04A_PNN, "S04 - Marea Alta", S04A_PNN$Densidad, S04A_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_S04B_PNN<-Estandar_15(S04B_PNN, "S04 - Marea Baja", S04B_PNN$Densidad, S04B_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_S03A_PNN<-Estandar_40(S03A_PNN, "S03 - Marea Alta", S03A_PNN$Densidad, S03A_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_S03B_PNN<-Estandar_40(S03B_PNN, "S03 - Marea Baja", S03B_PNN$Densidad, S03B_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_S02A_PNN<-Estandar_75(S02A_PNN, "S02 - Marea Alta", S02A_PNN$Densidad, S02A_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_S02B_PNN<-Estandar_75(S02B_PNN, "S02 - Marea Baja", S02B_PNN$Densidad, S02B_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_S01A_PNN<-Estandar_75(S01A_PNN, "S01 - Marea Alta", S01A_PNN$Densidad, S01A_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_S01B_PNN<-Estandar_75(S01B_PNN, "S01 - Marea Baja", S01B_PNN$Densidad, S01B_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-
-
-tiff(filename = "Densidad_Transecto_Sanquianga_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
+tiff(filename = "./03_Imagenes/Densidad_Transecto_Sanquianga_PNN.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
 grid.arrange(nrow=6, ncol=2,Den_S01A_PNN, Den_S01B_PNN, Den_S02A_PNN,Den_S02B_PNN, Den_S03A_PNN, Den_S03B_PNN, Den_S04A_PNN, Den_S04B_PNN, Den_S05A_PNN,Den_S05B_PNN, Den_S06A_PNN, Den_S06B_PNN, top="Transecto Sanquianga")
 dev.off()
 
 
-Oxi_S06A_PNN<-Estandar_15(S06A_PNN, "S06 - Marea Alta", S06A_PNN$Oxigeno, S06A_PNN$Profundidad, "Oxigeno - [mg/L]", "Profundidad [m]")
-Oxi_S06B_PNN<-Estandar_15(S06B_PNN, "S06 - Marea Baja", S06B_PNN$Oxigeno, S06B_PNN$Profundidad, "Oxigeno - [mg/L]", "Profundidad [m]")
-Oxi_S05A_PNN<-Estandar_15(S05A_PNN, "S05 - Marea Alta", S05A_PNN$Oxigeno, S05A_PNN$Profundidad, "Oxigeno - [mg/L]", "Profundidad [m]")
-Oxi_S05B_PNN<-Estandar_15(S05B_PNN, "S05 - Marea Baja", S05B_PNN$Oxigeno, S05B_PNN$Profundidad, "Oxigeno - [mg/L]", "Profundidad [m]")
-Oxi_S04A_PNN<-Estandar_15(S04A_PNN, "S04 - Marea Alta", S04A_PNN$Oxigeno, S04A_PNN$Profundidad, "Oxigeno - [mg/L]", "Profundidad [m]")
-Oxi_S04B_PNN<-Estandar_15(S04B_PNN, "S04 - Marea Baja", S04B_PNN$Oxigeno, S04B_PNN$Profundidad, "Oxigeno - [mg/L]", "Profundidad [m]")
-Oxi_S03A_PNN<-Estandar_40(S03A_PNN, "S03 - Marea Alta", S03A_PNN$Oxigeno, S03A_PNN$Profundidad, "Oxigeno - [mg/L]", "Profundidad [m]")
-Oxi_S03B_PNN<-Estandar_40(S03B_PNN, "S03 - Marea Baja", S03B_PNN$Oxigeno, S03B_PNN$Profundidad, "Oxigeno - [mg/L]", "Profundidad [m]")
-Oxi_S02A_PNN<-Estandar_75(S02A_PNN, "S02 - Marea Alta", S02A_PNN$Oxigeno, S02A_PNN$Profundidad, "Oxigeno - [mg/L]", "Profundidad [m]")
-Oxi_S02B_PNN<-Estandar_75(S02B_PNN, "S02 - Marea Baja", S02B_PNN$Oxigeno, S02B_PNN$Profundidad, "Oxigeno - [mg/L]", "Profundidad [m]")
-Oxi_S01A_PNN<-Estandar_75(S01A_PNN, "S01 - Marea Alta", S01A_PNN$Oxigeno, S01A_PNN$Profundidad, "Oxigeno - [mg/L]", "Profundidad [m]")
-Oxi_S01B_PNN<-Estandar_75(S01B_PNN, "S01 - Marea Baja", S01B_PNN$Oxigeno, S01B_PNN$Profundidad, "Oxigeno - [mg/L]", "Profundidad [m]")
-
-tiff(filename = "Oxigeno_Transecto_Sanquianga_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
-grid.arrange(nrow=6, ncol=2,Oxi_S01A_PNN, Oxi_S01B_PNN, Oxi_S02A_PNN,Oxi_S02B_PNN, Oxi_S03A_PNN, Oxi_S03B_PNN, Oxi_S04A_PNN, Oxi_S04B_PNN, Oxi_S05A_PNN,Oxi_S05B_PNN, Oxi_S06A_PNN, Oxi_S06B_PNN, top="Transecto Sanquianga")
-dev.off()
-
-
-Temp_G06A_PNN<-Estandar_15(G06A_PNN, "G06 - Marea Alta", G06A_PNN$Temperatura, G06A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_G06B_PNN<-Estandar_15(G06B_PNN, "G06 - Marea Baja", G06B_PNN$Temperatura, G06B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_G05A_PNN<-Estandar_15(G05A_PNN, "G05 - Marea Alta", G05A_PNN$Temperatura, G05A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_G05B_PNN<-Estandar_15(G05B_PNN, "G05 - Marea Baja", G05B_PNN$Temperatura, G05B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_G04A_PNN<-Estandar_15(G04A_PNN, "G04 - Marea Alta", G04A_PNN$Temperatura, G04A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_G04B_PNN<-Estandar_15(G04B_PNN, "G04 - Marea Baja", G04B_PNN$Temperatura, G04B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_G03A_PNN<-Estandar_40(G03A_PNN, "G03 - Marea Alta", G03A_PNN$Temperatura, G03A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_G03B_PNN<-Estandar_40(G03B_PNN, "G03 - Marea Baja", G03B_PNN$Temperatura, G03B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_G02A_PNN<-Estandar_75(G02A_PNN, "G02 - Marea Alta", G02A_PNN$Temperatura, G02A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_G02B_PNN<-Estandar_75(G02B_PNN, "G02 - Marea Baja", G02B_PNN$Temperatura, G02B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_G01A_PNN<-Estandar_75(G01A_PNN, "G01 - Marea Alta", G01A_PNN$Temperatura, G01A_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-Temp_G01B_PNN<-Estandar_75(G01B_PNN, "G01 - Marea Baja", G01B_PNN$Temperatura, G01B_PNN$Profundidad, "Temperatura - [°C]", "Profundidad [m]")
-
-tiff(filename = "Temperatura_Transecto_Guascama_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
+tiff(filename = "./03_Imagenes/Temperatura_Transecto_Guascama_PNN.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
 grid.arrange(nrow=6, ncol=2,Temp_G01A_PNN, Temp_G01B_PNN, Temp_G02A_PNN,Temp_G02B_PNN, Temp_G03A_PNN, Temp_G03B_PNN, Temp_G04A_PNN, Temp_G04B_PNN, Temp_G05A_PNN,Temp_G05B_PNN, Temp_G06A_PNN, Temp_G06B_PNN, top="Transecto Guascama")
 dev.off()
 
-Sal_G06A_PNN<-Estandar_15(G06A_PNN, "G06 - Marea Alta", G06A_PNN$Salinidad, G06A_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_G06B_PNN<-Estandar_15(G06B_PNN, "G06 - Marea Baja", G06B_PNN$Salinidad, G06B_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_G05A_PNN<-Estandar_15(G05A_PNN, "G05 - Marea Alta", G05A_PNN$Salinidad, G05A_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_G05B_PNN<-Estandar_15(G05B_PNN, "G05 - Marea Baja", G05B_PNN$Salinidad, G05B_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_G04A_PNN<-Estandar_15(G04A_PNN, "G04 - Marea Alta", G04A_PNN$Salinidad, G04A_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_G04B_PNN<-Estandar_15(G04B_PNN, "G04 - Marea Baja", G04B_PNN$Salinidad, G04B_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_G03A_PNN<-Estandar_40(G03A_PNN, "G03 - Marea Alta", G03A_PNN$Salinidad, G03A_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_G03B_PNN<-Estandar_40(G03B_PNN, "G03 - Marea Baja", G03B_PNN$Salinidad, G03B_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_G02A_PNN<-Estandar_75(G02A_PNN, "G02 - Marea Alta", G02A_PNN$Salinidad, G02A_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_G02B_PNN<-Estandar_75(G02B_PNN, "G02 - Marea Baja", G02B_PNN$Salinidad, G02B_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_G01A_PNN<-Estandar_75(G01A_PNN, "G01 - Marea Alta", G01A_PNN$Salinidad, G01A_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-Sal_G01B_PNN<-Estandar_75(G01B_PNN, "G01 - Marea Baja", G01B_PNN$Salinidad, G01B_PNN$Profundidad, "Salinidad - [PSU]", "Profundidad [m]")
-
-
-tiff(filename = "Salinidad_Transecto_Guascama_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
+tiff(filename = "./03_Imagenes/Salinidad_Transecto_Guascama_PNN.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
 grid.arrange(nrow=6, ncol=2,Sal_G01A_PNN, Sal_G01B_PNN, Sal_G02A_PNN,Sal_G02B_PNN, Sal_G03A_PNN, Sal_G03B_PNN, Sal_G04A_PNN, Sal_G04B_PNN, Sal_G05A_PNN,Sal_G05B_PNN, Sal_G06A_PNN, Sal_G06B_PNN, top="Transecto Guascama")
 dev.off()
 
-
-Den_G06A_PNN<-Estandar_15(G06A_PNN, "G06 - Marea Alta", G06A_PNN$Densidad, G06A_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_G06B_PNN<-Estandar_15(G06B_PNN, "G06 - Marea Baja", G06B_PNN$Densidad, G06B_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_G05A_PNN<-Estandar_15(G05A_PNN, "G05 - Marea Alta", G05A_PNN$Densidad, G05A_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_G05B_PNN<-Estandar_15(G05B_PNN, "G05 - Marea Baja", G05B_PNN$Densidad, G05B_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_G04A_PNN<-Estandar_15(G04A_PNN, "G04 - Marea Alta", G04A_PNN$Densidad, G04A_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_G04B_PNN<-Estandar_15(G04B_PNN, "G04 - Marea Baja", G04B_PNN$Densidad, G04B_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_G03A_PNN<-Estandar_40(G03A_PNN, "G03 - Marea Alta", G03A_PNN$Densidad, G03A_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_G03B_PNN<-Estandar_40(G03B_PNN, "G03 - Marea Baja", G03B_PNN$Densidad, G03B_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_G02A_PNN<-Estandar_75(G02A_PNN, "G02 - Marea Alta", G02A_PNN$Densidad, G02A_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_G02B_PNN<-Estandar_75(G02B_PNN, "G02 - Marea Baja", G02B_PNN$Densidad, G02B_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_G01A_PNN<-Estandar_75(G01A_PNN, "G01 - Marea Alta", G01A_PNN$Densidad, G01A_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-Den_G01B_PNN<-Estandar_75(G01B_PNN, "G01 - Marea Baja", G01B_PNN$Densidad, G01B_PNN$Profundidad, "Densidad - [Kg/m3]", "Profundidad [m]")
-
-tiff(filename = "Densidad_Transecto_Guascama_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
+tiff(filename = "./03_Imagenes/Densidad_Transecto_Guascama_PNN.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
 grid.arrange(nrow=6, ncol=2,Den_G01A_PNN, Den_G01B_PNN, Den_G02A_PNN,Den_G02B_PNN, Den_G03A_PNN, Den_G03B_PNN, Den_G04A_PNN, Den_G04B_PNN, Den_G05A_PNN,Den_G05B_PNN, Den_G06A_PNN, Den_G06B_PNN, top="Transecto Guascama")
 dev.off()
 
@@ -374,16 +287,24 @@ dev.off()
 Temp01_PNN<-grid.arrange(nrow=6, ncol=2,Temp_A01A_PNN, Temp_A01B_PNN, Temp_A02A_PNN,Temp_A02B_PNN, Temp_A03A_PNN, Temp_A03B_PNN, Temp_A04A_PNN, Temp_A04B_PNN, Temp_A05A_PNN,Temp_A05B_PNN, Temp_A06A_PNN, Temp_A06B_PNN, top="Transecto Amarales")
 Temp02_PNN<-grid.arrange(nrow=6, ncol=2,Temp_S01A_PNN, Temp_S01B_PNN, Temp_S02A_PNN,Temp_S02B_PNN, Temp_S03A_PNN, Temp_S03B_PNN, Temp_S04A_PNN, Temp_S04B_PNN, Temp_S05A_PNN,Temp_S05B_PNN, Temp_S06A_PNN, Temp_S06B_PNN, top="Transecto Sanquianga")
 Temp03_PNN<-grid.arrange(nrow=6, ncol=2,Temp_G01A_PNN, Temp_G01B_PNN, Temp_G02A_PNN,Temp_G02B_PNN, Temp_G03A_PNN, Temp_G03B_PNN, Temp_G04A_PNN, Temp_G04B_PNN, Temp_G05A_PNN,Temp_G05B_PNN, Temp_G06A_PNN, Temp_G06B_PNN, top="Transecto Guascama")
-tiff(filename = "Temperatura_Perfiles_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
+
+tiff(filename = "./03_Imagenes/Temperatura_Perfiles_PNN.tif", width = 50, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
 grid.arrange(nrow=1, ncol=3,Temp01_PNN, Temp02_PNN, Temp03_PNN)
 dev.off() 
 
+png(filename = "./03_Imagenes/Temperatura_Perfiles_PNN.png", width = 50, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
+grid.arrange(nrow=1, ncol=3,Temp01_PNN, Temp02_PNN, Temp03_PNN)
+dev.off() 
 
 Sal01_PNN<-grid.arrange(nrow=6, ncol=2,Sal_S01A_PNN, Sal_S01B_PNN, Sal_S02A_PNN,Sal_S02B_PNN, Sal_S03A_PNN, Sal_S03B_PNN, Sal_S04A_PNN, Sal_S04B_PNN, Sal_S05A_PNN,Sal_S05B_PNN, Sal_S06A_PNN, Sal_S06B_PNN, top="Transecto Sanquianga")
 Sal02_PNN<-grid.arrange(nrow=6, ncol=2,Sal_A01A_PNN, Sal_A01B_PNN, Sal_A02A_PNN,Sal_A02B_PNN, Sal_A03A_PNN, Sal_A03B_PNN, Sal_A04A_PNN, Sal_A04B_PNN, Sal_A05A_PNN,Sal_A05B_PNN, Sal_A06A_PNN, Sal_A06B_PNN, top="Transecto Amarales")
 Sal03_PNN<-grid.arrange(nrow=6, ncol=2,Sal_G01A_PNN, Sal_G01B_PNN, Sal_G02A_PNN,Sal_G02B_PNN, Sal_G03A_PNN, Sal_G03B_PNN, Sal_G04A_PNN, Sal_G04B_PNN, Sal_G05A_PNN,Sal_G05B_PNN, Sal_G06A_PNN, Sal_G06B_PNN, top="Transecto Guascama")
 
-tiff(filename = "Salinidad_Perfiles_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
+tiff(filename = "./03_Imagenes/Salinidad_Perfiles_PNN.tif", width = 50, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
+grid.arrange(nrow=1, ncol=3,Sal01_PNN, Sal02_PNN, Sal03_PNN)
+dev.off()
+
+png(filename = "./03_Imagenes/Salinidad_Perfiles_PNN.png", width = 50, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=1, ncol=3,Sal01_PNN, Sal02_PNN, Sal03_PNN)
 dev.off()
 
@@ -391,68 +312,13 @@ Den01_PNN<-grid.arrange(nrow=6, ncol=2,Den_S01A_PNN, Den_S01B_PNN, Den_S02A_PNN,
 Den02_PNN<-grid.arrange(nrow=6, ncol=2,Den_A01A_PNN, Den_A01B_PNN, Den_A02A_PNN,Den_A02B_PNN, Den_A03A_PNN, Den_A03B_PNN, Den_A04A_PNN, Den_A04B_PNN, Den_A05A_PNN,Den_A05B_PNN, Den_A06A_PNN, Den_A06B_PNN, top="Transecto Amarales")
 Den03_PNN<-grid.arrange(nrow=6, ncol=2,Den_G01A_PNN, Den_G01B_PNN, Den_G02A_PNN,Den_G02B_PNN, Den_G03A_PNN, Den_G03B_PNN, Den_G04A_PNN, Den_G04B_PNN, Den_G05A_PNN,Den_G05B_PNN, Den_G06A_PNN, Den_G06B_PNN, top="Transecto Guascama")
 
-tiff(filename = "Densidad_Perfiles_PNN.tif", width = 40, height = 50, units = "cm", pointsize = 15, bg = "white", res = 300)
+tiff(filename = "./03_Imagenes/Densidad_Perfiles_PNN.tif", width = 50, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
+grid.arrange(nrow=1, ncol=3,Den01_PNN, Den02_PNN, Den03_PNN)
+dev.off()
+
+png(filename = "./03_Imagenes/Densidad_Perfiles_PNN.png", width = 50, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
 grid.arrange(nrow=1, ncol=3,Den01_PNN, Den02_PNN, Den03_PNN)
 dev.off()
 
 
-hexbin_plot<-function(Estacion, var1, var2, labelx, labely)
-{
-  if (!is.null(Estacion) &  !is.null(var1)& !is.null(var2)& !is.null(labelx)& !is.null(labely)){
-    ggplot(Estacion, aes(x=var1, y=var2)) +
-      geom_hex(bins = 20) +
-      labs(x= labelx, y=labely)+
-      scale_y_reverse()+
-      scale_x_continuous(position = "top")+
-      theme_bw()}else{
-        print('Faltan Valores')}
-}
-hexbin_Temp_PNN<-hexbin_plot(Datos_CTDO_PNN, Datos_CTDO_PNN$Temperatura, Datos_CTDO_PNN$Profundidad, "Temperatura [°C]", "Profundidad [m]")
-hexbin_Sal_PNN<-hexbin_plot(Datos_CTDO_PNN, Datos_CTDO_PNN$Salinidad , Datos_CTDO_PNN$Profundidad, "Salinidad [PSU]", "Profundidad [m]")
-hexbin_Dens_PNN<-hexbin_plot(Datos_CTDO_PNN, Datos_CTDO_PNN$Densidad   , Datos_CTDO_PNN$Profundidad, "Densidad [kg/m3]", "Profundidad [m]")
-tiff(filename = "hexbin_Temp_total.tiff",width = 20, height = 12, units = "cm", res=300)
-hexbin_Temp_total<-grid.arrange(hexbin_Temp_CCCP, hexbin_Temp_PNN,  ncol=2, nrow=1)
-dev.off()
-tiff(filename = "hexbin_Sal_total.tiff",width = 20, height = 12, units = "cm", res=300)
-hexbin_Sal_total<-grid.arrange(hexbin_Sal_CCCP, hexbin_Sal_PNN,  ncol=2, nrow=1)
-dev.off()
-tiff(filename = "hexbin_Dens_total.tiff",width = 20, height = 12, units = "cm", res=300)
-hexbin_Dens_total<-grid.arrange(hexbin_Dens_CCCP, hexbin_Dens_PNN,  ncol=2, nrow=1)
-dev.off()
-
-
-tiff(filename = "Temperatura_Perfiles_Total.tif", width = 40, height = 60, units = "cm", pointsize = 15, bg = "white", res = 300)
-grid.arrange(nrow=2, ncol=3,Temp01_PNN, Temp02_PNN, Temp03_PNN, Temp01_CCCP, Temp02_CCCP, Temp03_CCCP)
-dev.off() 
-
-tiff(filename = "Salinidad_Perfiles_Total.tif", width = 40, height = 60, units = "cm", pointsize = 15, bg = "white", res = 300)
-grid.arrange(nrow=2, ncol=3,Sal01_PNN, Sal02_PNN, Sal03_PNN,Sal01_CCCP, Sal02_CCCP, Sal03_CCCP)
-dev.off()
-
-tiff(filename = "Densidad_Perfiles_Total.tif", width = 40, height = 60, units = "cm", pointsize = 15, bg = "white", res = 300)
-grid.arrange(nrow=2, ncol=3,Den01_PNN, Den02_PNN, Den03_PNN,Den01_CCCP, Den02_CCCP, Den03_CCCP)
-dev.off()
-
-
-
-head(Datos_CTDO_PNN)
-
-Datos_resumidos_PNN<-Datos_CTDO_PNN %>% 
-  group_by(Estacion, Marea) %>%
-  summarise(Temp_mean_PNN = mean(na.omit(Temperatura)), Temp_media_PNN = median(na.omit(Temperatura)), Temp_std_PNN=sd(na.omit(Temperatura)), 
-            Sal_mean_PNN = mean(na.omit(Salinidad)), Sal_media_PNN = median(na.omit(Salinidad)), Sal_std_PNN=sd(na.omit(Salinidad)), 
-            Den_mean_PNN = mean(na.omit(Densidad )), Den_media_PNN = median(na.omit(Densidad)), Den_std_PNN=sd(na.omit(Densidad )),
-            n = n())
-
-
-totales_Resumidos<-cbind(Datos_resumidos_PNN, Datos_resumidos_CCCP[,3:15])
-
-totales_Resumidos %>% 
-  mutate(Estacion, Temp_mean = (Temp_mean_PNN+Temp_mean_CCCP)/2, 
-         Sal_mean = (Sal_mean_PNN+Sal_mean_CCCP)/2,
-         Den_mean = ( Den_mean_PNN+Den_mean_CCCP)/2,
-         Temp_std = (Temp_std_PNN+Sal_std_CCCP)/2,
-         Sal_std = (Sal_std_PNN+Sal_std_CCCP)/2,
-         Den_std = (Den_std_PNN+Den_std_CCCP)/2)  %>%
-  select(Estacion:Marea, Temp_mean, Sal_mean, Den_mean, Temp_std, Sal_std, Den_std)
 

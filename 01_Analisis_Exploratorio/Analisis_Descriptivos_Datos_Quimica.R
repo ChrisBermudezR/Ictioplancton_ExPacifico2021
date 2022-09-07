@@ -29,13 +29,21 @@ as.factor(Datos_Quimica$Transecto)->Datos_Quimica$Transecto
 as.numeric(Datos_Quimica$No.Estacion)->Datos_Quimica$No.Estacion
 as.factor(Datos_Quimica$Codigo)->Datos_Quimica$Codigo
 #Cargade datos físicos asignados solo para la superficie
-Datos_Fisica_Sup<-readr::read_csv("./01_Resultados/Fisicos_EstadisticasDescrip_CCCP.csv")
-
+Datos_Fisica_Sup_CCCP<-readr::read_csv("./01_Resultados/Fisicos_EstadisticasDescrip_CCCP.csv")
+Datos_Fisica_Sup_PNN<-readr::read_csv("./01_Resultados/Fisicos_EstadisticasDescrip_PNN.csv")
 
 #Uniendo los dos conjuntos de datos
 
-Datos_Totales <- merge(Datos_Quimica,Datos_Fisica_Sup,by="Codigo")
-colnames(Datos_Totales_Limpios)
+Datos_Totales_CCCP <- merge(Datos_Quimica,Datos_Fisica_Sup_CCCP,by="Codigo")
+Datos_Totales_PNN <- merge(Datos_Quimica,Datos_Fisica_Sup_PNN,by="Codigo")
+
+
+write_csv(Datos_Totales_CCCP, "./01_Resultados/Datos_Totales_CCCP.csv", col_names = TRUE)
+write_csv(Datos_Totales_PNN, "./01_Resultados/Datos_Totales_PNN.csv", col_names = TRUE)
+
+
+
+colnames(Datos_Totales_CCCP)
 
 Datos_Totales_Limpios<-Datos_Totales %>% select(
   Codigo,

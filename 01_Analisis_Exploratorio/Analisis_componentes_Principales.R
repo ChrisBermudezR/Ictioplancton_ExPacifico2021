@@ -14,6 +14,68 @@ library(gridExtra)
 library(ggplot2)
 library(factoextra)
 
+datos_CCCP<-read.csv("./01_Resultados/Datos_Totales_CCCP.csv")
+
+
+
+#Separar la matriz de variables
+data_completo_CCCP<-datos_CCCP[c(11:52)]
+#dar nombres a las filas utilizando el codigo para las estaciones en cada tipo de marea
+rownames(data_completo_CCCP)<-datos_CCCP$Codigo   
+
+
+#Calcular los componentes principales
+data_completo_CCCP.pca <- prcomp(na.omit(data_completo_CCCP), scale = TRUE)
+print(data_completo_CCCP.pca)
+summary(data_completo_CCCP.pca)
+Comp_var<-as.data.frame(data_completo_CCCP.pca[5])
+colnames(Comp_var)<-c("PC01", "PC02", 
+                      "PC03", "PC04", 
+                      "PC05", "PC06", 
+                      "PC07","PC08", 
+                      "PC09", "PC10", 
+                      "PC11", "PC12", 
+                      "PC13", "PC14",
+                      "PC15", "PC16", 
+                      "PC17", "PC18",
+                      "PC19", "PC20",
+                      "PC21", "PC22",
+                      "PC23", "PC24",
+                      "PC25", "PC26",
+                      "PC27", "PC28",
+                      "PC29", "PC30",
+                      "PC31", "PC32",
+                      "PC33","PC34"
+                      
+)
+#exportar los valores de los residuales del cáculo de los componentes
+write.table(Comp_var, "Componentes_principales_valores_Var_CCCP.csv", dec = ".", sep=",")
+
+
+######Gráficas de los componentes principales#####
+library("corrplot")
+var <-corrplot::get_pca_var(data_completo_CCCP.pca)
+#Gráfica de correlación entre lasvariables y los componentes
+var$cos2
+
+corrplot(var$cor, is.corr=TRUE)
+
+
+graf01<-factoextra::fviz_eig(data_completo_CCCP.pca,addlabels = TRUE,hjust = -0.3,linecolor ="red")+
+  labs(title="PCA - Screeplot",x="Dimensiones (PC)", y="% explicado de var.")+
+  ylim(c(0,65))
+
+
+
+PCA_12<-factoextra::fviz_pca_biplot(data_completo_CCCP.pca, repel = TRUE,
+                                    axes = c(1,2),
+                                    col.var = "#2E9FDF", # Variables color
+                                    col.ind = "#696969"  # Individuals color
+)+
+  labs(x="PC1 (58.8%)", y="PC2 (17.1%)")
+
+
+
 
 #PCA Variables
 data_completo<-Datos_Totales_Limpios[c(11:44)]

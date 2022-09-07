@@ -67,10 +67,10 @@ dev.off()
 
 
 
-Temperatura_Hist_CCCP<-IctioExPacificoAnalisisPack::histograma_Transecto(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Temperatura, "Temperatura (°C)")
-Salinidad_Hist_CCCP<-histograma_Transecto(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Salinidad, "Salinidad (PSU)")
-Densidad_Hist_CCCP<-histograma_Transecto(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Densidad, "Densidad (KG/m3)")
-Oxigeno_Hist_CCCP<-histograma_Transecto(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Oxigeno, "Oxígeno disuelto (mg/L)")
+Temperatura_Hist_CCCP<-IctioExPacificoAnalisisPack::IctioExPacificoAnalisisPack::histograma_Transecto(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Temperatura, "Temperatura (°C)")
+Salinidad_Hist_CCCP<-IctioExPacificoAnalisisPack::histograma_Transecto(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Salinidad, "Salinidad (PSU)")
+Densidad_Hist_CCCP<-IctioExPacificoAnalisisPack::histograma_Transecto(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Densidad, "Densidad (KG/m3)")
+Oxigeno_Hist_CCCP<-IctioExPacificoAnalisisPack::histograma_Transecto(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Oxigeno, "Oxígeno disuelto (mg/L)")
 
 
 tiff(filename = "./03_Imagenes/02_Histogramas_CCCP.tif", width = 40, height = 30, units = "cm", pointsize = 30, bg = "white", res = 300, compression = "lzw")
