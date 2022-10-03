@@ -1,5 +1,3 @@
-
-
 install.packages("entropart")
 install.packages("iNEXT")
 install.packages("vegan")
@@ -17,143 +15,20 @@ library(tidyr)
 data(BCI)
 datosDiv <- BCI
 
-Codigo_fito<-read.table("./02_Datos/Biologicos/DatosP_Fitoplancton/Matriz_Codigos_Fito.csv", sep=",", header = TRUE,)
-Div_Code_fito<-Codigo_fito[,2:190]
-row.names(Div_Code_fito) <- Codigo_fito[["Etiquetas.de.fila"]]
-Codigo_fito_conteo<-read.table("./02_Datos/Biologicos/DatosP_Fitoplancton/Cod_Fito_Conteo.csv", sep=",", header = TRUE,)
-Codigo_fito_conteo2<-Codigo_fito_conteo[,2:190]
-row.names(Codigo_fito_conteo2) <- Codigo_fito_conteo[["Codigo"]]
-
-# Vector para almacenar el número de especies por unidad de muestreo
-S <- c()
-
-# Ciclo para recorrer la matriz de datos
-for(i in 1:nrow(Div_Code_fito)){ # Ciclo desde uno hasta el total de filas de los datos (unidades de muestreo)
-  S.tmp <- length(which(Div_Code_fito[i, ] > 0)) # Número de especies (columnas) con abundancia > 0 por unidad de muestreo
-  S <- append(S, S.tmp) # Añadimos el número de especies del sitio i al vector de especies
-}
-
-# Suma de las abundancias por unidad de muestreo (filas)
-N <- rowSums(Div_Code_fito)
-
-# Índice de Margalef
-Margalef <- (S - 1) / log(N)
-
-# Índice de Menhinick
-Menhinick <- S / sqrt(N)
-
-# Combinamos ambos índices en una misma tabla
-indices <- cbind(Ma = Margalef, Me = Menhinick) 
 
 
-
-# Histograma índice de Margalef
-hist(indices[, 1], # Valores de todas las filas de la primera columna de la tabla índices
-     xlab = "Margalef", # Etiqueta del eje X
-     main = NA) # Sin  título principal
-
-# Histograma índice de Menhinick
-hist(indices[, 2], # Valores de todas las filas de la segunda columna de la tabla índices
-     xlab = "Menhinick", # Etiqueta del eje Y
-     main = NA) # Sin título principal
-
-
-# Índice de Gini-Simpson
-Simpson <- diversity(Div_Code_fito, index  = "simpson")
-
-# Índice de Shannon
-Shannon <- diversity(Div_Code_fito, index = "shannon")
-
-# Índice de Pielou
-Pielou <- Shannon / log(S) 
-
-# Combinamos los índices en una tabla
-indices <- cbind(Simpson = Simpson, Shannon = Shannon, Pielou = Pielou) 
-
-
-#Histograma índice de Simpson
-hist(indices[, 1],
-     xlab = "Simpson",
-     main = NA)
-
-#Histograma índice de Shannon
-hist(indices[, 2],
-     xlab = "Shannon",
-     main = NA)
-
-#Histograma índice de Pielou
-hist(indices[, 3],
-     xlab = "Pielou",
-     main = NA)
-
-
-
-# Número de especies de la comunidad
-S <- ncol(Div_Code_fito)
-
-# Suma de las abundancias de cada especie
-datosDiv.Sum <- colSums(Div_Code_fito)
-
-# Índice de Gini-Simpson
-Simpson <- diversity(datosDiv.Sum, index  = "simpson")
-
-# Índice de Shannon
-Shannon <- diversity(datosDiv.Sum, index = "shannon")
-
-# Índice de Pielou
-Pielou <- Shannon / log(S)
-
-# Combinamos los índices en una tabla
-indices <- cbind(Simpson = Simpson, Shannon = Shannon, Pielou = Pielou)
-
-
-espAcc<-vegan::specaccum(Div_Code_fito)
-plot(espAcc, ci.type="polygon", ci.col="yellow")
-
-plot(specaccum(Div_Code_fito), xlab = "# of samples", ylab = "# of species")
-
-
-acumulacion<-specpool(Div_Code_fito)
-
-sp1 <- specaccum(Div_Code_fito)
-sp2 <- specaccum(Div_Code_fito, "random")
-sp2
-summary(sp2)
-plot(sp1, ci.type="poly", col="blue", lwd=2, ci.lty=0, ci.col="lightblue")
-boxplot(sp2, col="yellow", add=TRUE, pch="+")
-## Fit Lomolino model to the exact accumulation
-mod1 <- fitspecaccum(sp1, "lomolino")
-coef(mod1)
-fitted(mod1)
-plot(sp1)
-## Add Lomolino model using argument 'add'
-plot(mod1, add = TRUE, col=2, lwd=2)
-## Fit Arrhenius models to all random accumulations
-mods <- fitspecaccum(sp2, "arrh")
-plot(mods, col="hotpink")
-boxplot(sp2, col = "yellow", border = "blue", lty=1, cex=0.3, add= TRUE)
-## Use nls() methods to the list of models
-sapply(mods$models, AIC)
-
-
-
-rad <- radfit(Div_Code_fito)
-rad
-plot(rad)
-
-##### Acumulación de especies
 
 # Estimadores de riqueza por unidad de muestreo
-est.Sites <- vegan::estimateR(Codigo_fito_conteo2)
+est.Sites2 <- vegan::estimateR(datosDiv)
 
-estimateR(Codigo_fito_conteo2["S06A",])
+estimateR(datosDiv["S06B",])
 
 # Vector para almacenar el número de doubletons por unidad de muestreo
 doub <- c()
 
 # Ciclo para recorrer la matriz de datos
-for(i in 1:nrow(Codigo_fito_conteo2)){ # Ciclo desde uno hasta el total de filas de los datos (unidades de muestreo)
-  doub.tmp <- length(which(Codigo_fito_conteo2[i, ] == 2)) # Número de doubletons por unidad de muestreo
+for(i in 1:nrow(Transeptos_fito2)){ # Ciclo desde uno hasta el total de filas de los datos (unidades de muestreo)
+  doub.tmp <- length(which(Transeptos_fito2[i, ] == 2)) # Número de doubletons por unidad de muestreo
   doub <- append(doub, doub.tmp) # Añadimos el número de doubletons del sitio i al vector de doubletons
 }
 
@@ -163,31 +38,31 @@ for(i in 1:nrow(Codigo_fito_conteo2)){ # Ciclo desde uno hasta el total de filas
 CV <- c() 
 
 # Ciclo para recorrer la matriz de datos
-for(i in 1:nrow(Codigo_fito_conteo2)){ # Ciclo desde uno hasta el total de filas de los datos (unidades de muestreo)
-  zeros <- which(Codigo_fito_conteo2[i, ] == 0) # Validamos qué especies tienen abundancia de 0 para excluirlas del CV
-  CV.tmp <- sd(t(Codigo_fito_conteo2[i, -zeros])) / mean(t(Codigo_fito_conteo2[i, -zeros])) # CV de la abundancia por unidad de muestreo
+for(i in 1:nrow(datosDiv)){ # Ciclo desde uno hasta el total de filas de los datos (unidades de muestreo)
+  zeros <- which(datosDiv[i, ] == 0) # Validamos qué especies tienen abundancia de 0 para excluirlas del CV
+  CV.tmp <- sd(t(datosDiv[i, -zeros])) / mean(t(datosDiv[i, -zeros])) # CV de la abundancia por unidad de muestreo
   CV <- append(CV, CV.tmp) # Añadimos el CV del sitio i al vector de CV
 }
 
 
 # Estimadores de riqueza para la comunidad entera
-est.Comm <- estimateR(colSums(Codigo_fito_conteo2)) 
+est.Comm <- estimateR(colSums(datosDiv)) 
 
 
 
 # Estimadores de riqueza adicionales para la comunidad entera
-est.Comm <- specpool(Codigo_fito_conteo2, smallsample = TRUE)
+est.Comm <- specpool(datosDiv, smallsample = TRUE)
 
 
 
 # Calculo de la diversidad acumulada para 100 permutaciones
-accum <- estaccumR(Codigo_fito_conteo2, permutations = 100)
+accum <- estaccumR(datosDiv, permutations = 100)
 
 # Diversidades acumuladas promedio
-accum.mean <- as.data.frame(accum$means) 
+accum.mean <- as.datosDiv.frame(accum$means) 
 
 # Abundancias acumuladas
-accum.abundance <- cumsum(rowSums(Codigo_fito_conteo2))
+accum.abundance <- cumsum(rowSums(datosDiv))
 
 # Curva de acumulación usando unidades de muestreo
 plot(x = accum.mean$N, # Valores de X
@@ -211,11 +86,11 @@ plot(x = accum.mean$N, # Valores de X
      xlab = "Unidades de muestreo", # Etiqueta del eje X
      ylab = "Riqueza acumulada", # Etiqueta del eje Y
      type = "l", # Tipo de línea (sólida)
-     ylim = c(0, 200), # Límites del eje Y (según los datos)
+     ylim = c(80, 240), # Límites del eje Y (según los datos)
      yaxt = "n") # Remover la división por defecto del eje Y (para usar personalizada)
 
 # Intervalo personalizado del eje Y de la grafica (según los datos)
-axis(side = 2, at = seq(0, 200, 20))
+axis(side = 2, at = seq(80, 240, 40))
 
 # Curva del estimador Chao
 lines(x = accum.mean$N, # Valores de X
@@ -243,17 +118,17 @@ legend(x = "bottomright", # Posición
 permutations = 100 # Número de permutaciones
 tmp.rnd <- list() # Lista para almacenar las 100 nuevas matrices aleatorizadas
 for(i in 1:permutations){ # Ciclo desde uno hasta el total de permutaciones
-  tmp.rnd[[i]] <- Codigo_fito_conteo2[sample(1:nrow(Codigo_fito_conteo2)), ] # Aleatorización del orden de las filas de la matriz original
+  tmp.rnd[[i]] <- datosDiv[sample(1:nrow(datosDiv)), ] # Aleatorización del orden de las filas de la matriz original
 }
-single <- as.data.frame(matrix(ncol = permutations, nrow = nrow(Codigo_fito_conteo2))) # Matriz para almacenar los singletons
-double <- as.data.frame(matrix(ncol = permutations, nrow = nrow(Codigo_fito_conteo2))) # Matriz para almacenar los doubletons
+single <- as.datosDiv.frame(matrix(ncol = permutations, nrow = nrow(datosDiv))) # Matriz para almacenar los singletons
+double <- as.datosDiv.frame(matrix(ncol = permutations, nrow = nrow(datosDiv))) # Matriz para almacenar los doubletons
 for(i in 1:length(tmp.rnd)){ # Ciclo desde uno hasta el total de matrices aleatorizadas
-  for(n in 1:nrow(Codigo_fito_conteo2)){ # Ciclo desde uno hasta el total de filas en los datos
+  for(n in 1:nrow(datosDiv)){ # Ciclo desde uno hasta el total de filas en los datos
     single[n, i] <- length(which(colSums(tmp.rnd[[i]][1:n, ]) == 1)) # Cálculo de singletons acumulados
     double[n, i] <- length(which(colSums(tmp.rnd[[i]][1:n, ]) == 2)) # Cálculo de doubletons acumulados
   }
 }
-rares <- data.frame(single = rowMeans(single), double = rowMeans(double)) # Cálculo de valores promedio por fila
+rares <- datosDiv.frame(single = rowMeans(single), double = rowMeans(double)) # Cálculo de valores promedio por fila
 
 # Curva de acumulación
 plot(x = accum.mean$N, # Valores de X
@@ -261,11 +136,11 @@ plot(x = accum.mean$N, # Valores de X
      xlab = "Unidades de muestreo", # Etiqueta del eje X
      ylab = "Riqueza acumulada", # Etiqueta del eje Y
      type = "l", # Tipo de línea (sólida)
-     ylim = c(0, 200), # Límites del eje Y (según los datos)
+     ylim = c(0, 240), # Límites del eje Y (según los datos)
      yaxt = "n") # Remover la división por defecto del eje Y (para usar personalizada)
 
 # Intervalo personalizado del eje Y de la grafica (según los datos)
-axis(side = 2, at = seq(0, 200, 20))
+axis(side = 2, at = seq(0, 240, 40))
 
 # Curva del estimador Chao
 lines(x = accum.mean$N, # Valores de X
@@ -303,13 +178,13 @@ legend(x = "bottomright", # Posición
 
 
 # Matriz para almacenar las desviaciones estandar
-accum.sd <- matrix(ncol = 5, nrow = nrow(Codigo_fito_conteo2))
+accum.sd <- matrix(ncol = 5, nrow = nrow(datosDiv))
 
 # Nombres de las columnas de la matriz de desviaciones
 colnames(accum.sd) <- c("S.SD", "Chao.SD", "ACE.SD", "Singletons.SD", "Doubletons.SD")
 
 # Ciclo para recorrer las matrices de permutaciones
-for(i in 1:nrow(Codigo_fito_conteo2)){ # Ciclo desde uno hasta el total de filas de los datos (unidades de muestreo)
+for(i in 1:nrow(datosDiv)){ # Ciclo desde uno hasta el total de filas de los datos (unidades de muestreo)
   accum.sd[i, 1] <- sd(accum$S[i, ]) # Desviación estándar S
   accum.sd[i, 2] <- sd(accum$chao[i, ]) # Desviación estándar Chao
   accum.sd[i, 3] <- sd(accum$ace[i, ]) # Desviación estándar ACE
@@ -318,7 +193,7 @@ for(i in 1:nrow(Codigo_fito_conteo2)){ # Ciclo desde uno hasta el total de filas
 }
 
 # Matriz para almacenar los intervalos de confianza
-CI <- as.data.frame(matrix(ncol = 10, nrow = nrow(Codigo_fito_conteo2)))
+CI <- as.datosDiv.frame(matrix(ncol = 10, nrow = nrow(datosDiv)))
 
 # Nombres de las columnas de la matriz de intervalos de confianza
 colnames(CI) <- c("S.LCI", "S.UCI", "Chao.LCI", "Chao.UCI", "ACE.LCI", "ACE.UCI", "Sin.LCI", "Sin.UCI", "Dou.LCI", "Dou.UCI")
@@ -327,7 +202,7 @@ colnames(CI) <- c("S.LCI", "S.UCI", "Chao.LCI", "Chao.UCI", "ACE.LCI", "ACE.UCI"
 Z <- 1.96
 
 # Ciclo para calcular los intervalos de confianza
-for(i in 1:nrow(Codigo_fito_conteo2)){ # Ciclo desde uno hasta el total de filas de los datos (unidades de muestreo)
+for(i in 1:nrow(datosDiv)){ # Ciclo desde uno hasta el total de filas de los datos (unidades de muestreo)
   CI[i, 1] <- accum.mean[i, 2] - (Z * (accum.sd[i, 1] / sqrt(ncol(accum$S)))) # Limite inferior 95% CI S
   CI[i, 2] <- accum.mean[i, 2] + (Z * (accum.sd[i, 1] / sqrt(ncol(accum$S)))) # Limite superior 95% CI S
   CI[i, 3] <- accum.mean[i, 3] - (Z * (accum.sd[i, 2] / sqrt(ncol(accum$chao)))) # Limite inferior 95% CI Chao
@@ -354,31 +229,31 @@ plot(NA, # Lienzo sin datos
 axis(side = 2, at = seq(0, 240, 40))
 
 # Polígono con los intervalos de confianza para S
-polygon(x = c(seq(1, nrow(Codigo_fito_conteo2)) , rev(seq(1, nrow(Codigo_fito_conteo2)))), # Valores X del intervalo
+polygon(x = c(seq(1, nrow(datosDiv)) , rev(seq(1, nrow(datosDiv)))), # Valores X del intervalo
         y = c(CI$S.LCI, rev(CI$S.UCI)), # Valores Y del intervalo
         col = rgb(166/255, 122/255, 222/255, 0.6), # Color (en RGB) y transparencia del polígono
         border = NA) # No mostrar el borde del polígono
 
 # Polígono con los intervalos de confianza para Chao
-polygon(x = c(seq(1, nrow(Codigo_fito_conteo2)) , rev(seq(1, nrow(Codigo_fito_conteo2)))), # Valores X del intervalo
+polygon(x = c(seq(1, nrow(datosDiv)) , rev(seq(1, nrow(datosDiv)))), # Valores X del intervalo
         y = c(CI$Chao.LCI, rev(CI$Chao.UCI)), # Valores Y del intervalo
         col = rgb(222/255, 122/255, 122/255, 0.6), # Color (en RGB) y transparencia del polígono
         border = NA) # No mostrar el borde del polígono
 
 # Polígono con los intervalos de confianza para ACE
-polygon(x = c(seq(1, nrow(Codigo_fito_conteo2)) , rev(seq(1, nrow(Codigo_fito_conteo2)))), # Valores X del intervalo
+polygon(x = c(seq(1, nrow(datosDiv)) , rev(seq(1, nrow(datosDiv)))), # Valores X del intervalo
         y = c(CI$ACE.LCI, rev(CI$ACE.UCI)), # Valores Y del intervalo
         col = rgb(122/255, 170/255, 222/255, 0.6), # Color (en RGB) y transparencia del polígono
         border = NA) # No mostrar el borde del polígono
 
 # Polígono con los intervalos de confianza para los singletons
-polygon(x = c(seq(1, nrow(Codigo_fito_conteo2)) , rev(seq(1, nrow(Codigo_fito_conteo2)))), # Valores X del intervalo
+polygon(x = c(seq(1, nrow(datosDiv)) , rev(seq(1, nrow(datosDiv)))), # Valores X del intervalo
         y = c(CI$Sin.LCI, rev(CI$Sin.UCI)), # Valores Y del intervalo
         col = rgb(0/255, 100/255, 0/255, 0.2), # Color (en RGB) y transparencia del polígono
         border = NA) # No mostrar el borde del polígono
 
 # Polígono con los intervalos de confianza para los doubletons
-polygon(x = c(seq(1, nrow(Codigo_fito_conteo2)) , rev(seq(1, nrow(Codigo_fito_conteo2)))), # Valores X del intervalo
+polygon(x = c(seq(1, nrow(datosDiv)) , rev(seq(1, nrow(datosDiv)))), # Valores X del intervalo
         y = c(CI$Dou.LCI, rev(CI$Dou.UCI)), # Valores Y del intervalo
         col = rgb(255/255, 165/255, 0/255, 0.2), # Color (en RGB) y transparencia del polígono
         border = NA) # No mostrar el borde del polígono
@@ -439,13 +314,13 @@ C2.Jan <- c(rep(1, 84), rep(2, 10), rep(3, 4), rep(4, 3), rep(5, 5), rep(6, 1), 
 C2.Jan <- sample(C2.Jan, 140)
 
 # Añadimos ambos vectores a una tabla
-datosDiv <- as.data.frame(rbind(C1 = C1.Jan, C2 = C2.Jan))
+datosDiv <- as.datosDiv.frame(rbind(C1 = C1.Jan, C2 = C2.Jan))
 
 
 
 
 # Curvas de acumulación basadas en tamaño
-rare <- rarecurve(Codigo_fito_conteo2, # Matriz de datos
+rare <- rarecurve(datosDiv, # Matriz de datos
                   col = c("red", "blue"), # Colores de las líneas
                   label = FALSE, # Sin etiquetas de datos
                   xlab = "Número de individuos", # Etiqueta del eje X
@@ -457,7 +332,7 @@ rare <- rarecurve(Codigo_fito_conteo2, # Matriz de datos
 axis(side = 2, at = seq(0, 140, 20))
 
 # Obtenemos el valor de abundancia mínima común entre las comunidades
-ab.min <- min(rowSums(Codigo_fito_conteo2))
+ab.min <- min(rowSums(datosDiv))
 
 # Línea punteada en el valor de abundancia mínima común
 abline(v = ab.min, lty = 2)
@@ -487,15 +362,15 @@ sing <- c()
 doub <- c()
 
 # Ciclo para recorrer la matriz de datos
-for(i in 1:nrow(Codigo_fito_conteo2)){ # Ciclo desde uno hasta el total de filas de los datos (comunidades)
-  sing.tmp <- length(which(Codigo_fito_conteo2[i, ] == 1)) # Número de singletons por comunidad
+for(i in 1:nrow(datosDiv)){ # Ciclo desde uno hasta el total de filas de los datos (comunidades)
+  sing.tmp <- length(which(datosDiv[i, ] == 1)) # Número de singletons por comunidad
   sing <- append(sing, sing.tmp) # Añadimos el número de singletons del sitio i al vector de singletons
   doub.tmp <- length(which(datosDiv[i, ] == 2)) # Número de doubletons por comunidad
   doub <- append(doub, doub.tmp) # Añadimos el número de doubletons del sitio i al vector de doubletons
 }
 
 # Abundancias totales por comunidad
-abundances <- rowSums(Codigo_fito_conteo2)
+abundances <- rowSums(datosDiv)
 
 # Matriz para almacenar los datos de cobertura por comunidad
 coverage <- matrix(ncol = nrow(datosDiv), nrow = 1)
@@ -511,7 +386,7 @@ for(i in 1:nrow(datosDiv)){ # Ciclo desde uno hasta el total de filas de los dat
 
 
 # Matriz de datos transpuesta
-datosDiv.t <- as.data.frame(t(Codigo_fito_conteo2))
+datosDiv.t <- as.datosDiv.frame(t(datosDiv))
 
 # Comando general de iNEXT (calcula muchas cosas)
 est.Comms <- iNEXT(datosDiv.t, q = 0, datosDivtype = "abundance") # q = 0 es la riqueza (diversidades verdaderas)
