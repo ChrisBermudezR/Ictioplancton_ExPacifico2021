@@ -5,7 +5,7 @@ install.packages("iNEXT")
 install.packages("vegan")
 install.packages("dplyr")
 install.packages("tidyr")
-
+install.packages("C:/Users/chris/Downloads/entropart_1.6-11.zip", repos = NULL, type = "source")
 
 library(entropart)
 library(iNEXT)
@@ -18,37 +18,40 @@ data(BCI)
 DATA <- BCI
 
 
-bioprueba<-read.table("./02_Datos/Biologicos/DatosP_Fitoplancton/Plantilla_registros_Exp_Santianga_2021_09_21.csv", sep=",", header = TRUE)
+bioprueba<-read.table("./02_Datos/Biologicos/DatosP_Fitoplancton/Fitoplancton_Datos_Long.csv", sep=",", header = TRUE)
 
 colnames(bioprueba)
 
-dataframeFito<-bioprueba %>% select(eventID, scientificName, organismQuantity)
+bioprueba<-bioprueba %>% select(Especies,Estacion, Densidad)
 
-bioprueba2<-dataframeFito %>% pivot_wider(names_from = scientificName, values_from = organismQuantity)
+bioprueba2<-bioprueba %>% pivot_wider(names_from = Estacion, values_from = Densidad)
 
-bioprueba3<-tidyr::expand(fito_DarwinCore, scientificName,  organismQuantity)
-bioprueba4<-tidyr::pivot_wider(bioprueba3, names_from = scientificName, values_from = organismQuantity)
 
-bioprueba5<-bioprueba2[c(56:150)]
+bioprueba2<-as.data.frame(bioprueba2)
 
-bioprueba6<-as_tibble(bioprueba4)
-class(bioprueba6)
+rownames<-as.vector(bioprueba2[1])
+dataSubset<-bioprueba2[,2:37]
+row.names(dataSubset) <- rownames[["Especies"]]
 
-bioprueba4$`Actinocyclus `
 
-View(FQA)
+
+dataSubset[dataSubset == "NULL"] <- as.numeric(0)
+
+datosDiv<-t(dataSubset)
+
+
 
 # Vector para almacenar el número de especies por unidad de muestreo
 S <- c()
 
 # Ciclo para recorrer la matriz de datos
-for(i in 1:nrow(DATA)){ # Ciclo desde uno hasta el total de filas de los datos (unidades de muestreo)
-  S.tmp <- length(which(DATA[i, ] > 0)) # Número de especies (columnas) con abundancia > 0 por unidad de muestreo
+for(i in 1:nrow(datosDiv)){ # Ciclo desde uno hasta el total de filas de los datos (unidades de muestreo)
+  S.tmp <- length(which(datosDiv[i, ] > 0)) # Número de especies (columnas) con abundancia > 0 por unidad de muestreo
   S <- append(S, S.tmp) # Añadimos el número de especies del sitio i al vector de especies
 }
 
 # Suma de las abundancias por unidad de muestreo (filas)
-N <- rowSums(DATA)
+N <- rowSums(datosDiv)
 
 # Índice de Margalef
 Margalef <- (S - 1) / log(N)
