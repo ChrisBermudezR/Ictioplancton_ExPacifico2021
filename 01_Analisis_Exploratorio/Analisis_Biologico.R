@@ -43,7 +43,7 @@ Margalef <- (S - 1) / log(N)
 Menhinick <- S / sqrt(N)
 
 # Combinamos ambos índices en una misma tabla
-indices <- cbind(Ma = Margalef, Me = Menhinick) 
+indices2 <- cbind(Ma = Margalef, Me = Menhinick) 
 
 
 
@@ -121,6 +121,7 @@ sp2
 summary(sp2)
 plot(sp1, ci.type="poly", col="blue", lwd=2, ci.lty=0, ci.col="lightblue")
 boxplot(sp2, col="yellow", add=TRUE, pch="+")
+
 ## Fit Lomolino model to the exact accumulation
 mod1 <- fitspecaccum(sp1, "lomolino")
 coef(mod1)
@@ -211,11 +212,11 @@ plot(x = accum.mean$N, # Valores de X
      xlab = "Unidades de muestreo", # Etiqueta del eje X
      ylab = "Riqueza acumulada", # Etiqueta del eje Y
      type = "l", # Tipo de línea (sólida)
-     ylim = c(0, 200), # Límites del eje Y (según los datos)
+     ylim = c(0, 250), # Límites del eje Y (según los datos)
      yaxt = "n") # Remover la división por defecto del eje Y (para usar personalizada)
 
 # Intervalo personalizado del eje Y de la grafica (según los datos)
-axis(side = 2, at = seq(0, 200, 20))
+axis(side = 2, at = seq(0, 250, 20))
 
 # Curva del estimador Chao
 lines(x = accum.mean$N, # Valores de X
@@ -261,11 +262,11 @@ plot(x = accum.mean$N, # Valores de X
      xlab = "Unidades de muestreo", # Etiqueta del eje X
      ylab = "Riqueza acumulada", # Etiqueta del eje Y
      type = "l", # Tipo de línea (sólida)
-     ylim = c(0, 200), # Límites del eje Y (según los datos)
+     ylim = c(0, 250), # Límites del eje Y (según los datos)
      yaxt = "n") # Remover la división por defecto del eje Y (para usar personalizada)
 
 # Intervalo personalizado del eje Y de la grafica (según los datos)
-axis(side = 2, at = seq(0, 200, 20))
+axis(side = 2, at = seq(0, 250, 20))
 
 # Curva del estimador Chao
 lines(x = accum.mean$N, # Valores de X
@@ -442,10 +443,10 @@ C2.Jan <- sample(C2.Jan, 140)
 datosDiv <- as.data.frame(rbind(C1 = C1.Jan, C2 = C2.Jan))
 
 
-
+Div_Code_fito
 
 # Curvas de acumulación basadas en tamaño
-rare <- rarecurve(Codigo_fito_conteo2, # Matriz de datos
+rare <- rarecurve(Div_Code_fito, # Matriz de datos
                   col = c("red", "blue"), # Colores de las líneas
                   label = FALSE, # Sin etiquetas de datos
                   xlab = "Número de individuos", # Etiqueta del eje X
@@ -457,7 +458,7 @@ rare <- rarecurve(Codigo_fito_conteo2, # Matriz de datos
 axis(side = 2, at = seq(0, 140, 20))
 
 # Obtenemos el valor de abundancia mínima común entre las comunidades
-ab.min <- min(rowSums(Codigo_fito_conteo2))
+ab.min <- min(rowSums(Div_Code_fito))
 
 # Línea punteada en el valor de abundancia mínima común
 abline(v = ab.min, lty = 2)
@@ -487,15 +488,15 @@ sing <- c()
 doub <- c()
 
 # Ciclo para recorrer la matriz de datos
-for(i in 1:nrow(Codigo_fito_conteo2)){ # Ciclo desde uno hasta el total de filas de los datos (comunidades)
-  sing.tmp <- length(which(Codigo_fito_conteo2[i, ] == 1)) # Número de singletons por comunidad
+for(i in 1:nrow(Div_Code_fito)){ # Ciclo desde uno hasta el total de filas de los datos (comunidades)
+  sing.tmp <- length(which(Div_Code_fito[i, ] == 1)) # Número de singletons por comunidad
   sing <- append(sing, sing.tmp) # Añadimos el número de singletons del sitio i al vector de singletons
   doub.tmp <- length(which(datosDiv[i, ] == 2)) # Número de doubletons por comunidad
   doub <- append(doub, doub.tmp) # Añadimos el número de doubletons del sitio i al vector de doubletons
 }
 
 # Abundancias totales por comunidad
-abundances <- rowSums(Codigo_fito_conteo2)
+abundances <- rowSums(Div_Code_fito)
 
 # Matriz para almacenar los datos de cobertura por comunidad
 coverage <- matrix(ncol = nrow(datosDiv), nrow = 1)
@@ -511,18 +512,18 @@ for(i in 1:nrow(datosDiv)){ # Ciclo desde uno hasta el total de filas de los dat
 
 
 # Matriz de datos transpuesta
-datosDiv.t <- as.data.frame(t(Codigo_fito_conteo2))
+datosDiv.t <- as.data.frame(t(Div_Code_fito))
 
 # Comando general de iNEXT (calcula muchas cosas)
-est.Comms <- iNEXT(datosDiv.t, q = 0, datosDivtype = "abundance") # q = 0 es la riqueza (diversidades verdaderas)
+est.Comms <- iNEXT(datosDiv.t, q = 0, datatype = "abundance") # q = 0 es la riqueza (diversidades verdaderas)
 
 
 
 # Cobertura de muestra C1
-SC.C1 <- est.Comms$iNextEst$C1[which(est.Comms$iNextEst$C1$method == "observed"), 7]
+SC.C1 <- est.Comms$iNextEst$size_based[which(est.Comms$iNextEst$size_based$Method == "observed"), 7]
 
 # Cobertura de muestra C2
-SC.C2 <- est.Comms$iNextEst$C2[which(est.Comms$iNextEst$C2$method == "observed"), 7]
+SC.C2 <- est.Comms$iNextEst$coverage_based[which(est.Comms$iNextEst$coverage_based$Method == "observed"), 7]
 
 # Añadimos las coberturas a una tabla
 coverage <- cbind(C1 = SC.C1, C2 = SC.C2) 
@@ -536,8 +537,8 @@ abundances <- colSums(datosDiv.t)
 max.Extrapol <- abundances * 2
 
 # Estimadores para cada comunidad
-rare.C1 <- iNEXT(datosDiv.t[, 1], q = 0, datosDivtype = "abundance", knots = max.Extrapol[1])
-rare.C2 <- iNEXT(datosDiv.t[, 2], q = 0, datosDivtype = "abundance", knots = max.Extrapol[2])
+rare.C1 <- iNEXT(datosDiv.t[, 1], q = 0, datatype = "abundance", knots = max.Extrapol[1])
+rare.C2 <- iNEXT(datosDiv.t[, 2], q = 0, datatype = "abundance", knots = max.Extrapol[2])
 
 
 
