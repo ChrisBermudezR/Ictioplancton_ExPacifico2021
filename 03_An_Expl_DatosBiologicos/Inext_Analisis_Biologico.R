@@ -12,14 +12,13 @@ library(iNEXT)
 library(vegan)
 library(dplyr)
 library(tidyverse)
-library(tidyr)
 library(gridExtra)
 
 data(BCI)
 DATA <- BCI
 
 
-Codigo_fito<-read.table("./Biologicos/DatosP_Fitoplancton/Matriz_Incidencia_Fito.csv", sep=",", header = TRUE,)
+Codigo_fito<-read.table("./Biologicos/DatosP_Fitoplancton/Definitiva/Matriz_Abundancia.csv", sep=",", header = TRUE)
 
 #Transectos####
 
@@ -27,17 +26,17 @@ Amarales<-filter(Codigo_fito, Transecto=="Amarales")
 Sanquianga<-filter(Codigo_fito, Transecto=="Sanquianga")
 Guascama<-filter(Codigo_fito, Transecto=="Guascama")
 
-amaSum<-as.data.frame(t(Amarales[,6:191]%>% summarise_all(sum)))
-sanSum<-as.data.frame(t(Sanquianga[,6:191]%>% summarise_all(sum)))
-guaSum<-as.data.frame(t(Guascama[,6:191]%>% summarise_all(sum)))
+amaSum<-as.data.frame(t(Amarales[,5:145]%>% summarise_all(sum)))
+sanSum<-as.data.frame(t(Sanquianga[,5:145]%>% summarise_all(sum)))
+guaSum<-as.data.frame(t(Guascama[,5:145]%>% summarise_all(sum)))
 
 amaDiv<-filter(amaSum, V1>0)
 sanDiv<-filter(sanSum, V1>0)
 guaDiv<-filter(guaSum, V1>0)
 
-amaVec<-as_vector(amaDiv$V1)
-sanVec<-as_vector(sanDiv$V1)
-guaVec<-as_vector(guaDiv$V1)
+amaVec<-as.vector(amaDiv$V1)
+sanVec<-as.vector(sanDiv$V1)
+guaVec<-as.vector(guaDiv$V1)
 
 amaVec<-append(amaVec,12,0)
 sanVec<-append(sanVec,12,0)
@@ -51,9 +50,30 @@ names(Transectos)<-c("Amarales", "Sanquianga", "Guascama")
 # Comando general de iNEXT (calcula muchas cosas)
 Transectos_Plot <- iNEXT(Transectos, 
                    q=c(0,1,2), 
-                   datatype = "incidence_freq",
-                   endpoint = 20) # q = 0 es la riqueza (diversidades verdaderas)
+                   datatype = "abundance",
+                   endpoint = 100) # q = 0 es la riqueza (diversidades verdaderas)
 
+
+Transecto_Data<- Transectos_Plot[["iNextEst"]][["size_based"]]
+
+
+
+dataprueba<-Transecto_Data %>% select(qD,
+                                      qD.LCL,
+                                      qD.UCL,
+                                      SC,
+                                      SC.LCL,
+                                      SC.UCL)
+dataprueba<-Transecto_Data %>% select(qD, qD.UCL)
+
+
+
+vegan::mrpp(dat = dataprueba,  Transecto_Data$Assemblage, permutations = 2000)
+
+
+
+
+colnames(Transecto_Data)
 # Sample-size-based R/E curves, separating plots by "site"
 
 png(filename="Transectos_Plot_hill_Plot_Assamblage.png", height =1000 , width = 1500, units = "px")
@@ -94,9 +114,9 @@ amaAltaDiv<-filter(amaSumAlta, V1>0)
 sanAltaDiv<-filter(sanSumAlta, V1>0)
 guaAltaDiv<-filter(guaSumAlta, V1>0)
 
-amaVecAlta<-as_vector(amaAltaDiv$V1)
-sanVecAlta<-as_vector(sanAltaDiv$V1)
-guaVecAlta<-as_vector(guaAltaDiv$V1)
+amaVecAlta<-as.vector(amaAltaDiv$V1)
+sanVecAlta<-as.vector(sanAltaDiv$V1)
+guaVecAlta<-as.vector(guaAltaDiv$V1)
 
 amaVecAlta<-append(amaVecAlta,6,0)
 sanVecAlta<-append(sanVecAlta,6,0)
@@ -162,16 +182,16 @@ Alta<-filter(Codigo_fito, Marea=="Alta")
 Baja<-filter(Codigo_fito, Marea=="Baja")
 
 
-AltaSum<-as.data.frame(t(Alta[,6:191]%>% summarise_all(sum)))
-BajaSum<-as.data.frame(t(Baja[,6:191]%>% summarise_all(sum)))
+AltaSum<-as.data.frame(t(Alta[,5:145]%>% summarise_all(sum)))
+BajaSum<-as.data.frame(t(Baja[,5:145]%>% summarise_all(sum)))
 
 
 AltaDiv<-filter(AltaSum, V1>0)
 BajaDiv<-filter(BajaSum, V1>0)
 
 
-AltaVec<-as_vector(AltaDiv$V1)
-BajaVec<-as_vector(BajaDiv$V1)
+AltaVec<-as.vector(AltaDiv$V1)
+BajaVec<-as.vector(BajaDiv$V1)
 
 
 AltaVec<-append(AltaVec,18,0)
@@ -186,8 +206,34 @@ names(Marea)<-c("Alta", "Baja")
 # Comando general de iNEXT (calcula muchas cosas)
 Marea_Plot <- iNEXT(Marea, 
                          q=c(0,1,2), 
-                         datatype = "incidence_freq",
-                         endpoint = 20) # q = 0 es la riqueza (diversidades verdaderas)
+                         datatype = "abundance",
+                         endpoint = 100) # q = 0 es la riqueza (diversidades verdaderas)
+
+Marea_Data<- Marea_Plot[["iNextEst"]][["size_based"]]
+
+
+
+dataprueba<-Marea_Data %>% select(qD,
+                                      qD.LCL,
+                                      qD.UCL,
+                                      SC,
+                                      SC.LCL,
+                                      SC.UCL)
+
+
+
+
+vegan::mrpp(dat = dataprueba,  Marea_Data$Assemblage, permutations = 2000)
+
+
+
+
+colnames(Transecto_Data)
+
+
+
+
+
 
 # Sample-size-based R/E curves, separating plots by "site"
 
@@ -220,16 +266,16 @@ Oceanico<-filter(Codigo_fito, Sector=="Oceanico")
 Costero<-filter(Codigo_fito, Sector=="Costero")
 
 
-OceanicoSum<-as.data.frame(t(Oceanico[,6:191]%>% summarise_all(sum)))
-CosteroSum<-as.data.frame(t(Costero[,6:191]%>% summarise_all(sum)))
+OceanicoSum<-as.data.frame(t(Oceanico[,5:145]%>% summarise_all(sum)))
+CosteroSum<-as.data.frame(t(Costero[,5:145]%>% summarise_all(sum)))
 
 
 OceanicoDiv<-filter(OceanicoSum, V1>0)
 CosteroDiv<-filter(CosteroSum, V1>0)
 
 
-OceanicoVec<-as_vector(OceanicoDiv$V1)
-CosteroVec<-as_vector(CosteroDiv$V1)
+OceanicoVec<-as.vector(OceanicoDiv$V1)
+CosteroVec<-as.vector(CosteroDiv$V1)
 
 
 OceanicoVec<-append(OceanicoVec,18,0)
@@ -244,8 +290,31 @@ names(Sector)<-c("Oceanico", "Costero")
 # Comando general de iNEXT (calcula muchas cosas)
 Sector_Plot <- iNEXT(Sector, 
                     q=c(0,1,2), 
-                    datatype = "incidence_freq",
-                    endpoint = 20) # q = 0 es la riqueza (diversidades verdaderas)
+                    datatype = "abundance",
+                    endpoint = 100) # q = 0 es la riqueza (diversidades verdaderas)
+
+
+Sector_Data<- Sector_Plot[["iNextEst"]][["size_based"]]
+
+
+
+dataprueba<-Sector_Data %>% select(qD,
+                                  qD.LCL,
+                                  qD.UCL,
+                                  SC,
+                                  SC.LCL,
+                                  SC.UCL)
+
+
+
+
+vegan::mrpp(dat = dataprueba,  Sector_Data$Assemblage, permutations = 2000)
+
+
+
+
+colnames(Transecto_Data)
+
 
 # Sample-size-based R/E curves, separating plots by "site"
 
@@ -289,4 +358,3 @@ gridExtra:: grid.arrange(Transectos_Plot_Coverage,Marea_Plot_Coverage,Sector_Plo
 dev.off()
 
 
-#
