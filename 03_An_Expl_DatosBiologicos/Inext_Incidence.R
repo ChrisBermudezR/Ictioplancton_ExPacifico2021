@@ -14,79 +14,87 @@ library(dplyr)
 library(tidyverse)
 library(gridExtra)
 
-Codigo_fito_abundancia<-read.table("./Biologicos/DatosP_Fitoplancton/Definitiva/Matriz_Abundancia.csv", sep=",", header = TRUE)
+Codigo_fito_incidencia<-read.table("./Biologicos/DatosP_Fitoplancton/Definitiva/Matriz_Incidencia.csv", sep=",", header = TRUE)
 
 #Transectos####
 
-Amarales<-filter(Codigo_fito, Transecto=="Amarales")
-Sanquianga<-filter(Codigo_fito, Transecto=="Sanquianga")
-Guascama<-filter(Codigo_fito, Transecto=="Guascama")
+Amarales_incidencia<-filter(Codigo_fito_incidencia, Transecto=="Amarales")
+Sanquianga_incidencia<-filter(Codigo_fito_incidencia, Transecto=="Sanquianga")
+Guascama_incidencia<-filter(Codigo_fito_incidencia, Transecto=="Guascama")
 
-amaSum<-as.data.frame(t(Amarales[,6:145]%>% summarise_all(sum)))
-sanSum<-as.data.frame(t(Sanquianga[,6:145]%>% summarise_all(sum)))
-guaSum<-as.data.frame(t(Guascama[,6:145]%>% summarise_all(sum)))
+amaSum_incidencia<-as.data.frame(t(Amarales_incidencia[,6:145]%>% summarise_all(sum)))
+sanSum_incidencia<-as.data.frame(t(Sanquianga_incidencia[,6:145]%>% summarise_all(sum)))
+guaSum_incidencia<-as.data.frame(t(Guascama_incidencia[,6:145]%>% summarise_all(sum)))
 
-amaDiv<-filter(amaSum, V1>0)
-sanDiv<-filter(sanSum, V1>0)
-guaDiv<-filter(guaSum, V1>0)
+amaDiv_incidencia<-filter(amaSum_incidencia, V1>0)
+sanDiv_incidencia<-filter(sanSum_incidencia, V1>0)
+guaDiv_incidencia<-filter(guaSum_incidencia, V1>0)
 
-amaVec<-as.vector(amaDiv$V1)
-sanVec<-as.vector(sanDiv$V1)
-guaVec<-as.vector(guaDiv$V1)
+amaVec_incidencia<-as.vector(amaDiv_incidencia$V1)
+sanVec_incidencia<-as.vector(sanDiv_incidencia$V1)
+guaVec_incidencia<-as.vector(guaDiv_incidencia$V1)
 
+amaVec_incidencia<-append(amaVec_incidencia,12,0)
+sanVec_incidencia<-append(sanVec_incidencia,12,0)
+guaVec_incidencia<-append(guaVec_incidencia,12,0)
 
-Transectos<-list(amaVec, sanVec, guaVec)
-names(Transectos)<-c("Amarales", "Sanquianga", "Guascama")
+Muestras_incidencia<-round(seq(1, 100, length.out=100))
+
+Transectos_incidencia<-list(amaVec_incidencia, sanVec_incidencia, guaVec_incidencia)
+names(Transectos_incidencia)<-c("Amarales", "Sanquianga", "Guascama")
 
 #Inext###
 
-# Comando general de iNEXT 
-Transectos_Plot <- iNEXT(Transectos, 
-                   q=c(0,1,2), 
-                   datatype = "abundance",
-                   endpoint = 1000000) # q = 0 es la riqueza 
-
-Transectos_Plot$DataInfo # showing basic data information.
-Transectos_Plot$AsyEst # showing asymptotic diversity estimates.
-
-Transecto_Data<- Transectos_Plot$iNextEst$size_based 
+# Comando general de iNEXT (calcula muchas cosas)
+Transectos_Plot_incidencia <- iNEXT(Transectos_incidencia, 
+                         q=c(0,1,2), 
+                         datatype = "incidence_freq",
+                         endpoint = 25,
+                         size=Muestras, 
+                         se=TRUE) # q = 0 es la riqueza (diversidades verdaderas)
 
 
 
-dataprueba<-Transecto_Data %>% select(qD,
+Transectos_Plot_incidencia$DataInfo # showing basic data information.
+Transectos_Plot_incidencia$AsyEst # showing asymptotic diversity estimates.
+Transectos_Plot_incidencia$iNextEst$size_based 
+
+Transecto_Data_incidencia<- Transectos_Plot_incidencia[["iNextEst"]][["size_based"]]
+
+
+
+dataprueba_incidencia<-Transecto_Data_incidencia %>% select(qD,
                                       qD.LCL,
                                       qD.UCL,
                                       SC,
                                       SC.LCL,
                                       SC.UCL)
-dataprueba<-Transecto_Data %>% select(qD, qD.UCL)
+dataprueba_incidencia<-Transecto_Data_incidencia %>% select(qD, qD.UCL)
 
 
 
-MRPP_Transecto<-vegan::mrpp(dat = dataprueba,  Transecto_Data$Assemblage, permutations = 2000)
+MRPP_Transecto_incidencia<-vegan::mrpp(dat = dataprueba_incidencia,  Transecto_Data_incidencia$Assemblage, permutations = 2000)
 
 
 
 
-colnames(Transecto_Data)
+colnames(Transecto_Data_incidencia)
 # Sample-size-based R/E curves, separating plots by "site"
 
-png(filename="./Imagenes/Transectos_Plot_hill_Plot_Assamblage.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(Transectos_Plot, type=1,facet.var = "Assemblage")
+png(filename="./Imagenes/Transectos_Plot_hill_Plot_Assamblage_incidence.png", height =1000 , width = 1500, units = "px")
+ggiNEXT(Transectos_Plot_incidencia, type=1,facet.var = "Assemblage")
 dev.off()
 
 png(filename="./Imagenes/Transectos_Plot_coverage_Plot_Assamblage.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(Transectos_Plot, type=3,facet.var = "Assemblage")
+ggiNEXT(Transectos_Plot_incidencia, type=3,facet.var = "Assemblage")
 dev.off()
 
-
-
 png(filename="./Imagenes/Transectos_Plot_hill_Plot_Order.q.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(Transectos_Plot, type=1,facet.var = "Order.q")
+ggiNEXT(Transectos_Plot_incidencia, type=1,facet.var = "Order.q")
 dev.off()
 
 png(filename="./Imagenes/Transectos_Plot_hill_Plot_both.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(Transectos_Plot, type=1,facet.var = "Both")
+ggiNEXT(Transectos_Plot_incidencia, type=1,facet.var = "Both")
 dev.off()
 
 
@@ -95,13 +103,13 @@ dev.off()
 
 #Transectos + Mareas ####
 
-AmaralesAlta<-filter(Codigo_fito, Transecto=="Amarales" & Marea =="Alta")
-SanquiangaAlta<-filter(Codigo_fito, Transecto=="Sanquianga" & Marea =="Alta")
-GuascamaAlta<-filter(Codigo_fito, Transecto=="Guascama" & Marea =="Alta")
+AmaralesAlta<-filter(Codigo_fito_incidencia, Transecto=="Amarales" & Marea =="Alta")
+SanquiangaAlta<-filter(Codigo_fito_incidencia, Transecto=="Sanquianga" & Marea =="Alta")
+GuascamaAlta<-filter(Codigo_fito_incidencia, Transecto=="Guascama" & Marea =="Alta")
 
-amaSumAlta<-as.data.frame(t(AmaralesAlta[,6:145]%>% summarise_all(sum)))
-sanSumAlta<-as.data.frame(t(SanquiangaAlta[,6:145]%>% summarise_all(sum)))
-guaSumAlta<-as.data.frame(t(GuascamaAlta[,6:145]%>% summarise_all(sum)))
+amaSumAlta<-as.data.frame(t(AmaralesAlta[,5:145]%>% summarise_all(sum)))
+sanSumAlta<-as.data.frame(t(SanquiangaAlta[,5:145]%>% summarise_all(sum)))
+guaSumAlta<-as.data.frame(t(GuascamaAlta[,5:145]%>% summarise_all(sum)))
 
 
 
@@ -119,13 +127,13 @@ guaVecAlta<-append(guaVecAlta,6,0)
 
 #Bajas
 
-AmaralesBaja<-filter(Codigo_fito, Transecto=="Amarales" & Marea =="Baja")
-SanquiangaBaja<-filter(Codigo_fito, Transecto=="Sanquianga" & Marea =="Baja")
-GuascamaBaja<-filter(Codigo_fito, Transecto=="Guascama" & Marea =="Baja")
+AmaralesBaja<-filter(Codigo_fito_incidencia, Transecto=="Amarales" & Marea =="Baja")
+SanquiangaBaja<-filter(Codigo_fito_incidencia, Transecto=="Sanquianga" & Marea =="Baja")
+GuascamaBaja<-filter(Codigo_fito_incidencia, Transecto=="Guascama" & Marea =="Baja")
 
-amaSumBaja<-as.data.frame(t(AmaralesBaja[,6:145]%>% summarise_all(sum)))
-sanSumBaja<-as.data.frame(t(SanquiangaBaja[,6:145]%>% summarise_all(sum)))
-guaSumBaja<-as.data.frame(t(GuascamaBaja[,6:145]%>% summarise_all(sum)))
+amaSumBaja<-as.data.frame(t(AmaralesBaja[,5:145]%>% summarise_all(sum)))
+sanSumBaja<-as.data.frame(t(SanquiangaBaja[,5:145]%>% summarise_all(sum)))
+guaSumBaja<-as.data.frame(t(GuascamaBaja[,5:145]%>% summarise_all(sum)))
 
 amaBajaDiv<-filter(amaSumBaja, V1>0)
 sanBajaDiv<-filter(sanSumBaja, V1>0)
@@ -146,9 +154,9 @@ names(Transectos)<-c("Ama_Alta", "San_Alta","Gua_Alta", "Ama_Baja", "San_Baja","
 
 # Comando general de iNEXT (calcula muchas cosas)
 est.Comms <- iNEXT(Transectos, 
-                 q=c(0,1,2), 
-                 datatype = "abundance",
-                 endpoint = 1000000) # q = 0 es la riqueza (diversidades verdaderas)
+                   q=c(0,1,2), 
+                   datatype = "abundance",
+                   endpoint = 20) # q = 0 es la riqueza (diversidades verdaderas)
 
 # Sample-size-based R/E curves, separating plots by "site"
 
@@ -173,12 +181,12 @@ dev.off()
 
 #Marea
 
-Alta<-filter(Codigo_fito, Marea=="Alta")
-Baja<-filter(Codigo_fito, Marea=="Baja")
+Alta<-filter(Codigo_fito_incidencia, Marea=="Alta")
+Baja<-filter(Codigo_fito_incidencia, Marea=="Baja")
 
 
-AltaSum<-as.data.frame(t(Alta[,6:145]%>% summarise_all(sum)))
-BajaSum<-as.data.frame(t(Baja[,6:145]%>% summarise_all(sum)))
+AltaSum<-as.data.frame(t(Alta[,5:145]%>% summarise_all(sum)))
+BajaSum<-as.data.frame(t(Baja[,5:145]%>% summarise_all(sum)))
 
 
 AltaDiv<-filter(AltaSum, V1>0)
@@ -200,20 +208,20 @@ names(Marea)<-c("Alta", "Baja")
 
 # Comando general de iNEXT (calcula muchas cosas)
 Marea_Plot <- iNEXT(Marea, 
-                         q=c(0,1,2), 
-                         datatype = "abundance",
-                         endpoint = 1000000) # q = 0 es la riqueza (diversidades verdaderas)
+                    q=c(0,1,2), 
+                    datatype = "abundance",
+                    endpoint = 100) # q = 0 es la riqueza (diversidades verdaderas)
 
 Marea_Data<- Marea_Plot[["iNextEst"]][["size_based"]]
 
 
 
 dataprueba<-Marea_Data %>% select(qD,
-                                      qD.LCL,
-                                      qD.UCL,
-                                      SC,
-                                      SC.LCL,
-                                      SC.UCL)
+                                  qD.LCL,
+                                  qD.UCL,
+                                  SC,
+                                  SC.LCL,
+                                  SC.UCL)
 
 
 
@@ -257,12 +265,12 @@ dev.off()
 
 #Sector
 
-Oceanico<-filter(Codigo_fito, Sector=="Oceanico")
-Costero<-filter(Codigo_fito, Sector=="Costero")
+Oceanico<-filter(Codigo_fito_incidencia, Sector=="Oceanico")
+Costero<-filter(Codigo_fito_incidencia, Sector=="Costero")
 
 
-OceanicoSum<-as.data.frame(t(Oceanico[,6:145]%>% summarise_all(sum)))
-CosteroSum<-as.data.frame(t(Costero[,6:145]%>% summarise_all(sum)))
+OceanicoSum<-as.data.frame(t(Oceanico[,5:145]%>% summarise_all(sum)))
+CosteroSum<-as.data.frame(t(Costero[,5:145]%>% summarise_all(sum)))
 
 
 OceanicoDiv<-filter(OceanicoSum, V1>0)
@@ -284,9 +292,9 @@ names(Sector)<-c("Oceanico", "Costero")
 
 # Comando general de iNEXT (calcula muchas cosas)
 Sector_Plot <- iNEXT(Sector, 
-                    q=c(0,1,2), 
-                    datatype = "abundance",
-                    endpoint = 10000) # q = 0 es la riqueza (diversidades verdaderas)
+                     q=c(0,1,2), 
+                     datatype = "abundance",
+                     endpoint = 100) # q = 0 es la riqueza (diversidades verdaderas)
 
 
 Sector_Data<- Sector_Plot[["iNextEst"]][["size_based"]]
@@ -294,11 +302,11 @@ Sector_Data<- Sector_Plot[["iNextEst"]][["size_based"]]
 
 
 dataprueba<-Sector_Data %>% select(qD,
-                                  qD.LCL,
-                                  qD.UCL,
-                                  SC,
-                                  SC.LCL,
-                                  SC.UCL)
+                                   qD.LCL,
+                                   qD.UCL,
+                                   SC,
+                                   SC.LCL,
+                                   SC.UCL)
 
 
 
