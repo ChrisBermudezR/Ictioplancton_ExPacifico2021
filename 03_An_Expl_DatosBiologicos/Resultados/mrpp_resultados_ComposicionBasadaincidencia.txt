@@ -1,0 +1,60 @@
+
+Call:
+vegan::mrpp(dat = Codigo_fito_incidencia[, 5:145], grouping = Codigo_fito_incidencia$Transecto,      permutations = 2000) 
+
+Dissimilarity index: euclidean 
+Weights for groups:  n 
+
+Class means and counts:
+
+      Amarales Guascama Sanquianga
+delta 4.935    5.266    5.721     
+n     12       12       12        
+
+Chance corrected within-group agreement A: 0.01954 
+Based on observed delta 5.307 and expected delta 5.413 
+
+Significance of delta: 0.0014993 
+Permutation: free
+Number of permutations: 2000
+
+
+Call:
+vegan::mrpp(dat = Codigo_fito_incidencia[, 5:145], grouping = Codigo_fito_incidencia$Marea,      permutations = 2000) 
+
+Dissimilarity index: euclidean 
+Weights for groups:  n 
+
+Class means and counts:
+
+      Alta  Baja 
+delta 5.366 5.399
+n     18    18   
+
+Chance corrected within-group agreement A: 0.005725 
+Based on observed delta 5.382 and expected delta 5.413 
+
+Significance of delta: 0.05947 
+Permutation: free
+Number of permutations: 2000
+
+
+Call:
+vegan::mrpp(dat = Codigo_fito_incidencia[, 5:145], grouping = Codigo_fito_incidencia$Sector,      permutations = 2000) 
+
+Dissimilarity index: euclidean 
+Weights for groups:  n 
+
+Class means and counts:
+
+      Costero Oceanico
+delta 5.577    5.08   
+n     18      18      
+
+Chance corrected within-group agreement A: 0.01557 
+Based on observed delta 5.329 and expected delta 5.413 
+
+Significance of delta: 0.0024988 
+Permutation: free
+Number of permutations: 2000
+

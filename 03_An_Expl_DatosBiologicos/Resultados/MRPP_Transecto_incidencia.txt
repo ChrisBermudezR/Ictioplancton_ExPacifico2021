@@ -1,0 +1,20 @@
+
+Call:
+vegan::mrpp(dat = Transecto_dataprueba_incidencia, grouping = Transecto_Data_incidencia$Assemblage,      permutations = 2000) 
+
+Dissimilarity index: euclidean 
+Weights for groups:  n 
+
+Class means and counts:
+
+      Amarales Guascama Sanquianga
+delta  12.2    21.92    20.08     
+n     100      100      100       
+
+Chance corrected within-group agreement A: 0.4146 
+Based on observed delta 18.07 and expected delta 30.86 
+
+Significance of delta: 0.00049975 
+Permutation: free
+Number of permutations: 2000
+

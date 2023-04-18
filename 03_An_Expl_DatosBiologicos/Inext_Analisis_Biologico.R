@@ -13,47 +13,62 @@ library(vegan)
 library(dplyr)
 library(tidyverse)
 library(gridExtra)
+library(parallel)
 
 Codigo_fito_abundancia<-read.table("./Biologicos/DatosP_Fitoplancton/Definitiva/Matriz_Abundancia.csv", sep=",", header = TRUE)
 
+#Evaluación de la composición entre transectos sectores y mareas
+MRPP_Transecto_Abundancia<-vegan::mrpp(dat = Codigo_fito_abundancia[,5:145],  Codigo_fito_abundancia$Transecto, permutations = 2000)
+MRPP_Marea_Abundancia<-vegan::mrpp(dat = Codigo_fito_abundancia[,5:145],  Codigo_fito_abundancia$Marea, permutations = 2000)
+MRPP_Sector_Abundancia<-vegan::mrpp(dat = Codigo_fito_abundancia[,5:145],  Codigo_fito_abundancia$Sector, permutations = 2000)
+
+
+
+capture.output(MRPP_Transecto_Abundancia,MRPP_Marea_Abundancia, MRPP_Sector_Abundancia, file = "./Resultados/mrpp_resultados_ComposicionBasadaAbundancia.txt")
+
+MRPP_Sector_Abundancia
 #Transectos####
 
-Amarales<-filter(Codigo_fito, Transecto=="Amarales")
-Sanquianga<-filter(Codigo_fito, Transecto=="Sanquianga")
-Guascama<-filter(Codigo_fito, Transecto=="Guascama")
+Amarales_abundancia<-filter(Codigo_fito_abundancia, Transecto=="Amarales")
+Sanquianga_abundancia<-filter(Codigo_fito_abundancia, Transecto=="Sanquianga")
+Guascama_abundancia<-filter(Codigo_fito_abundancia, Transecto=="Guascama")
 
-amaSum<-as.data.frame(t(Amarales[,6:145]%>% summarise_all(sum)))
-sanSum<-as.data.frame(t(Sanquianga[,6:145]%>% summarise_all(sum)))
-guaSum<-as.data.frame(t(Guascama[,6:145]%>% summarise_all(sum)))
+amaSum_abundancia<-as.data.frame(t(Amarales_abundancia[,6:145]%>% summarise_all(sum)))
+sanSum_abundancia<-as.data.frame(t(Sanquianga_abundancia[,6:145]%>% summarise_all(sum)))
+guaSum_abundancia<-as.data.frame(t(Guascama_abundancia[,6:145]%>% summarise_all(sum)))
 
-amaDiv<-filter(amaSum, V1>0)
-sanDiv<-filter(sanSum, V1>0)
-guaDiv<-filter(guaSum, V1>0)
+amaDiv_abundancia<-filter(amaSum_abundancia, V1>0)
+sanDiv_abundancia<-filter(sanSum_abundancia, V1>0)
+guaDiv_abundancia<-filter(guaSum_abundancia, V1>0)
 
-amaVec<-as.vector(amaDiv$V1)
-sanVec<-as.vector(sanDiv$V1)
-guaVec<-as.vector(guaDiv$V1)
+amaVec_abundancia<-as.vector(amaDiv_abundancia$V1)
+sanVec_abundancia<-as.vector(sanDiv_abundancia$V1)
+guaVec_abundancia<-as.vector(guaDiv_abundancia$V1)
 
 
-Transectos<-list(amaVec, sanVec, guaVec)
-names(Transectos)<-c("Amarales", "Sanquianga", "Guascama")
+Transectos_abundancia<-list(amaVec_abundancia, sanVec_abundancia, guaVec_abundancia)
+names(Transectos_abundancia)<-c("Amarales", "Sanquianga", "Guascama")
 
 #Inext###
 
+
+
+
+
 # Comando general de iNEXT 
-Transectos_Plot <- iNEXT(Transectos, 
+Transectos_Plot_abundancia <- iNEXT(Transectos_abundancia, 
                    q=c(0,1,2), 
                    datatype = "abundance",
-                   endpoint = 1000000) # q = 0 es la riqueza 
+                   endpoint = 10000) # q = 0 es la riqueza 
 
-Transectos_Plot$DataInfo # showing basic data information.
-Transectos_Plot$AsyEst # showing asymptotic diversity estimates.
+Transectos_Plot_abundancia$DataInfo # showing basic data information.
+Transectos_Plot_abundancia$AsyEst # showing asymptotic diversity estimates.
 
-Transecto_Data<- Transectos_Plot$iNextEst$size_based 
+Transecto_Data_abundancia<- Transectos_Plot_abundancia$iNextEst$size_based 
 
 
 
-dataprueba<-Transecto_Data %>% select(qD,
+dataprueba_abundancia<-Transecto_Data_abundancia %>% select(qD,
                                       qD.LCL,
                                       qD.UCL,
                                       SC,
@@ -95,9 +110,9 @@ dev.off()
 
 #Transectos + Mareas ####
 
-AmaralesAlta<-filter(Codigo_fito, Transecto=="Amarales" & Marea =="Alta")
-SanquiangaAlta<-filter(Codigo_fito, Transecto=="Sanquianga" & Marea =="Alta")
-GuascamaAlta<-filter(Codigo_fito, Transecto=="Guascama" & Marea =="Alta")
+AmaralesAlta<-filter(Codigo_fito_abundancia, Transecto=="Amarales" & Marea =="Alta")
+SanquiangaAlta<-filter(Codigo_fito_abundancia, Transecto=="Sanquianga" & Marea =="Alta")
+GuascamaAlta<-filter(Codigo_fito_abundancia, Transecto=="Guascama" & Marea =="Alta")
 
 amaSumAlta<-as.data.frame(t(AmaralesAlta[,6:145]%>% summarise_all(sum)))
 sanSumAlta<-as.data.frame(t(SanquiangaAlta[,6:145]%>% summarise_all(sum)))
@@ -119,9 +134,9 @@ guaVecAlta<-append(guaVecAlta,6,0)
 
 #Bajas
 
-AmaralesBaja<-filter(Codigo_fito, Transecto=="Amarales" & Marea =="Baja")
-SanquiangaBaja<-filter(Codigo_fito, Transecto=="Sanquianga" & Marea =="Baja")
-GuascamaBaja<-filter(Codigo_fito, Transecto=="Guascama" & Marea =="Baja")
+AmaralesBaja<-filter(Codigo_fito_abundancia, Transecto=="Amarales" & Marea =="Baja")
+SanquiangaBaja<-filter(Codigo_fito_abundancia, Transecto=="Sanquianga" & Marea =="Baja")
+GuascamaBaja<-filter(Codigo_fito_abundancia, Transecto=="Guascama" & Marea =="Baja")
 
 amaSumBaja<-as.data.frame(t(AmaralesBaja[,6:145]%>% summarise_all(sum)))
 sanSumBaja<-as.data.frame(t(SanquiangaBaja[,6:145]%>% summarise_all(sum)))
@@ -173,8 +188,8 @@ dev.off()
 
 #Marea
 
-Alta<-filter(Codigo_fito, Marea=="Alta")
-Baja<-filter(Codigo_fito, Marea=="Baja")
+Alta<-filter(Codigo_fito_abundancia, Marea=="Alta")
+Baja<-filter(Codigo_fito_abundancia, Marea=="Baja")
 
 
 AltaSum<-as.data.frame(t(Alta[,6:145]%>% summarise_all(sum)))
@@ -257,8 +272,8 @@ dev.off()
 
 #Sector
 
-Oceanico<-filter(Codigo_fito, Sector=="Oceanico")
-Costero<-filter(Codigo_fito, Sector=="Costero")
+Oceanico<-filter(Codigo_fito_abundancia, Sector=="Oceanico")
+Costero<-filter(Codigo_fito_abundancia, Sector=="Costero")
 
 
 OceanicoSum<-as.data.frame(t(Oceanico[,6:145]%>% summarise_all(sum)))

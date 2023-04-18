@@ -16,6 +16,18 @@ library(gridExtra)
 
 Codigo_fito_incidencia<-read.table("./Biologicos/DatosP_Fitoplancton/Definitiva/Matriz_Incidencia.csv", sep=",", header = TRUE)
 
+
+#Evaluación de la composición entre transectos sectores y mareas
+
+
+MRPP_Transecto_incidencia<-vegan::mrpp(dat = Codigo_fito_incidencia[,5:145],  Codigo_fito_incidencia$Transecto, permutations = 2000)
+MRPP_Marea_incidencia<-vegan::mrpp(dat = Codigo_fito_incidencia[,5:145],  Codigo_fito_incidencia$Marea, permutations = 2000)
+MRPP_Sector_incidencia<-vegan::mrpp(dat = Codigo_fito_incidencia[,5:145],  Codigo_fito_incidencia$Sector, permutations = 2000)
+
+
+capture.output(MRPP_Transecto_incidencia,MRPP_Marea_incidencia, MRPP_Sector_incidencia, file = "./Resultados/mrpp_resultados_ComposicionBasadaincidencia.txt")
+
+
 #Transectos####
 
 Amarales_incidencia<-filter(Codigo_fito_incidencia, Transecto=="Amarales")
@@ -47,131 +59,37 @@ names(Transectos_incidencia)<-c("Amarales", "Sanquianga", "Guascama")
 
 # Comando general de iNEXT (calcula muchas cosas)
 Transectos_Plot_incidencia <- iNEXT(Transectos_incidencia, 
-                         q=c(0,1,2), 
+                         q=c(0), 
                          datatype = "incidence_freq",
                          endpoint = 25,
-                         size=Muestras, 
+                         size=Muestras_incidencia, 
                          se=TRUE) # q = 0 es la riqueza (diversidades verdaderas)
 
 
 
-Transectos_Plot_incidencia$DataInfo # showing basic data information.
-Transectos_Plot_incidencia$AsyEst # showing asymptotic diversity estimates.
-Transectos_Plot_incidencia$iNextEst$size_based 
-
-Transecto_Data_incidencia<- Transectos_Plot_incidencia[["iNextEst"]][["size_based"]]
+Transectos_Plot_incidencia_Data_Info<-Transectos_Plot_incidencia$DataInfo # showing basic data information.
+Transectos_Plot_incidencia_AsyEst<-Transectos_Plot_incidencia$AsyEst # showing asymptotic diversity estimates.
+Transecto_Data_incidencia<- Transectos_Plot_incidencia$iNextEst$size_based 
 
 
 
-dataprueba_incidencia<-Transecto_Data_incidencia %>% select(qD,
-                                      qD.LCL,
-                                      qD.UCL,
-                                      SC,
-                                      SC.LCL,
-                                      SC.UCL)
-dataprueba_incidencia<-Transecto_Data_incidencia %>% select(qD, qD.UCL)
+Transecto_dataprueba_incidencia<-Transecto_Data_incidencia %>% select(qD)
 
 
 
-MRPP_Transecto_incidencia<-vegan::mrpp(dat = dataprueba_incidencia,  Transecto_Data_incidencia$Assemblage, permutations = 2000)
-
-
-
-
-colnames(Transecto_Data_incidencia)
-# Sample-size-based R/E curves, separating plots by "site"
-
-png(filename="./Imagenes/Transectos_Plot_hill_Plot_Assamblage_incidence.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(Transectos_Plot_incidencia, type=1,facet.var = "Assemblage")
-dev.off()
-
-png(filename="./Imagenes/Transectos_Plot_coverage_Plot_Assamblage.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(Transectos_Plot_incidencia, type=3,facet.var = "Assemblage")
-dev.off()
-
-png(filename="./Imagenes/Transectos_Plot_hill_Plot_Order.q.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(Transectos_Plot_incidencia, type=1,facet.var = "Order.q")
-dev.off()
-
-png(filename="./Imagenes/Transectos_Plot_hill_Plot_both.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(Transectos_Plot_incidencia, type=1,facet.var = "Both")
-dev.off()
-
-
-
-
-
-#Transectos + Mareas ####
-
-AmaralesAlta<-filter(Codigo_fito_incidencia, Transecto=="Amarales" & Marea =="Alta")
-SanquiangaAlta<-filter(Codigo_fito_incidencia, Transecto=="Sanquianga" & Marea =="Alta")
-GuascamaAlta<-filter(Codigo_fito_incidencia, Transecto=="Guascama" & Marea =="Alta")
-
-amaSumAlta<-as.data.frame(t(AmaralesAlta[,5:145]%>% summarise_all(sum)))
-sanSumAlta<-as.data.frame(t(SanquiangaAlta[,5:145]%>% summarise_all(sum)))
-guaSumAlta<-as.data.frame(t(GuascamaAlta[,5:145]%>% summarise_all(sum)))
-
-
-
-amaAltaDiv<-filter(amaSumAlta, V1>0)
-sanAltaDiv<-filter(sanSumAlta, V1>0)
-guaAltaDiv<-filter(guaSumAlta, V1>0)
-
-amaVecAlta<-as.vector(amaAltaDiv$V1)
-sanVecAlta<-as.vector(sanAltaDiv$V1)
-guaVecAlta<-as.vector(guaAltaDiv$V1)
-
-amaVecAlta<-append(amaVecAlta,6,0)
-sanVecAlta<-append(sanVecAlta,6,0)
-guaVecAlta<-append(guaVecAlta,6,0)
-
-#Bajas
-
-AmaralesBaja<-filter(Codigo_fito_incidencia, Transecto=="Amarales" & Marea =="Baja")
-SanquiangaBaja<-filter(Codigo_fito_incidencia, Transecto=="Sanquianga" & Marea =="Baja")
-GuascamaBaja<-filter(Codigo_fito_incidencia, Transecto=="Guascama" & Marea =="Baja")
-
-amaSumBaja<-as.data.frame(t(AmaralesBaja[,5:145]%>% summarise_all(sum)))
-sanSumBaja<-as.data.frame(t(SanquiangaBaja[,5:145]%>% summarise_all(sum)))
-guaSumBaja<-as.data.frame(t(GuascamaBaja[,5:145]%>% summarise_all(sum)))
-
-amaBajaDiv<-filter(amaSumBaja, V1>0)
-sanBajaDiv<-filter(sanSumBaja, V1>0)
-guaBajaDiv<-filter(guaSumBaja, V1>0)
-
-amaVecBaja<-as_vector(amaBajaDiv$V1)
-sanVecBaja<-as_vector(sanBajaDiv$V1)
-guaVecBaja<-as_vector(guaBajaDiv$V1)
-
-amaVecBaja<-append(amaVecBaja,6,0)
-sanVecBaja<-append(sanVecBaja,6,0)
-guaVecBaja<-append(guaVecBaja,6,0)
-
-Transectos<-list(amaVecAlta, sanVecAlta, guaVecAlta, amaVecBaja, sanVecBaja, guaVecBaja)
-names(Transectos)<-c("Ama_Alta", "San_Alta","Gua_Alta", "Ama_Baja", "San_Baja","Gua_Baja")
-
-#Inext####
-
-# Comando general de iNEXT (calcula muchas cosas)
-est.Comms <- iNEXT(Transectos, 
-                   q=c(0,1,2), 
-                   datatype = "abundance",
-                   endpoint = 20) # q = 0 es la riqueza (diversidades verdaderas)
+MRPP_Transecto_incidencia<-vegan::mrpp(dat = Transecto_dataprueba_incidencia,  Transecto_Data_incidencia$Assemblage, permutations = 2000)
+capture.output(MRPP_Transecto_incidencia, file = "./Resultados/MRPP_Transecto_incidencia.txt")
 
 # Sample-size-based R/E curves, separating plots by "site"
 
-png(filename="./Imagenes/TransectosMarea_hill_Plot_Assamblage.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(est.Comms, type=1,facet.var = "Assemblage")
+
+png(filename="./Imagenes/Incidencia_Transectos_Plot_coverage_Plot_Assamblage.png", height =1000 , width = 1500, units = "px")
+ggiNEXT(Transectos_Plot_incidencia, type=3,)
 dev.off()
 
-png(filename="./Imagenes/TransectosMarea_hill_Plot_Order.q.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(est.Comms, type=1,facet.var = "Order.q")
+png(filename="./Imagenes/Incidencia_Transectos_Plot_hill_Plot_Order.q.png", height =1000 , width = 1500, units = "px")
+ggiNEXT(Transectos_Plot_incidencia, type=1)
 dev.off()
-
-png(filename="./Imagenes/TransectosMarea_hill_Plot_both.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(est.Comms, type=1,facet.var = "Both")
-dev.off()
-
 
 
 
@@ -181,57 +99,53 @@ dev.off()
 
 #Marea
 
-Alta<-filter(Codigo_fito_incidencia, Marea=="Alta")
-Baja<-filter(Codigo_fito_incidencia, Marea=="Baja")
+Alta_incidencia<-filter(Codigo_fito_incidencia, Marea=="Alta")
+Baja_incidencia<-filter(Codigo_fito_incidencia, Marea=="Baja")
 
 
-AltaSum<-as.data.frame(t(Alta[,5:145]%>% summarise_all(sum)))
-BajaSum<-as.data.frame(t(Baja[,5:145]%>% summarise_all(sum)))
+AltaSum_incidencia<-as.data.frame(t(Alta_incidencia[,5:145]%>% summarise_all(sum)))
+BajaSum_incidencia<-as.data.frame(t(Baja_incidencia[,5:145]%>% summarise_all(sum)))
 
 
-AltaDiv<-filter(AltaSum, V1>0)
-BajaDiv<-filter(BajaSum, V1>0)
+AltaDiv_incidencia<-filter(AltaSum_incidencia, V1>0)
+BajaDiv_incidencia<-filter(BajaSum_incidencia, V1>0)
 
 
-AltaVec<-as.vector(AltaDiv$V1)
-BajaVec<-as.vector(BajaDiv$V1)
+AltaVec_incidencia<-as.vector(AltaDiv_incidencia$V1)
+BajaVec_incidencia<-as.vector(BajaDiv_incidencia$V1)
 
 
-AltaVec<-append(AltaVec,18,0)
-BajaVec<-append(BajaVec,18,0)
+AltaVec_incidencia<-append(AltaVec_incidencia,18,0)
+BajaVec_incidencia<-append(BajaVec_incidencia,18,0)
 
 
-Marea<-list(AltaVec, BajaVec)
-names(Marea)<-c("Alta", "Baja")
+Marea_incidencia<-list(AltaVec_incidencia, BajaVec_incidencia)
+names(Marea_incidencia)<-c("Alta", "Baja")
 
 #Inext####
 
-# Comando general de iNEXT (calcula muchas cosas)
-Marea_Plot <- iNEXT(Marea, 
-                    q=c(0,1,2), 
-                    datatype = "abundance",
-                    endpoint = 100) # q = 0 es la riqueza (diversidades verdaderas)
-
-Marea_Data<- Marea_Plot[["iNextEst"]][["size_based"]]
-
-
-
-dataprueba<-Marea_Data %>% select(qD,
-                                  qD.LCL,
-                                  qD.UCL,
-                                  SC,
-                                  SC.LCL,
-                                  SC.UCL)
+Marea_Plot_incidencia <- iNEXT(Marea_incidencia, 
+                                    q=c(0), 
+                                    datatype = "incidence_freq",
+                                    endpoint = 25,
+                                    size=Muestras_incidencia, 
+                                    se=TRUE) # q = 0 es la riqueza (diversidades verdaderas)
 
 
 
+Marea_Plot_incidencia_Data_Info<-Marea_Plot_incidencia$DataInfo # showing basic data information.
+Marea_Plot_incidencia_AsyEst<-Marea_Plot_incidencia$AsyEst # showing asymptotic diversity estimates.
+Marea_Data_incidencia<- Marea_Plot_incidencia$iNextEst$size_based 
 
-vegan::mrpp(dat = dataprueba,  Marea_Data$Assemblage, permutations = 2000)
+
+
+Marea_dataprueba_incidencia<-Marea_Data_incidencia %>% select(qD)
 
 
 
+MRPP_Marea_incidencia<-vegan::mrpp(dat = Marea_dataprueba_incidencia,  Marea_Data_incidencia$Assemblage, permutations = 2000)
+capture.output(MRPP_Marea_incidencia, file = "./Resultados/MRPP_Marea_incidencia.txt")
 
-colnames(Transecto_Data)
 
 
 
@@ -240,23 +154,15 @@ colnames(Transecto_Data)
 
 # Sample-size-based R/E curves, separating plots by "site"
 
-png(filename="./Imagenes/Marea_Plot_hill_Plot_Assamblage.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(Marea_Plot, type=1,facet.var = "Assemblage")
+png(filename="./Imagenes/Incidencia_Marea_Plot_hill_Plot_Assamblage.png", height =1000 , width = 1500, units = "px")
+ggiNEXT(Marea_Plot_incidencia, type=1)
 dev.off()
 
-png(filename="./Imagenes/Marea_Plot_coverage_Plot_Assamblage.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(Marea_Plot, type=3,facet.var = "Assemblage")
+png(filename="./Imagenes/Incidencia_Marea_Plot_coverage_Plot_Assamblage.png", height =1000 , width = 1500, units = "px")
+ggiNEXT(Marea_Plot_incidencia, type=3)
 dev.off()
 
 
-
-png(filename="./Imagenes/Marea_Plot_hill_Plot_Order.q.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(Marea_Plot, type=1,facet.var = "Order.q")
-dev.off()
-
-png(filename="./Imagenes/Marea_Plot_hill_Plot_both.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(Marea_Plot, type=1,facet.var = "Both")
-dev.off()
 
 
 
@@ -265,11 +171,11 @@ dev.off()
 
 #Sector
 
-Oceanico<-filter(Codigo_fito_incidencia, Sector=="Oceanico")
-Costero<-filter(Codigo_fito_incidencia, Sector=="Costero")
+Oceanico_incidencia<-filter(Codigo_fito_incidencia, Sector=="Oceanico")
+Costero_incidencia<-filter(Codigo_fito_incidencia, Sector=="Costero")
 
 
-OceanicoSum<-as.data.frame(t(Oceanico[,5:145]%>% summarise_all(sum)))
+OceanicoSum_incidencia<-as.data.frame(t(Oceanico[,5:145]%>% summarise_all(sum)))
 CosteroSum<-as.data.frame(t(Costero[,5:145]%>% summarise_all(sum)))
 
 
