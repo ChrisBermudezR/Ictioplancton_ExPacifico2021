@@ -1,0 +1,16 @@
+[1] "Datos del analisis de abundancia por Transecto"
+  Assemblage  T   U S.obs     SC Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8 Q9 Q10
+1   Amarales 12 258    75 0.9076 26 13  5 10  5  4  6  2  0   2
+2 Sanquianga 12 366   108 0.8944 42 20  9  7  9  0  7  2  5   4
+3   Guascama 12 303    89 0.8913 35 12 12  4  6  6  4  1  4   2
+[1] "Estimadores para Q0, Q1, Q2"
+  Assemblage         Diversity  Observed Estimator      s.e.       LCL       UCL
+1   Amarales  Species richness  75.00000  98.83333 11.122227  77.03417 120.63250
+2   Amarales Shannon diversity  56.05280  66.62178  3.498781  59.76430  73.47927
+3   Amarales Simpson diversity  45.52941  50.67857  2.288479  46.19324  55.16391
+4   Guascama  Species richness  89.00000 135.78819 17.316869 101.84775 169.72863
+5   Guascama Shannon diversity  64.23729  78.63237  4.642059  69.53411  87.73064
+6   Guascama Simpson diversity  51.26131  56.55797  2.964625  50.74741  62.36852
+7 Sanquianga  Species richness 108.00000 148.42500 15.763171 117.52975 179.32025
+8 Sanquianga Shannon diversity  76.94320  92.67949  4.272738  84.30508 101.05390
+9 Sanquianga Simpson diversity  60.83379  66.88072  2.951586  61.09572  72.66572

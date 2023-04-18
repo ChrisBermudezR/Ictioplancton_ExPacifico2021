@@ -1,0 +1,12 @@
+[1] "Datos del analisis de abundancia por Transecto"
+  Assemblage     n S.obs SC f1 f2 f3 f4 f5 f6 f7 f8 f9 f10
+1       Alta 95283   112  1  0  0  0  0  0  0  0  0  0   0
+2       Baja 87839   110  1  0  0  0  0  0  0  0  0  0   0
+[1] "Estimadores para Q0, Q1, Q2"
+  Assemblage         Diversity   Observed  Estimator       s.e.        LCL        UCL
+1       Alta  Species richness 112.000000 112.000000 0.00000000 112.000000 112.000000
+2       Alta Shannon diversity  15.164587  15.173454 0.10050979  14.976458  15.370449
+3       Alta Simpson diversity   5.102282   5.102502 0.03616513   5.031620   5.173384
+4       Baja  Species richness 110.000000 110.000000 0.00000000 110.000000 110.000000
+5       Baja Shannon diversity  15.489759  15.499410 0.08951360  15.323967  15.674854
+6       Baja Simpson diversity   4.983698   4.983924 0.03204203   4.921123   5.046725

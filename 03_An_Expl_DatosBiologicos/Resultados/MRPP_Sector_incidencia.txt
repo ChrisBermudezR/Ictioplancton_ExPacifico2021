@@ -14,7 +14,7 @@ n     100   100
 Chance corrected within-group agreement A: -0.002008 
 Based on observed delta 28.44 and expected delta 28.38 
 
-Significance of delta: 0.61169 
+Significance of delta: 0.5982 
 Permutation: free
 Number of permutations: 2000
 

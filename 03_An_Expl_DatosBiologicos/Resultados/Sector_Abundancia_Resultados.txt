@@ -1,0 +1,12 @@
+[1] "Datos del analisis de abundancia por Transecto"
+  Assemblage      n S.obs SC f1 f2 f3 f4 f5 f6 f7 f8 f9 f10
+1   Oceanico  49919    99  1  0  0  0  0  0  0  0  0  0   0
+2    Costero 133203   116  1  0  0  0  0  0  0  0  0  0   0
+[1] "Estimadores para Q0, Q1, Q2"
+  Assemblage         Diversity   Observed  Estimator       s.e.        LCL        UCL
+1    Costero  Species richness 116.000000 116.000000 0.00000000 116.000000 116.000000
+2    Costero Shannon diversity  15.342279  15.348927 0.06393299  15.223621  15.474234
+3    Costero Simpson diversity   5.285859   5.286029 0.02515678   5.236722   5.335335
+4   Oceanico  Species richness  99.000000  99.000000 0.00000000  99.000000  99.000000
+5   Oceanico Shannon diversity  15.203331  15.218314 0.13993964  14.944037  15.492591
+6   Oceanico Simpson diversity   4.501015   4.501330 0.04054971   4.421854   4.580806

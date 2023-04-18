@@ -1,0 +1,20 @@
+
+Call:
+vegan::mrpp(dat = Codigo_fito_abundancia[, 5:145], grouping = Codigo_fito_abundancia$Transecto,      permutations = 2000) 
+
+Dissimilarity index: euclidean 
+Weights for groups:  n 
+
+Class means and counts:
+
+      Amarales Guascama Sanquianga
+delta  2095     2136     4732     
+n     12       12       12        
+
+Chance corrected within-group agreement A: 0.05743 
+Based on observed delta 2988 and expected delta 3170 
+
+Significance of delta: 0.030485 
+Permutation: free
+Number of permutations: 2000
+

@@ -69,31 +69,18 @@ Transectos_Plot_incidencia <- iNEXT(Transectos_incidencia,
 
 Transectos_Plot_incidencia_Data_Info<-Transectos_Plot_incidencia$DataInfo # showing basic data information.
 Transectos_Plot_incidencia_AsyEst<-Transectos_Plot_incidencia$AsyEst # showing asymptotic diversity estimates.
-Transecto_Data_incidencia<- Transectos_Plot_incidencia$iNextEst$size_based 
 
 
+capture.output("Datos del analisis de abundancia por Transecto",Transectos_Plot_incidencia_Data_Info, "Estimadores para Q0, Q1, Q2",Transectos_Plot_incidencia_AsyEst, file="./Resultados/Transectos_Abundancia_Resultados.txt")
+Transecto_Data_incidencia<- Transectos_Plot_incidencia$iNextEst$size_based
+write.csv(Transecto_Data_incidencia, file = "./Resultados/Transecto_Data_incidencia.csv",  row.names = FALSE)
 
-Transecto_dataprueba_incidencia<-Transecto_Data_incidencia %>% select(qD)
+Transecto_dataprueba_incidencia<-Transecto_Data_incidencia %>% select(qD, qD.LCL, qD.UCL, SC, SC.LCL, SC.UCL)
 
 
 
 MRPP_Transecto_incidencia<-vegan::mrpp(dat = Transecto_dataprueba_incidencia,  Transecto_Data_incidencia$Assemblage, permutations = 2000)
 capture.output(MRPP_Transecto_incidencia, file = "./Resultados/MRPP_Transecto_incidencia.txt")
-
-# Sample-size-based R/E curves, separating plots by "site"
-
-
-png(filename="./Imagenes/Incidencia_Transectos_Plot_coverage_Plot_Assamblage.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(Transectos_Plot_incidencia, type=3,)
-dev.off()
-
-png(filename="./Imagenes/Incidencia_Transectos_Plot_hill_Plot_Order.q.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(Transectos_Plot_incidencia, type=1)
-dev.off()
-
-
-
-
 
 
 
@@ -137,32 +124,10 @@ Marea_Plot_incidencia_Data_Info<-Marea_Plot_incidencia$DataInfo # showing basic 
 Marea_Plot_incidencia_AsyEst<-Marea_Plot_incidencia$AsyEst # showing asymptotic diversity estimates.
 Marea_Data_incidencia<- Marea_Plot_incidencia$iNextEst$size_based 
 
-
-
-Marea_dataprueba_incidencia<-Marea_Data_incidencia %>% select(qD)
-
-
+Marea_dataprueba_incidencia<-Marea_Data_incidencia %>% select(qD, qD.LCL, qD.UCL, SC, SC.LCL, SC.UCL)
 
 MRPP_Marea_incidencia<-vegan::mrpp(dat = Marea_dataprueba_incidencia,  Marea_Data_incidencia$Assemblage, permutations = 2000)
 capture.output(MRPP_Marea_incidencia, file = "./Resultados/MRPP_Marea_incidencia.txt")
-
-
-
-
-
-
-
-# Sample-size-based R/E curves, separating plots by "site"
-
-png(filename="./Imagenes/Incidencia_Marea_Plot_hill_Plot_Assamblage.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(Marea_Plot_incidencia, type=1)
-dev.off()
-
-png(filename="./Imagenes/Incidencia_Marea_Plot_coverage_Plot_Assamblage.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(Marea_Plot_incidencia, type=3)
-dev.off()
-
-
 
 
 
@@ -175,95 +140,73 @@ Oceanico_incidencia<-filter(Codigo_fito_incidencia, Sector=="Oceanico")
 Costero_incidencia<-filter(Codigo_fito_incidencia, Sector=="Costero")
 
 
-OceanicoSum_incidencia<-as.data.frame(t(Oceanico[,5:145]%>% summarise_all(sum)))
-CosteroSum<-as.data.frame(t(Costero[,5:145]%>% summarise_all(sum)))
+OceanicoSum_incidencia<-as.data.frame(t(Oceanico_incidencia[,5:145]%>% summarise_all(sum)))
+CosteroSum_incidencia<-as.data.frame(t(Costero_incidencia[,5:145]%>% summarise_all(sum)))
 
 
-OceanicoDiv<-filter(OceanicoSum, V1>0)
-CosteroDiv<-filter(CosteroSum, V1>0)
+OceanicoDiv_incidencia<-filter(OceanicoSum_incidencia, V1>0)
+CosteroDiv_incidencia<-filter(CosteroSum_incidencia, V1>0)
 
 
-OceanicoVec<-as.vector(OceanicoDiv$V1)
-CosteroVec<-as.vector(CosteroDiv$V1)
+OceanicoVec_incidencia<-as.vector(OceanicoDiv_incidencia$V1)
+CosteroVec_incidencia<-as.vector(CosteroDiv_incidencia$V1)
 
 
-OceanicoVec<-append(OceanicoVec,18,0)
-CosteroVec<-append(CosteroVec,18,0)
+OceanicoVec_incidencia<-append(OceanicoVec_incidencia,18,0)
+CosteroVec_incidencia<-append(CosteroVec_incidencia,18,0)
 
 
-Sector<-list(OceanicoVec, CosteroVec)
-names(Sector)<-c("Oceanico", "Costero")
+Sector_incidencia<-list(OceanicoVec_incidencia, CosteroVec_incidencia)
+names(Sector_incidencia)<-c("Oceanico", "Costero")
 
 #Inext####
 
 # Comando general de iNEXT (calcula muchas cosas)
-Sector_Plot <- iNEXT(Sector, 
-                     q=c(0,1,2), 
-                     datatype = "abundance",
-                     endpoint = 100) # q = 0 es la riqueza (diversidades verdaderas)
 
 
-Sector_Data<- Sector_Plot[["iNextEst"]][["size_based"]]
-
-
-
-dataprueba<-Sector_Data %>% select(qD,
-                                   qD.LCL,
-                                   qD.UCL,
-                                   SC,
-                                   SC.LCL,
-                                   SC.UCL)
+Sector_Plot_incidencia <- iNEXT(Sector_incidencia, 
+                               q=c(0), 
+                               datatype = "incidence_freq",
+                               endpoint = 25,
+                               size=Muestras_incidencia, 
+                               se=TRUE) # q = 0 es la riqueza (diversidades verdaderas)
 
 
 
-
-vegan::mrpp(dat = dataprueba,  Sector_Data$Assemblage, permutations = 2000)
-
-
-
-
-colnames(Transecto_Data)
-
-
-# Sample-size-based R/E curves, separating plots by "site"
-
-png(filename="./Imagenes/Sector_Plot_hill_Plot_Assamblage.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(Sector_Plot, type=1,facet.var = "Assemblage")
-dev.off()
-
-png(filename="./Imagenes/Sector_Plot_coverage_Plot_Assamblage.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(Sector_Plot, type=3,facet.var = "Assemblage")
-dev.off()
+Sector_Plot_incidencia_Data_Info<-Sector_Plot_incidencia$DataInfo # showing basic data information.
+Sector_Plot_incidencia_AsyEst<-Sector_Plot_incidencia$AsyEst # showing asymptotic diversity estimates.
+Sector_Data_incidencia<- Sector_Plot_incidencia$iNextEst$size_based 
 
 
 
-png(filename="./Imagenes/Sector_Plot_hill_Plot_Order.q.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(Sector_Plot, type=1,facet.var = "Order.q")
-dev.off()
+Sector_dataprueba_incidencia<-Marea_Data_incidencia %>% select(qD, qD.LCL, qD.UCL, SC, SC.LCL, SC.UCL)
 
-png(filename="./Imagenes/Sector_Plot_hill_Plot_both.png", height =1000 , width = 1500, units = "px")
-ggiNEXT(Sector_Plot, type=1,facet.var = "Both")
+
+
+MRPP_Sector_incidencia<-vegan::mrpp(dat = Sector_dataprueba_incidencia,  Sector_Data_incidencia$Assemblage, permutations = 2000)
+capture.output(MRPP_Marea_incidencia, file = "./Resultados/MRPP_Sector_incidencia.txt")
+
+
+
+
+
+Transectos_Plot_Hill_incidencia<-ggiNEXT(Transectos_Plot_incidencia, type=1)
+Marea_Plot_Hill_incidencia<-ggiNEXT(Marea_Plot_incidencia, type=1)
+Sector_Plot_Hill_incidencia<-ggiNEXT(Sector_Plot_incidencia, type=1)
+
+Transectos_Plot_Coverage_incidencia<-ggiNEXT(Transectos_Plot_incidencia, type=3)
+Marea_Plot_Coverage_incidencia<-ggiNEXT(Marea_Plot_incidencia, type=3)
+Sector_Plot_Coverage_incidencia<-ggiNEXT(Sector_Plot_incidencia, type=3)
+
+
+png(filename="./Imagenes/01_Incidencia_Total_Plot_hill_Plot_Assamblage.png", height =35 , width = 25, units = "cm", res=400)
+gridExtra:: grid.arrange(Transectos_Plot_Hill_incidencia,Marea_Plot_Hill_incidencia,Sector_Plot_Hill_incidencia, ncol=1)
 dev.off()
 
 
 
-Transectos_Plot_Hill<-ggiNEXT(Transectos_Plot, type=1,facet.var = "Assemblage")
-Marea_Plot_Hill<-ggiNEXT(Marea_Plot, type=1,facet.var = "Assemblage")
-Sector_Plot_Hill<-ggiNEXT(Sector_Plot, type=1,facet.var = "Assemblage")
-
-Transectos_Plot_Coverage<-ggiNEXT(Transectos_Plot, type=3,facet.var = "Assemblage")
-Marea_Plot_Coverage<-ggiNEXT(Marea_Plot, type=3,facet.var = "Assemblage")
-Sector_Plot_Coverage<-ggiNEXT(Sector_Plot, type=3,facet.var = "Assemblage")
-
-
-png(filename="./Imagenes/Total_Plot_hill_Plot_Assamblage.png", height =1500 , width = 1000, units = "px")
-gridExtra:: grid.arrange(Transectos_Plot_Hill,Marea_Plot_Hill,Sector_Plot_Hill, ncol=1)
-dev.off()
-
-
-
-png(filename="./Imagenes/Total_Plot_coverage_Plot_Assamblage.png", height =1500 , width = 1000, units = "px")
-gridExtra:: grid.arrange(Transectos_Plot_Coverage,Marea_Plot_Coverage,Sector_Plot_Coverage, ncol=1)
+ png(filename="./Imagenes/02_Incidencia_Total_Plot_coverage_Plot_Assamblage.png", height =35 , width = 25, units = "cm", res=400)
+gridExtra:: grid.arrange(Transectos_Plot_Coverage_incidencia,Marea_Plot_Coverage_incidencia,Sector_Plot_Coverage_incidencia, ncol=1)
 dev.off()
 
 

@@ -1,6 +1,7 @@
+[1] "Comparación abundancia relativa - MRPP - Transectos"
 
 Call:
-vegan::mrpp(dat = Codigo_fito_abundancia[, 5:145], grouping = Codigo_fito_abundancia$Transecto,      permutations = 2000) 
+vegan::mrpp(dat = Abundancia_Relativa, grouping = Codigo_fito_abundancia$Transecto,      permutations = 2000) 
 
 Dissimilarity index: euclidean 
 Weights for groups:  n 
@@ -8,39 +9,41 @@ Weights for groups:  n
 Class means and counts:
 
       Amarales Guascama Sanquianga
-delta  2095     2136     4732     
+delta 0.4107   0.3527   0.3188    
 n     12       12       12        
 
-Chance corrected within-group agreement A: 0.05743 
-Based on observed delta 2988 and expected delta 3170 
+Chance corrected within-group agreement A: 0.03797 
+Based on observed delta 0.3608 and expected delta 0.375 
 
-Significance of delta: 0.023988 
+Significance of delta: 0.018991 
 Permutation: free
 Number of permutations: 2000
 
+[1] "MRPP - Marea"
 
 Call:
-vegan::mrpp(dat = Codigo_fito_abundancia[, 5:145], grouping = Codigo_fito_abundancia$Marea,      permutations = 2000) 
+vegan::mrpp(dat = Abundancia_Relativa, grouping = Codigo_fito_abundancia$Marea,      permutations = 2000) 
 
 Dissimilarity index: euclidean 
 Weights for groups:  n 
 
 Class means and counts:
 
-      Alta  Baja 
-delta  3708  2632
-n     18    18   
+      Alta   Baja  
+delta 0.3769 0.3793
+n     18     18    
 
-Chance corrected within-group agreement A: -9.558e-05 
-Based on observed delta 3170 and expected delta 3170 
+Chance corrected within-group agreement A: -0.008296 
+Based on observed delta 0.3781 and expected delta 0.375 
 
-Significance of delta: 0.35482 
+Significance of delta: 0.81059 
 Permutation: free
 Number of permutations: 2000
 
+[1] "MRPP - Sector"
 
 Call:
-vegan::mrpp(dat = Codigo_fito_abundancia[, 5:145], grouping = Codigo_fito_abundancia$Sector,      permutations = 2000) 
+vegan::mrpp(dat = Abundancia_Relativa, grouping = Codigo_fito_abundancia$Sector,      permutations = 2000) 
 
 Dissimilarity index: euclidean 
 Weights for groups:  n 
@@ -48,13 +51,13 @@ Weights for groups:  n
 Class means and counts:
 
       Costero Oceanico
-delta  4371    1691   
+delta 0.3862  0.3609  
 n     18      18      
 
-Chance corrected within-group agreement A: 0.04375 
-Based on observed delta 3031 and expected delta 3170 
+Chance corrected within-group agreement A: 0.003875 
+Based on observed delta 0.3735 and expected delta 0.375 
 
-Significance of delta: 0.021989 
+Significance of delta: 0.24338 
 Permutation: free
 Number of permutations: 2000
 

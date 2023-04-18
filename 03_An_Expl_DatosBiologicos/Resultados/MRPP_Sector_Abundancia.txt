@@ -1,0 +1,20 @@
+
+Call:
+vegan::mrpp(dat = dataprueba_Abundancia, grouping = Marea_Data_Abundancia$Assemblage,      permutations = 2000) 
+
+Dissimilarity index: euclidean 
+Weights for groups:  n 
+
+Class means and counts:
+
+      Alta  Baja 
+delta 71.36 69.97
+n     120   120  
+
+Chance corrected within-group agreement A: -0.003625 
+Based on observed delta 70.66 and expected delta 70.41 
+
+Significance of delta: 0.91454 
+Permutation: free
+Number of permutations: 2000
+
