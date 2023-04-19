@@ -1,63 +1,63 @@
-[1] "Comparación abundancia relativa - MRPP - Transectos"
+[1] "ComparaciÃ³n abundancia relativa - MRPP - Transectos"
 
 Call:
-vegan::mrpp(dat = Abundancia_Relativa, grouping = Codigo_fito_abundancia$Transecto,      permutations = 2000) 
+vegan::mrpp(dat = Abundancia_Relativa_distmat, grouping = Codigo_fito_abundancia$Transecto,      permutations = 2000, distance = "bray") 
 
-Dissimilarity index: euclidean 
+Dissimilarity index: bray 
 Weights for groups:  n 
 
 Class means and counts:
 
       Amarales Guascama Sanquianga
-delta 0.4107   0.3527   0.3188    
+delta 0.5981   0.5784   0.4863    
 n     12       12       12        
 
-Chance corrected within-group agreement A: 0.03797 
-Based on observed delta 0.3608 and expected delta 0.375 
+Chance corrected within-group agreement A: 0.03481 
+Based on observed delta 0.5543 and expected delta 0.5743 
 
-Significance of delta: 0.018991 
+Significance of delta: 0.0044978 
 Permutation: free
 Number of permutations: 2000
 
 [1] "MRPP - Marea"
 
 Call:
-vegan::mrpp(dat = Abundancia_Relativa, grouping = Codigo_fito_abundancia$Marea,      permutations = 2000) 
+vegan::mrpp(dat = Abundancia_Relativa_distmat, grouping = Codigo_fito_abundancia$Marea,      permutations = 2000, distance = "bray") 
 
-Dissimilarity index: euclidean 
+Dissimilarity index: bray 
 Weights for groups:  n 
 
 Class means and counts:
 
       Alta   Baja  
-delta 0.3769 0.3793
+delta 0.5902 0.5571
 n     18     18    
 
-Chance corrected within-group agreement A: -0.008296 
-Based on observed delta 0.3781 and expected delta 0.375 
+Chance corrected within-group agreement A: 0.001092 
+Based on observed delta 0.5737 and expected delta 0.5743 
 
-Significance of delta: 0.81059 
+Significance of delta: 0.36832 
 Permutation: free
 Number of permutations: 2000
 
 [1] "MRPP - Sector"
 
 Call:
-vegan::mrpp(dat = Abundancia_Relativa, grouping = Codigo_fito_abundancia$Sector,      permutations = 2000) 
+vegan::mrpp(dat = Abundancia_Relativa_distmat, grouping = Codigo_fito_abundancia$Sector,      permutations = 2000, distance = "bray") 
 
-Dissimilarity index: euclidean 
+Dissimilarity index: bray 
 Weights for groups:  n 
 
 Class means and counts:
 
       Costero Oceanico
-delta 0.3862  0.3609  
+delta 0.5657  0.5663  
 n     18      18      
 
-Chance corrected within-group agreement A: 0.003875 
-Based on observed delta 0.3735 and expected delta 0.375 
+Chance corrected within-group agreement A: 0.01439 
+Based on observed delta 0.566 and expected delta 0.5743 
 
-Significance of delta: 0.24338 
+Significance of delta: 0.028986 
 Permutation: free
 Number of permutations: 2000
 

@@ -1,0 +1,18 @@
+[1] "Resultados NMDS"
+
+Call:
+metaMDS(comm = Abundancia_Relativa_distmat, distance = "bray",      k = 3, trymax = 500, wascores = TRUE, maxit = 999) 
+
+global Multidimensional Scaling using monoMDS
+
+Data:     Abundancia_Relativa_distmat 
+Distance: user supplied 
+
+Dimensions: 3 
+Stress:     0.1211168 
+Stress type 1, weak ties
+Best solution was repeated 2 times in 20 tries
+The best solution was from try 14 (random start)
+Scaling: centring, PC rotation 
+Species: scores missing
+
