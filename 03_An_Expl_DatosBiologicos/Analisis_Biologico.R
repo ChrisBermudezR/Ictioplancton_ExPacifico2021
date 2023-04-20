@@ -17,12 +17,10 @@ library(tidyr)
 data(BCI)
 datosDiv <- BCI
 
-Codigo_fito<-read.table("./Biologicos/DatosP_Fitoplancton/Matriz_Codigos_Fito.csv", sep=",", header = TRUE,)
-Div_Code_fito<-Codigo_fito[,2:190]
-row.names(Div_Code_fito) <- Codigo_fito[["Etiquetas.de.fila"]]
-Codigo_fito_conteo<-read.table("./Biologicos/DatosP_Fitoplancton/Cod_Fito_Conteo.csv", sep=",", header = TRUE,)
-Codigo_fito_conteo2<-Codigo_fito_conteo[,2:190]
-row.names(Codigo_fito_conteo2) <- Codigo_fito_conteo[["Codigo"]]
+Codigo_fito_abundancia<-read.table("./Biologicos/DatosP_Fitoplancton/Definitiva/Matriz_Abundancia.csv", sep=",", header = TRUE)
+
+Div_Code_fito<-Codigo_fito_abundancia[,6:145]
+row.names(Div_Code_fito) <- Codigo_fito_abundancia[,1]
 
 #Inext####
 # Matriz de datos transpuesta
