@@ -29,7 +29,7 @@ Describir las condiciones oceanográficas en los eventos mareales de creciente a
 6. Explorar la relación entre el patrón espacial de variación de larvas y huevos de peces con las condiciones oceanográficas en la subregión Sanquianga-Gorgona
 
 <p align="center" width="100%">
-    <img width="50%" src="/Imagenes_MD/Mapa_Estaciones_Bocas.png">
+    <img width="50%" src="/Imagenes_MD/Mapa_Estaciones_Bocas2.png">
 </p>
 <p align="center" width="100%">
 <b>Figura 1</b>. Distribución de las estaciones de toma de muestras en el área de estudio. 
