@@ -17,20 +17,21 @@ library(GGally)
 library(devtools)
 library(raster)
 library(rgdal)
+library(dplyr)
 
 devtools::install_github("ChrisBermudezR/IctioExPacificoAnalisisPack")
 library(IctioExPacificoAnalisisPack)
 
-
+source("../Funciones/rasterizar_Variable.R")
 
 #Carga de datos química
-Datos_Quimica<-read.table("./02_Datos/Quimicos/Datos_Quimica.csv", header = TRUE, sep=",")
+Datos_Quimica<-read.table("./Quimicos/Datos_Quimica.csv", header = TRUE, sep=",")
 as.factor(Datos_Quimica$Transecto)->Datos_Quimica$Transecto
 as.numeric(Datos_Quimica$No.Estacion)->Datos_Quimica$No.Estacion
 as.factor(Datos_Quimica$Codigo)->Datos_Quimica$Codigo
 #Cargade datos físicos asignados solo para la superficie
-Datos_Fisica_Sup_CCCP<-readr::read_csv("./01_Resultados/Fisicos_EstadisticasDescrip_CCCP.csv")
-Datos_Fisica_Sup_PNN<-readr::read_csv("./01_Resultados/Fisicos_EstadisticasDescrip_PNN.csv")
+Datos_Fisica_Sup_CCCP<-read.table("../04_Analisis_Combinado/01_Datos/Fisicos_EstadisticasDescrip_CCCP.csv", header = TRUE, sep=",")
+Datos_Fisica_Sup_PNN<-readr::read_csv("../01_Resultados/Fisicos_EstadisticasDescrip_PNN.csv")
 
 #Uniendo los dos conjuntos de datos
 
@@ -45,7 +46,7 @@ write_csv(Datos_Totales_PNN, "./01_Resultados/Datos_Totales_PNN.csv", col_names 
 
 colnames(Datos_Totales_CCCP)
 
-Datos_Totales_Limpios<-Datos_Totales %>% select(
+Datos_Totales_Limpios<-Datos_Totales_CCCP %>% dplyr::select(
   Codigo,
   ID,
   Transecto,
@@ -703,28 +704,6 @@ png(filename = "./03_Imagenes/graf_lineas_04.png", width = 20, height = 30, unit
    areas_protegidas<-readOGR("../SIG_Datos/areas_protegidas.shp")
  
 
- rasterizar_Variable<-function(nombre_variable,longitud, latitud, variable, marea, leyenda){
-  assign("WIRE",interpBarnes(longitud, latitud, variable), envir = parent.frame())
-  assign(paste0("pts.grid"),expand.grid(Longitud=WIRE$x, Latitud=WIRE$y), envir = parent.frame())
-  assign(paste0("pts.grid"), mutate(pts.grid, variable=as.vector(WIRE$zg)), envir = parent.frame())
-  assign(paste0("export"),  raster::rasterFromXYZ(pts.grid), envir = parent.frame())
-  assign(paste0(nombre_variable,"_",marea,"_pts.grid"),  rasterFromXYZ(pts.grid), envir = parent.frame())
-  raster::writeRaster(export, filename=paste("../SIG_Datos/grids/",nombre_variable,"_",marea, ".tif", sep = ""),overwrite=TRUE)
-  
-  ggplot(pts.grid, aes(Longitud, Latitud)) +
-    geom_raster(aes(fill = variable))+
-    geom_polygon(data=costa, aes(x= long, y= lat, group=group), colour="grey", fill="grey") +
-    geom_polygon(data=rios, aes(x= long, y= lat, group=group), colour="dodgerblue", fill="dodgerblue") +
-    coord_sf(xlim = c(-78.4055, -78.217), ylim = c(2.55, 2.853), expand = FALSE)+   
-    geom_polygon(data=areas_protegidas, aes(x= long, y= lat, group=group), colour="red", fill="transparent") +
-    theme_bw()+
-    scale_fill_gradientn(colours = terrain.colors(7))+
-    geom_point(data=marea_altagra, aes(x= longitud, y= latitud))+
-    labs(fill=leyenda)
-    #ggrepel::geom_text_repel(data=marea_alta,aes(x=longitud, y=latitud,label = Estacion),box.padding   = 0.3, direction = "x")
-}
-
- 
  rasterizar_Variable("NO2", marea_baja$longitud, marea_baja$latitud, marea_baja$NO2, "Baja",Exp_NO2)
  
 
@@ -805,83 +784,74 @@ png(filename = "./03_Imagenes/graf_lineas_04.png", width = 20, height = 30, unit
  Densidad_max_AltaGrid<-rasterizar_Variable('Densidad_max', marea_alta$longitud, marea_alta$latitud, marea_alta$Densidad_max, 'Alta',  Exp_Densidad_max)
  Profundidad_max_AltaGrid<-rasterizar_Variable('Profundidad_max', marea_alta$longitud, marea_alta$latitud, marea_alta$Profundidad_max, 'Alta',  Exp_Profundidad_max)
 
- tiff(filename = "./03_Imagenes/grid_grafica_01.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
+ tiff(filename = "./02_Imagenes/grid_grafica_01.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
  grid.arrange(nrow=4, ncol=2, 
               NO2_AltaGrid, NO2_BajaGrid,
               NO3_AltaGrid, NO3_BajaGrid,
               PO4_AltaGrid, PO4_BajaGrid,
-              SiO2_AltaGrid, SiO2_BajaGrid,
-              top="mareas", left="Alta", right="baja")
+              SiO2_AltaGrid, SiO2_BajaGrid)
  dev.off()
  
- tiff(filename = "./03_Imagenes/grid_grafica_02.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
+ tiff(filename = "./02_Imagenes/grid_grafica_02.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
  grid.arrange(nrow=4, ncol=2, 
               Clorofila_AltaGrid, Clorofila_BajaGrid,
               Conductividad_AltaGrid, Conductividad_BajaGrid,
               Salinidad_AltaGrid, Salinidad_BajaGrid,
-              pH_AltaGrid, pH_BajaGrid,
-              top="mareas", left="Alta", right="baja")
+              pH_AltaGrid, pH_BajaGrid)
  dev.off()
  
- tiff(filename = "./03_Imagenes/grid_grafica_03.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
+ tiff(filename = "./02_Imagenes/grid_grafica_03.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
  grid.arrange(nrow=4, ncol=2, 
               OD_AltaGrid, OD_BajaGrid,
               Transparencia_AltaGrid, Transparencia_BajaGrid,
               SST_AltaGrid, SST_BajaGrid,
-              TSI_Clor_AltaGrid, TSI_Clor_BajaGrid,
-              top="mareas", left="Alta", right="baja")
+              TSI_Clor_AltaGrid, TSI_Clor_BajaGrid)
  dev.off()
  
- tiff(filename = "./03_Imagenes/grid_grafica_04.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
+ tiff(filename = "./02_Imagenes/grid_grafica_04.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
  grid.arrange(nrow=4, ncol=2, 
               TSI_SECCHI_AltaGrid, TSI_SECCHI_BajaGrid,
               Temperatura_mean_AltaGrid, Temperatura_mean_BajaGrid,
               Salinidad_mean_AltaGrid, Salinidad_mean_BajaGrid,
-              Oxigeno_mean_AltaGrid, Oxigeno_mean_BajaGrid,
-              top="mareas", left="Alta", right="baja")
+              Oxigeno_mean_AltaGrid, Oxigeno_mean_BajaGrid)
  dev.off()
  
- tiff(filename = "./03_Imagenes/grid_grafica_05.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
+ tiff(filename = "./02_Imagenes/grid_grafica_05.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
  grid.arrange(nrow=4, ncol=2, 
               Densidad_mean_AltaGrid, Densidad_mean_BajaGrid,
               Temperatura_median_AltaGrid, Temperatura_median_BajaGrid,
               Salinidad_median_AltaGrid, Salinidad_median_BajaGrid,
-              Oxigeno_median_AltaGrid, Oxigeno_median_BajaGrid,
-              top="mareas", left="Alta", right="baja")
+              Oxigeno_median_AltaGrid, Oxigeno_median_BajaGrid)
  dev.off()
  
- tiff(filename = "./03_Imagenes/grid_grafica_06.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
+ tiff(filename = "./02_Imagenes/grid_grafica_06.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
  grid.arrange(nrow=4, ncol=2, 
               Densidad_median_AltaGrid, Densidad_median_BajaGrid,
               Temperatura_sd_AltaGrid, Temperatura_sd_BajaGrid,
               Salinidad_sd_AltaGrid, Salinidad_sd_BajaGrid,
-              Oxigeno_sd_AltaGrid, Oxigeno_sd_BajaGrid,
-              top="mareas", left="Alta", right="baja")
+              Oxigeno_sd_AltaGrid, Oxigeno_sd_BajaGrid)
  dev.off()
  
- tiff(filename = "./03_Imagenes/grid_grafica_07.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
+ tiff(filename = "./02_Imagenes/grid_grafica_07.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
  grid.arrange(nrow=4, ncol=2, 
               Densidad_sd_AltaGrid, Densidad_sd_BajaGrid,
               Temperatura_min_AltaGrid, Temperatura_min_BajaGrid,
               Salinidad_min_AltaGrid, Salinidad_min_BajaGrid,
-              Oxigeno_min_AltaGrid, Oxigeno_min_BajaGrid,
-              top="mareas", left="Alta", right="baja")
+              Oxigeno_min_AltaGrid, Oxigeno_min_BajaGrid)
  dev.off()
  
- tiff(filename = "./03_Imagenes/grid_grafica_08.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
+ tiff(filename = "./02_Imagenes/grid_grafica_08.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
  grid.arrange(nrow=4, ncol=2, 
               Densidad_min_AltaGrid, Densidad_min_BajaGrid,
               Temperatura_max_AltaGrid, Temperatura_max_BajaGrid,
               Salinidad_max_AltaGrid, Salinidad_max_BajaGrid,
-              Oxigeno_max_AltaGrid, Oxigeno_max_BajaGrid,
-              top="mareas", left="Alta", right="baja")
+              Oxigeno_max_AltaGrid, Oxigeno_max_BajaGrid)
  dev.off()
  
- tiff(filename = "./03_Imagenes/grid_grafica_09.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
+ tiff(filename = "./02_Imagenes/grid_grafica_09.tif", width = 30, height = 50, units = "cm", pointsize = 25, bg = "white", res = 300, compression = "lzw")
  grid.arrange(nrow=4, ncol=2, 
               Densidad_max_AltaGrid, Densidad_max_BajaGrid,
-              Profundidad_max_AltaGrid, Profundidad_max_BajaGrid,
-              top="mareas", left="Alta", right="baja")
+              Profundidad_max_AltaGrid, Profundidad_max_BajaGrid)
  dev.off()
  
  

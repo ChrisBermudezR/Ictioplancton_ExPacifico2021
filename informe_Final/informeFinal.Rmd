@@ -1,0 +1,55 @@
+---
+title: "INFORME FINAL"
+  
+author: "SECRETARÍA EJECUTIVA DE LA COMISIÓN COLOMBIANA DEL OCÉANO PLAN NACIONAL DE EXPEDICIONES CIENTÍFICAS MARINAS"
+  
+output:
+  bookdown::word_document2:
+    reference_docx: template.docx
+    number_sections: false
+    link-citations: yes
+    language:
+      label:
+        fig: 'Figura '
+        tab: 'Tabla '
+        eq: 'Ecuación '
+keep_tex: true
+csl: biodiversity-and-conservation.csl
+bibliography: Bibliography.bib
+link-citations: yes
+number_sections: yes
+df_print: kable
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+# Datos generales del proyecto
+
+
+## Resumen 
+# Sinopsis técnica 
+#	Cumplimiento de objetivos
+##	Objetivo general
+##	Objetivos específicos 
+#	Introducción
+#	Metodología 
+##	Metodología efectiva de muestreo
+
+##	Metodología de procesamiento y análisis de resultados
+#	Resultados
+#	Discusión
+#	Conclusiones
+#	Productos generados 
+#	Literatura citada
+::: {#refs}
+:::
+
+\pagebreak
+#	Comentarios y recomendaciones 
+
+
+
+
+
+
+

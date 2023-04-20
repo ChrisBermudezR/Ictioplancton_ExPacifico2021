@@ -21,7 +21,7 @@ library(rgdal)
 devtools::install_github("ChrisBermudezR/IctioExPacificoAnalisisPack")
 library(IctioExPacificoAnalisisPack)
 
-
+source("./Funciones/")
 
 #Carga de datos química
 Datos_Quimica<-read.table("./02_Datos/Quimicos/Datos_Quimica.csv", header = TRUE, sep=",")
