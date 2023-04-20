@@ -16,8 +16,14 @@ library(gsw)
 library(oce)
 library(pastecs)
 library(devtools)
+library(dunn.test)
 
 
+source("../Funciones/boxplot_CTDO.R")
+source("../Funciones/KrusckalPotHoc.R")
+source("../Funciones/histograma_Transecto.R")
+source("../Funciones/perfil_en_profundidad.R")
+source("../Funciones/boxplot_profundidad.R")
 
 devtools::install_github("ChrisBermudezR/IctioExPacificoAnalisisPack")
 library(IctioExPacificoAnalisisPack)
@@ -25,15 +31,23 @@ library(IctioExPacificoAnalisisPack)
 
 #####Manejo del conjunto de datos####
 #Cargar el archivo de datos
-Datos_CTDO_CCCP<-readr::read_csv("./02_Datos/Fisicos/Datos_CTDO_CCCP.csv")
+Datos_CTDO_CCCP<-readr::read_csv("./02_DatosFisicos/Datos_CTDO_CCCP.csv")
+
 #Asignar factores al evento de muestreo que en este caso está descrito por la variable "Codigo"
 Datos_CTDO_CCCP$No.Estacion<-as.factor(Datos_CTDO_CCCP$No.Estacion)
 Datos_CTDO_CCCP$Marea<-as.factor(Datos_CTDO_CCCP$Marea)
 Datos_CTDO_CCCP$Codigo<-as.factor(Datos_CTDO_CCCP$Codigo)
 Datos_CTDO_CCCP <- Datos_CTDO_CCCP %>% group_by(Codigo)
 
-
-
+Datos_CTDO_CCCP<-Datos_CTDO_CCCP %>% mutate(Sector = case_when(
+  No.Estacion == "6" ~ "Costero",
+  No.Estacion == "5" ~ "Costero",
+  No.Estacion == "4" ~ "Costero",
+  No.Estacion == "3" ~ "Oceanico",
+  No.Estacion == "2" ~ "Oceanico",
+  No.Estacion == "1" ~ "Oceanico"
+))
+Datos_CTDO_CCCP$Sector<-as.factor(Datos_CTDO_CCCP$Sector)
 ####Estadistica descriptiva####
   
 EstadisticasDescrip<-Datos_CTDO_CCCP %>% summarise_each(funs(mean(., na.rm = TRUE),   median(., na.rm = TRUE),n(),sd(., na.rm = TRUE), min(., na.rm = TRUE),max(., na.rm = TRUE)), Temperatura, Salinidad, Oxigeno, Densidad, Profundidad)
@@ -41,43 +55,97 @@ EstadisticasDescrip<-Datos_CTDO_CCCP %>% summarise_each(funs(mean(., na.rm = TRU
 write_csv(EstadisticasDescrip, "./01_Resultados/Fisicos_EstadisticasDescrip_CCCP.csv", col_names = TRUE)
 
 
+library(vegan)
+Datos_CTDO_CCCPNA<-na.omit(Datos_CTDO_CCCP[,c(7,9,10,12,13,15,18)])
+MRPP_CTDOMarea <- mrpp(dat = na.omit(Datos_CTDO_CCCPNA[,2:5]), grouping = Datos_CTDO_CCCPNA$Marea, permutations = 999)
+MRPP_CTDOTransecto <- mrpp(dat = na.omit(Datos_CTDO_CCCPNA[,2:5]), grouping = Datos_CTDO_CCCPNA$Transecto, permutations = 999)
+MRPP_CTDOSector <- mrpp(dat = na.omit(Datos_CTDO_CCCPNA[,2:5]), grouping = Datos_CTDO_CCCPNA$Sector, permutations = 999)
+
+capture.output("MRPP Química - Mareas", 
+               MRPP_CTDOMarea,
+               "MRPP Química - Transecto", 
+               MRPP_CTDOTransecto,
+               "MRPP Química - Sectores",
+               MRPP_CTDOSector,
+               file="./01_Resultados/MRPP_CTDO.txt"
+)
 #########################
 
 
-Temperatura_Total_CCCP<-IctioExPacificoAnalisisPack::boxplot_CTDO(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Temperatura, "Transectos", "Temperatura (°C)")
-Salinidad_Total_CCCP<-IctioExPacificoAnalisisPack::boxplot_CTDO(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Salnidad, "Transectos", "Salinidad (PSU)")
-Densidad_Total_CCCP<-IctioExPacificoAnalisisPack::boxplot_CTDO(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Densidad, "Transectos", "Densidad (KG/m3)")
-Oxigeno_Total_CCCP<-IctioExPacificoAnalisisPack::boxplot_CTDO(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Oxigeno, "Transectos", "Oxígeno disuelto (mg/L)")
+Temperatura_Transectos_CCCP<-boxplot_CTDO(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Temperatura, "Transectos", "Temperatura (°C)")
+Salinidad_Transectos_CCCP<-boxplot_CTDO(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Salinidad, "Transectos", "Salinidad (PSU)")
+Densidad_Transectos_CCCP<-boxplot_CTDO(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Densidad, "Transectos", "Densidad (KG/m3)")
+Oxigeno_Transectos_CCCP<-boxplot_CTDO(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Oxigeno, "Transectos", "Oxígeno disuelto (mg/L)")
 
 
+Temperatura_Marea_CCCP<-boxplot_CTDO(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Temperatura, "Marea", "Temperatura (°C)")
+Salinidad_Marea_CCCP<-boxplot_CTDO(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Salinidad, "Marea", "Salinidad (PSU)")
+Densidad_Marea_CCCP<-boxplot_CTDO(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Densidad, "Marea", "Densidad (KG/m3)")
+Oxigeno_Marea_CCCP<-boxplot_CTDO(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Oxigeno, "Marea", "Oxígeno disuelto (mg/L)")
 
-tiff(filename = "./03_Imagenes/01_Datos_Totales_CCCP.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
-grid.arrange(nrow=2, ncol=2, Temperatura_Total_CCCP, 
-             Salnidad_Total_CCCP,Densidad_Total_CCCP,Oxigeno_Total_CCCP, 
-             top="Datos totales")
+Temperatura_Sector_CCCP<-boxplot_CTDO(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Sector, Datos_CTDO_CCCP$Temperatura, "Sector", "Temperatura (°C)")
+Salinidad_Sector_CCCP<-boxplot_CTDO(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Sector, Datos_CTDO_CCCP$Salinidad, "Sector", "Salinidad (PSU)")
+Densidad_Sector_CCCP<-boxplot_CTDO(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Sector, Datos_CTDO_CCCP$Densidad, "Sector", "Densidad (KG/m3)")
+Oxigeno_Sector_CCCP<-boxplot_CTDO(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Sector, Datos_CTDO_CCCP$Oxigeno, "Sector", "Oxígeno disuelto (mg/L)")
+
+
+png(filename = "./03_Imagenes/01_CTDO_Transectos_CCCP.png", width = 20, height = 30, units = "cm", pointsize = 15, res = 300)
+grid.arrange(nrow=2, ncol=2, 
+             Temperatura_Transectos_CCCP, 
+             Salinidad_Transectos_CCCP,
+             Densidad_Transectos_CCCP,
+             Oxigeno_Transectos_CCCP)
 dev.off()
 
-
-
-png(filename = "./03_Imagenes/01_Datos_Totales_CCCP.png", width = 20, height = 30, units = "cm", pointsize = 15, res = 300)
-grid.arrange(nrow=2, ncol=2, Temperatura_Total_CCCP, 
-             Salnidad_Total_CCCP,Densidad_Total_CCCP,Oxigeno_Total_CCCP, 
-             top="Datos totales")
+png(filename = "./03_Imagenes/01_CTDO_Mareas_CCCP.png", width = 20, height = 30, units = "cm", pointsize = 15, res = 300)
+grid.arrange(nrow=2, ncol=2, 
+             Temperatura_Marea_CCCP, 
+             Salinidad_Marea_CCCP,
+             Densidad_Marea_CCCP,
+             Oxigeno_Marea_CCCP)
 dev.off()
 
-
-
-Temperatura_Hist_CCCP<-IctioExPacificoAnalisisPack::IctioExPacificoAnalisisPack::histograma_Transecto(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Temperatura, "Temperatura (°C)")
-Salinidad_Hist_CCCP<-IctioExPacificoAnalisisPack::histograma_Transecto(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Salinidad, "Salinidad (PSU)")
-Densidad_Hist_CCCP<-IctioExPacificoAnalisisPack::histograma_Transecto(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Densidad, "Densidad (KG/m3)")
-Oxigeno_Hist_CCCP<-IctioExPacificoAnalisisPack::histograma_Transecto(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Oxigeno, "Oxígeno disuelto (mg/L)")
-
-
-tiff(filename = "./03_Imagenes/02_Histogramas_CCCP.tif", width = 40, height = 30, units = "cm", pointsize = 30, bg = "white", res = 300, compression = "lzw")
-grid.arrange(nrow=2, ncol=2,Temperatura_Hist_CCCP, Salinidad_Hist_CCCP, Densidad_Hist_CCCP, Oxigeno_Hist_CCCP)
+png(filename = "./03_Imagenes/01_CTDO_Sector_CCCP.png", width = 20, height = 30, units = "cm", pointsize = 15, res = 300)
+grid.arrange(nrow=2, ncol=2, 
+             Temperatura_Sector_CCCP, 
+             Salinidad_Sector_CCCP,
+             Densidad_Sector_CCCP,
+             Oxigeno_Sector_CCCP)
 dev.off()
 
-png(filename = "./03_Imagenes/02_Histogramas_CCCP.png", width = 40, height = 30, units = "cm", pointsize = 30, bg = "white", res = 300)
+Temperatura_Transectos_KrusckalPotHoc<-KrusckalPotHoc(Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Temperatura, "./01_Resultados/Temperatura_Transectos_KrusckalPotHoc.txt", "Temperatura_Transectos_KrusckalPotHoc")
+Salinidad_Transectos_KrusckalPotHoc<-KrusckalPotHoc(Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Salinidad, "./01_Resultados/Salinidad_Transectos_KrusckalPotHoc.txt", "Salinidad_Transectos_KrusckalPotHoc")
+Densidad_Transectos_KrusckalPotHoc<-KrusckalPotHoc(Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Densidad, "./01_Resultados/Densidad_Transectos_KrusckalPotHoc.txt", "Densidad_Transectos_KrusckalPotHoc")
+Oxigeno_Transectos_KrusckalPotHoc<-KrusckalPotHoc(Datos_CTDO_CCCP$Transecto, Datos_CTDO_CCCP$Oxigeno, "./01_Resultados/Oxigeno_Transectos_KrusckalPotHoc.txt", "Oxigeno_Transectos_KrusckalPotHoc")
+
+source("../Funciones/Wilcoxon.R")
+Temperatura_Marea_Wilcoxon<-Wilcoxon(Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Temperatura, "./01_Resultados/Temperatura_Marea_Wilcoxon.txt", "Temperatura_Marea_Wilcoxon")
+Salinidad_Marea_Wilcoxon<-Wilcoxon(Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Salinidad, "./01_Resultados/Salinidad_Marea_Wilcoxon.txt", "Salinidad_Marea_Wilcoxon")
+Densidad_Marea_Wilcoxon<-Wilcoxon(Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Densidad, "./01_Resultados/Densidad_Marea_Wilcoxon.txt", "Densidad_Marea_Wilcoxon")
+Oxigeno_Marea_Wilcoxon<-Wilcoxon(Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Oxigeno, "./01_Resultados/Oxigeno_Marea_Wilcoxon.txt", "Oxigeno_Marea_Wilcoxon")
+
+Temperatura_Sector_Wilcoxon<-Wilcoxon( Datos_CTDO_CCCP$Sector, Datos_CTDO_CCCP$Temperatura, "./01_Resultados/Temperatura_Sector_Wilcoxon.txt", "Temperatura_Sector_Wilcoxon")
+Salinidad_Sector_Wilcoxon<-Wilcoxon(Datos_CTDO_CCCP$Sector, Datos_CTDO_CCCP$Salinidad, "./01_Resultados/Salinidad_Sector_Wilcoxon.txt", "Salinidad_Sector_Wilcoxon")
+Densidad_Sector_Wilcoxon<-Wilcoxon(Datos_CTDO_CCCP$Sector, Datos_CTDO_CCCP$Densidad, "./01_Resultados/Densidad_Sector_Wilcoxon.txt", "Densidad_Sector_Wilcoxon")
+Oxigeno_Sector_Wilcoxon<-Wilcoxon(Datos_CTDO_CCCP$Sector, Datos_CTDO_CCCP$Oxigeno, "./01_Resultados/Oxigeno_Sector_Wilcoxon.txt", "Oxigeno_Sector_Wilcoxon")
+
+
+
+
+
+
+
+
+
+
+Temperatura_Hist_CCCP<-histograma_Transecto(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Transecto,Datos_CTDO_CCCP$Sector, Datos_CTDO_CCCP$Temperatura, "Temperatura (°C)")
+Salinidad_Hist_CCCP<-histograma_Transecto(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Transecto,Datos_CTDO_CCCP$Sector, Datos_CTDO_CCCP$Salinidad, "Salinidad (PSU)")
+Densidad_Hist_CCCP<-histograma_Transecto(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Transecto,Datos_CTDO_CCCP$Sector, Datos_CTDO_CCCP$Densidad, "Densidad (KG/m3)")
+Oxigeno_Hist_CCCP<-histograma_Transecto(Datos_CTDO_CCCP, Datos_CTDO_CCCP$Marea, Datos_CTDO_CCCP$Transecto,Datos_CTDO_CCCP$Sector, Datos_CTDO_CCCP$Oxigeno, "Oxígeno disuelto (mg/L)")
+
+
+
+png(filename = "./03_Imagenes/02_Histogramas_CCCP.png", width = 40, height = 45, units = "cm", pointsize = 30, bg = "white", res = 300)
 grid.arrange(nrow=2, ncol=2,Temperatura_Hist_CCCP, Salinidad_Hist_CCCP, Densidad_Hist_CCCP, Oxigeno_Hist_CCCP)
 dev.off()
 
@@ -90,12 +158,8 @@ Oxigeno_boxplot_CCCP<-boxplot_profundidad(Datos_CTDO_CCCP,Datos_CTDO_CCCP$No.Est
 
 
 
-tiff(filename = "./03_Imagenes/03_Boxplot_CCCP.tif", width = 20, height = 15, units = "cm", pointsize = 12, bg = "white", res = 300, compression = "lzw")
-grid.arrange(nrow=2, ncol=2,Temperatura_boxplot_CCCP, Salinidad_boxplot_CCCP, 
-             Densidad_boxplot_CCCP, Oxigeno_boxplot_CCCP)
-dev.off()
 
-png(filename = "./03_Imagenes/03_Boxplot_CCCP.png", width = 20, height = 15, units = "cm", pointsize = 12, bg = "white", res = 300)
+png(filename = "./03_Imagenes/03_Boxplot_CCCP.png", width = 30, height = 35, units = "cm", pointsize = 12, bg = "white", res = 300)
 grid.arrange(nrow=2, ncol=2,Temperatura_boxplot_CCCP, Salinidad_boxplot_CCCP, 
              Densidad_boxplot_CCCP, Oxigeno_boxplot_CCCP)
 dev.off()
@@ -132,7 +196,7 @@ for (i in 1:36){
   print(paste0("Den_",lista_codigos[[i]],"<-perfil_en_profundidad(",lista_codigos[[i]],",", lista_codigos[[i]],"$Codigo,", lista_codigos[[i]],"$Marea,", lista_codigos[[i]],"$Densidad,", lista_codigos[[i]],"$Profundidad,"," 'Densidad - (kg/m3)', 'Profundidad [m]')"))
 }
 
- Temp_A01A_CCCP<-IctioExPacificoAnalisisPack::perfil_en_profundidad(A01A_CCCP,A01A_CCCP$Codigo,A01A_CCCP$Marea,A01A_CCCP$Temperatura,A01A_CCCP$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
+ Temp_A01A_CCCP<-perfil_en_profundidad(A01A_CCCP,A01A_CCCP$Codigo,A01A_CCCP$Marea,A01A_CCCP$Temperatura,A01A_CCCP$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
  Temp_A01B_CCCP<-perfil_en_profundidad(A01B_CCCP,A01B_CCCP$Codigo,A01B_CCCP$Marea,A01B_CCCP$Temperatura,A01B_CCCP$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
  Temp_A02A_CCCP<-perfil_en_profundidad(A02A_CCCP,A02A_CCCP$Codigo,A02A_CCCP$Marea,A02A_CCCP$Temperatura,A02A_CCCP$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')
  Temp_A02B_CCCP<-perfil_en_profundidad(A02B_CCCP,A02B_CCCP$Codigo,A02B_CCCP$Marea,A02B_CCCP$Temperatura,A02B_CCCP$Profundidad, 'Temperatura - [°C]', 'Profundidad [m]')

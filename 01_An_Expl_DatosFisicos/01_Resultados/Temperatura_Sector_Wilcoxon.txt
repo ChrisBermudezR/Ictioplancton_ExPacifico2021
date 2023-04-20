@@ -1,0 +1,9 @@
+[1] "Temperatura_Sector_Wilcoxon"
+[1] "Kruskal-Wallis rank sum test"
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  variable by grupo
+W = 635860, p-value < 2.2e-16
+alternative hypothesis: true location shift is not equal to 0
+

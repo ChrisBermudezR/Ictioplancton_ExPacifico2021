@@ -1,0 +1,18 @@
+[1] "Salinidad_Sector_KrusckalPotHoc"
+[1] "Kruskal-Wallis rank sum test"
+
+	Kruskal-Wallis rank sum test
+
+data:  grupo by variable
+Kruskal-Wallis chi-squared = 2788.5, df = 2683, p-value = 0.07632
+
+[1] "Pairwise comparisons using Wilcoxon rank sum test with continuity correction "
+
+	Pairwise comparisons using Wilcoxon rank sum test with continuity correction 
+
+data:  variable and grupo 
+
+         Costero
+Oceanico <2e-16 
+
+P value adjustment method: bonferroni 

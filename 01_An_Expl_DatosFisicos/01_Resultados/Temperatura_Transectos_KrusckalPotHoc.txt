@@ -1,0 +1,19 @@
+[1] "Temperatura_Transectos_KrusckalPotHoc"
+[1] "Kruskal-Wallis rank sum test"
+
+	Kruskal-Wallis rank sum test
+
+data:  grupo by variable
+Kruskal-Wallis chi-squared = 2678, df = 2656, p-value = 0.3781
+
+[1] "Pairwise comparisons using Wilcoxon rank sum test with continuity correction "
+
+	Pairwise comparisons using Wilcoxon rank sum test with continuity correction 
+
+data:  variable and grupo 
+
+           Amarales Guascama
+Guascama   2.9e-13  -       
+Sanquianga 3.0e-07  0.4     
+
+P value adjustment method: bonferroni 

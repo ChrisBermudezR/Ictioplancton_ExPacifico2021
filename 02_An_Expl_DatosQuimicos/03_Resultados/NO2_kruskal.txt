@@ -1,0 +1,9 @@
+[1] "NO2_kruskal"
+[1] "Kruskal-Wallis rank sum test"
+
+	Wilcoxon signed rank test with continuity correction
+
+data:  variable by grupo
+V = 0, p-value = 0.0003204
+alternative hypothesis: true location shift is not equal to 0
+

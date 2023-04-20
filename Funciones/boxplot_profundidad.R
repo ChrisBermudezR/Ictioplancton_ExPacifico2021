@@ -16,5 +16,5 @@ boxplot_profundidad<-function(datos, estacion, variable, labely){
     stat_summary(fun=mean, aes(y = variable, x=estacion), geom="point", shape=20, size=2, color="red", position = position_dodge(width =0.8)) +
     labs(title = paste0("Histograma de la ",labely),
          y = labely, x = "Estaciones")+
-    facet_grid(Marea~Transecto)
+    facet_grid(Sector~Transecto~Marea)
 }

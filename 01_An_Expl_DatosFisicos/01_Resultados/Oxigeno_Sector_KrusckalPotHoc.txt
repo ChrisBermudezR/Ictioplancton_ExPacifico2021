@@ -1,0 +1,18 @@
+[1] "Oxigeno_Sector_KrusckalPotHoc"
+[1] "Kruskal-Wallis rank sum test"
+
+	Kruskal-Wallis rank sum test
+
+data:  grupo by variable
+Kruskal-Wallis chi-squared = 2581.1, df = 2591, p-value = 0.5512
+
+[1] "Pairwise comparisons using Wilcoxon rank sum test with continuity correction "
+
+	Pairwise comparisons using Wilcoxon rank sum test with continuity correction 
+
+data:  variable and grupo 
+
+         Costero
+Oceanico 0.00074
+
+P value adjustment method: bonferroni 

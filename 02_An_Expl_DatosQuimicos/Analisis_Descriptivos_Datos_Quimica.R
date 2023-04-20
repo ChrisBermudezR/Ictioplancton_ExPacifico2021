@@ -23,24 +23,43 @@ devtools::install_github("ChrisBermudezR/IctioExPacificoAnalisisPack")
 library(IctioExPacificoAnalisisPack)
 
 source("../Funciones/rasterizar_Variable.R")
+source("../Funciones/KruskalPostHoc.R")
+source("../Funciones/boxplot_Marea.R")
+source("../Funciones/boxplot_Sector.R")
+source("../Funciones/boxplot_transecto.R")
+source("../Funciones/Wilcoxon.R")
+
+
+
 
 #Carga de datos química
 Datos_Quimica<-read.table("./Quimicos/Datos_Quimica.csv", header = TRUE, sep=",")
 as.factor(Datos_Quimica$Transecto)->Datos_Quimica$Transecto
 as.numeric(Datos_Quimica$No.Estacion)->Datos_Quimica$No.Estacion
 as.factor(Datos_Quimica$Codigo)->Datos_Quimica$Codigo
+Datos_Quimica<-Datos_Quimica %>% mutate(Sector = case_when(
+  No.Estacion == "6" ~ "Costero",
+  No.Estacion == "5" ~ "Costero",
+  No.Estacion == "4" ~ "Costero",
+  No.Estacion == "3" ~ "Oceanico",
+  No.Estacion == "2" ~ "Oceanico",
+  No.Estacion == "1" ~ "Oceanico"
+))
+Datos_Quimica$Sector<-as.factor(Datos_Quimica$Sector)
+
 #Cargade datos físicos asignados solo para la superficie
 Datos_Fisica_Sup_CCCP<-read.table("../04_Analisis_Combinado/01_Datos/Fisicos_EstadisticasDescrip_CCCP.csv", header = TRUE, sep=",")
-Datos_Fisica_Sup_PNN<-readr::read_csv("../01_Resultados/Fisicos_EstadisticasDescrip_PNN.csv")
+Biomasa<-read.table("../03_An_Expl_DatosBiologicos/Biologicos/DatosP_Zooplancton/Biomasa.csv", header = TRUE, sep=",")
+Biomasa$Codigo<-as.factor(Biomasa$Codigo)
+Datos_Fisica_Sup_CCCP$Codigo<-as.factor(Datos_Fisica_Sup_CCCP$Codigo)
 
 #Uniendo los dos conjuntos de datos
 
-Datos_Totales_CCCP <- merge(Datos_Quimica,Datos_Fisica_Sup_CCCP,by="Codigo")
-Datos_Totales_PNN <- merge(Datos_Quimica,Datos_Fisica_Sup_PNN,by="Codigo")
+Datos_Totales_CCCP <- base::merge(Datos_Quimica,Datos_Fisica_Sup_CCCP, by="Codigo")
+Datos_Totales_CCCP <- merge(Datos_Totales_CCCP,Biomasa, by="Codigo")
 
 
-write_csv(Datos_Totales_CCCP, "./01_Resultados/Datos_Totales_CCCP.csv", col_names = TRUE)
-write_csv(Datos_Totales_PNN, "./01_Resultados/Datos_Totales_PNN.csv", col_names = TRUE)
+write_csv(Datos_Totales_CCCP, "./Quimicos/Datos_Totales_CCCP.csv", col_names = TRUE)
 
 
 
@@ -51,7 +70,8 @@ Datos_Totales_Limpios<-Datos_Totales_CCCP %>% dplyr::select(
   ID,
   Transecto,
   No.Estacion,
-  Estacion,           
+  Estacion,
+  Sector,
   latitud ,          
   longitud,
   Fecha,              
@@ -90,7 +110,15 @@ Datos_Totales_Limpios<-Datos_Totales_CCCP %>% dplyr::select(
   Salinidad_max,
   Oxigeno_max,
   Densidad_max,
-  Profundidad_max  
+  Profundidad_max,  
+  BioVol500,         
+ PesoHum500,
+ PesoSec500,
+ PesoSCen500,
+ BioVol300,
+ PesoHum300,
+   PesoSec300,
+ PesoSCen300
 )
 colnames(Datos_Totales_Limpios)
 
@@ -131,7 +159,15 @@ etiqueta_para_y<-c(
   "Máximo de la Salinidad en la columna [PSU]",
   "Máximo del Oxígeno disuelto en la columna [mg/L]",
   "Exp_Densidad",
-  "Máximo de la Profundidad [m]"
+  "Máximo de la Profundidad [m]",
+  "Biovolumen 300µm [ml/1000m3]",
+  "Peso húmedo 300µm [g/1000m3]",
+  "Peso seco 300µm [g/1000m3]",
+  "Peso sin ceniza 300µm [g/1000m3]",
+  "Biovolumen 500µm [g/1000m3]",
+  "Peso húmedo 500µm [g/1000m3]",
+  "Peso seco 500µm [g/1000m3]",
+  "Peso sin ceniza 500µm [g/1000m3]"
 )
 
 #Expresiones para las leyendas de las variables
@@ -179,7 +215,7 @@ Exp_Clorofila2=expression(paste("[",mu,"g/L]"))
 Exp_Conductividad2="(mS/cm)"
 Exp_Salinidad2=" (PSU)"
 Exp_pH2="pH"
-Exp_OD2=expression(paste("[mg O"[2],"/L]"))
+Exp_OD2=expression(paste("[mg O"[2],".L"^-1,"]"))
 Exp_Transparencia2="(m)"
 Exp_SST2="[mg/L]"
 Exp_TSI_Clor="(m)"
@@ -205,6 +241,28 @@ Exp_Salinidad_max=expression(paste("(PSU)"))
 Exp_Oxigeno_max=expression(paste("[mg O"[2],"/L]"))
 Exp_Densidad_max=expression(paste("(kg/m"^3,")"))
 Exp_Profundidad_max="[m]"
+Exp_BioVol300=expression(paste("Biovolumen Zoop. 300µm [ml.1000m"^-3,"]"))
+Exp_PesoHum300=expression(paste("Peso humedo Zoop. 300µm [g.1000m"^-3,"]"))
+Exp_PesoSec300=expression(paste("Peso seco Zoop. 300µm [g.1000m"^-3,"]"))
+Exp_PesoSCen300=expression(paste("Peso sin ceniza Zoop. 300µm [g.1000m"^-3,"]"))
+Exp_BioVol500=expression(paste("Biovolumen Zoop. 500µm [ml.1000m"^-3,"]"))
+Exp_PesoHum500=expression(paste("Peso humedo Zoop. 500µm [g.1000m"^-3,"]"))
+Exp_PesoSec500=expression(paste("Peso seco Zoop. 500µm [g.1000m"^-3,"]"))
+Exp_PesoSCen500=expression(paste("Peso sin ceniza Zoop. 500µm [g.1000m"^-3,"]"))
+
+
+MRPP_QuimicosMarea <- mrpp(dat = Datos_Totales_Limpios[,12:53], grouping = Datos_Totales_Limpios$Marea, permutations = 999)
+MRPP_QuimicosTransecto <- mrpp(dat = Datos_Totales_Limpios[,12:53], grouping = Datos_Totales_Limpios$Transecto, permutations = 999)
+MRPP_QuimicosSector <- mrpp(dat = Datos_Totales_Limpios[,12:53], grouping = Datos_Totales_Limpios$Sector, permutations = 999)
+
+capture.output("MRPP Química - Mareas", 
+               MRPP_QuimicosMarea,
+               "MRPP Química - Transecto", 
+               MRPP_QuimicosTransecto,
+               "MRPP Química - Sectores",
+               MRPP_QuimicosSector,
+               file="./03_Resultados/MRPP_FisicoQuimicos.txt"
+               )
 
 ####Creación de la visualización 
 
@@ -216,210 +274,181 @@ Exp_Profundidad_max="[m]"
 #ciclo para imprimir los objetos para ejecutar la función
 #Se debe tomar lo que imprime en la consola, copiarlo en el script y borrar el [1] y las comillas que encierran la expresión
 for (i in 1:34){
-  print(paste0(variables[i], "_boxplot_Mareas<-boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$",variables[i],", ","'",etiqueta_para_y[i],"'",")"))
+  print(paste0(variables[i], "_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$",variables[i],", ","'",etiqueta_para_y[i],"'",")"))
 }
 
- NO2_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$NO2, Exp_NO2)
- NO3_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$NO3, Exp_NO3)
- PO4_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$PO4, Exp_PO4)
- SiO2_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$SiO2, Exp_SiO2)
- Clorofila_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Clorofila, Exp_Clorofila)
- Conductividad_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Conductividad, Exp_Conductividad)
- Salinidad_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad, Exp_Salinidad)
- pH_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$pH, Exp_pH)
- OD_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$OD, Exp_OD)
- Transparencia_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Transparencia, Exp_Transparencia)
- SST_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$SST, Exp_SST)
- TSI_Clor_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$TSI_Clor, Exp_TSIClorofila)
- TSI_SECCHI_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$TSI_SECCHI, Exp_TSIDiscoSecchi)
- Temperatura_mean_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_mean, Exp_meanTemp)
- Salinidad_mean_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_mean, Exp_meansal)
- Oxigeno_mean_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_mean, Exp_meanoxi)
- Densidad_mean_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_mean, Exp_meanden)
- Temperatura_median_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_median, Exp_medianTemp)
- Salinidad_median_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_median, Exp_mediansal)
- Oxigeno_median_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_median, Exp_medianoxi)
- Densidad_median_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_median, Exp_medianden)
- Temperatura_sd_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_sd, Exp_stdTemp)
- Salinidad_sd_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_sd, Exp_stdsal)
- Oxigeno_sd_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_sd, Exp_stdnoxi)
- Densidad_sd_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_sd, Exp_stdden)
- Temperatura_min_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_min, Exp_minTemp)
- Salinidad_min_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_min, Exp_minsal)
- Oxigeno_min_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_min, Exp_minnoxi)
- Densidad_min_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_min, Exp_minden)
- Temperatura_max_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_max, Exp_maxTemp)
- Salinidad_max_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_max, Exp_maxsal)
- Oxigeno_max_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_max, Exp_maxnoxi)
- Densidad_max_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_max,Exp_maxden)
- Profundidad_max_boxplot_Mareas<-IctioExPacificoAnalisisPack::boxplot_Marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Profundidad_max, Exp_maxProf)
 
 
+ NO2_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$NO2, Exp_NO2)
+ NO3_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$NO3, Exp_NO3)
+ PO4_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$PO4, Exp_PO4)
+ SiO2_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$SiO2, Exp_SiO2)
+ Clorofila_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Clorofila, Exp_Clorofila)
+ Conductividad_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Conductividad, Exp_Conductividad)
+ Salinidad_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad, Exp_Salinidad)
+ pH_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$pH, Exp_pH)
+ OD_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$OD, Exp_OD)
+ Transparencia_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Transparencia, Exp_Transparencia)
+ SST_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$SST, Exp_SST)
+ TSI_Clor_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$TSI_Clor, Exp_TSIClorofila)
+ TSI_SECCHI_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$TSI_SECCHI, Exp_TSIDiscoSecchi)
+ Temperatura_mean_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_mean, Exp_meanTemp)
+ Salinidad_mean_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_mean, Exp_meansal)
+ Oxigeno_mean_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_mean, Exp_meanoxi)
+ Densidad_mean_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_mean, Exp_meanden)
+ Temperatura_median_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_median, Exp_medianTemp)
+ Salinidad_median_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_median, Exp_mediansal)
+ Oxigeno_median_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_median, Exp_medianoxi)
+ Densidad_median_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_median, Exp_medianden)
+ Temperatura_sd_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_sd, Exp_stdTemp)
+ Salinidad_sd_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_sd, Exp_stdsal)
+ Oxigeno_sd_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_sd, Exp_stdnoxi)
+ Densidad_sd_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_sd, Exp_stdden)
+ Temperatura_min_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_min, Exp_minTemp)
+ Salinidad_min_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_min, Exp_minsal)
+ Oxigeno_min_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_min, Exp_minnoxi)
+ Densidad_min_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_min, Exp_minden)
+ Temperatura_max_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_max, Exp_maxTemp)
+ Salinidad_max_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_max, Exp_maxsal)
+ Oxigeno_max_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_max, Exp_maxnoxi)
+ Densidad_max_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_max,Exp_maxden)
+ Profundidad_max_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Profundidad_max, Exp_maxProf)
+
+ Biovolumen300_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$BioVol300, Exp_BioVol300)
+ PesoHum300_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$PesoHum300, Exp_PesoSec300)
+ PesoSec300_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$PesoSec300, Exp_PesoSec300)
+ PesoSCen300_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$PesoSCen300, Exp_PesoSCen300)
+ 
+ Biovolumen500_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$BioVol500, Exp_BioVol500)
+ PesoHum500_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$PesoHum500, Exp_PesoHum500)
+ PesoSec500_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$PesoSec500, Exp_PesoSec500)
+ PesoSCen500_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$PesoSCen500, Exp_PesoSCen500)
+ 
+ 
+
+ 
  for (i in 1:34){
-   print(paste0(variables[i], "_boxplot_Mareas"))
+   print(paste0(variables[i], "_boxplot_mareas"))
  }
  
  
-   
-tiff(filename = "./03_Imagenes/boxplot_Mareas_01.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
-   grid.arrange(nrow=4, ncol=2, 
-                NO2_boxplot_Mareas, 
-                NO3_boxplot_Mareas, 
-                PO4_boxplot_Mareas, 
-                SiO2_boxplot_Mareas, 
-                Clorofila_boxplot_Mareas, 
-                Conductividad_boxplot_Mareas, 
-                Salinidad_boxplot_Mareas, 
-                pH_boxplot_Mareas,
-                top="Datos totales")
-   dev.off()
  
-
-tiff(filename = "./03_Imagenes/boxplot_Mareas_02.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
-   grid.arrange(nrow=4, ncol=2, 
-                OD_boxplot_Mareas, 
-                Transparencia_boxplot_Mareas, 
-                SST_boxplot_Mareas, 
-                TSI_Clor_boxplot_Mareas, 
-                TSI_SECCHI_boxplot_Mareas, 
-                Temperatura_mean_boxplot_Mareas, 
-                Salinidad_mean_boxplot_Mareas, 
-                Oxigeno_mean_boxplot_Mareas,
-                top="Datos totales")
-   dev.off()
- 
-   
-   tiff(filename = "./03_Imagenes/boxplot_Mareas_03.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
-   grid.arrange(nrow=4, ncol=2, 
-                Densidad_mean_boxplot_Mareas, 
-                Temperatura_median_boxplot_Mareas, 
-                Salinidad_median_boxplot_Mareas, 
-                Oxigeno_median_boxplot_Mareas, 
-                Densidad_median_boxplot_Mareas, 
-                Temperatura_sd_boxplot_Mareas, 
-                Salinidad_sd_boxplot_Mareas, 
-                Oxigeno_sd_boxplot_Mareas,
-                top="Datos totales")
-   dev.off()
-   
-   tiff(filename = "./03_Imagenes/boxplot_Mareas_04.tif", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300, compression = "lzw")
-   grid.arrange(nrow=5, ncol=2, 
-                Densidad_sd_boxplot_Mareas, 
-                Temperatura_min_boxplot_Mareas, 
-                Salinidad_min_boxplot_Mareas, 
-                Oxigeno_min_boxplot_Mareas, 
-                Densidad_min_boxplot_Mareas, 
-                Temperatura_max_boxplot_Mareas, 
-                Salinidad_max_boxplot_Mareas, 
-                Oxigeno_max_boxplot_Mareas,
-                Densidad_max_boxplot_Mareas,
-                Profundidad_max_boxplot_Mareas,
-                top="Datos totales")
-   dev.off()
- 
- png(filename = "./03_Imagenes/boxplot_Mareas_01.png", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
+ png(filename = "./02_Imagenes/boxplot_mareas_01.png", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
  grid.arrange(nrow=4, ncol=2, 
-              NO2_boxplot_Mareas, 
-              NO3_boxplot_Mareas, 
-              PO4_boxplot_Mareas, 
-              SiO2_boxplot_Mareas, 
-              Clorofila_boxplot_Mareas, 
-              Conductividad_boxplot_Mareas, 
-              Salinidad_boxplot_Mareas, 
-              pH_boxplot_Mareas,
-              top="Datos totales")
+              NO2_boxplot_mareas, 
+              NO3_boxplot_mareas, 
+              PO4_boxplot_mareas, 
+              SiO2_boxplot_mareas, 
+              Clorofila_boxplot_mareas, 
+              Conductividad_boxplot_mareas, 
+              Salinidad_boxplot_mareas, 
+              pH_boxplot_mareas)
  dev.off()
  
  
 
-png(filename = "./03_Imagenes/boxplot_Mareas_02.png", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
+png(filename = "./02_Imagenes/boxplot_mareas_02.png", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
    grid.arrange(nrow=4, ncol=2, 
-                OD_boxplot_Mareas, 
-                Transparencia_boxplot_Mareas, 
-                SST_boxplot_Mareas, 
-                TSI_Clor_boxplot_Mareas, 
-                TSI_SECCHI_boxplot_Mareas, 
-                Temperatura_mean_boxplot_Mareas, 
-                Salinidad_mean_boxplot_Mareas, 
-                Oxigeno_mean_boxplot_Mareas,
-                top="Datos totales")
+                OD_boxplot_mareas, 
+                Transparencia_boxplot_mareas, 
+                SST_boxplot_mareas, 
+                TSI_Clor_boxplot_mareas, 
+                TSI_SECCHI_boxplot_mareas, 
+                Temperatura_mean_boxplot_mareas, 
+                Salinidad_mean_boxplot_mareas, 
+                Oxigeno_mean_boxplot_mareas)
    dev.off()
  
    
-png(filename = "./03_Imagenes/boxplot_Mareas_03.png", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
+png(filename = "./02_Imagenes/boxplot_mareas_03.png", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
    grid.arrange(nrow=4, ncol=2, 
-                Densidad_mean_boxplot_Mareas, 
-                Temperatura_median_boxplot_Mareas, 
-                Salinidad_median_boxplot_Mareas, 
-                Oxigeno_median_boxplot_Mareas, 
-                Densidad_median_boxplot_Mareas, 
-                Temperatura_sd_boxplot_Mareas, 
-                Salinidad_sd_boxplot_Mareas, 
-                Oxigeno_sd_boxplot_Mareas,
-                top="Datos totales")
+                Densidad_mean_boxplot_mareas, 
+                Temperatura_median_boxplot_mareas, 
+                Salinidad_median_boxplot_mareas, 
+                Oxigeno_median_boxplot_mareas, 
+                Densidad_median_boxplot_mareas, 
+                Temperatura_sd_boxplot_mareas, 
+                Salinidad_sd_boxplot_mareas, 
+                Oxigeno_sd_boxplot_mareas)
    dev.off()
    
-png(filename = "./03_Imagenes/boxplot_Mareas_04.png", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
+png(filename = "./02_Imagenes/boxplot_mareas_04.png", width = 20, height = 30, units = "cm", pointsize = 15, bg = "white", res = 300)
    grid.arrange(nrow=5, ncol=2, 
-                Densidad_sd_boxplot_Mareas, 
-                Temperatura_min_boxplot_Mareas, 
-                Salinidad_min_boxplot_Mareas, 
-                Oxigeno_min_boxplot_Mareas, 
-                Densidad_min_boxplot_Mareas, 
-                Temperatura_max_boxplot_Mareas, 
-                Salinidad_max_boxplot_Mareas, 
-                Oxigeno_max_boxplot_Mareas,
-                Densidad_max_boxplot_Mareas,
-                Profundidad_max_boxplot_Mareas,
-                top="Datos totales")
+                Densidad_sd_boxplot_mareas, 
+                Temperatura_min_boxplot_mareas, 
+                Salinidad_min_boxplot_mareas, 
+                Oxigeno_min_boxplot_mareas, 
+                Densidad_min_boxplot_mareas, 
+                Temperatura_max_boxplot_mareas, 
+                Salinidad_max_boxplot_mareas, 
+                Oxigeno_max_boxplot_mareas,
+                Densidad_max_boxplot_mareas,
+                Profundidad_max_boxplot_mareas)
    dev.off()
  
  
- 
- 
- 
- 
+   png(filename = "./02_Imagenes/boxplot_mareas_05.png", width = 20, height = 31, units = "cm", pointsize = 15, bg = "white", res = 300)
+   grid.arrange(nrow=4, ncol=2, 
+                Biovolumen500_boxplot_mareas,
+                PesoHum500_boxplot_mareas,
+                PesoSec500_boxplot_mareas,
+                PesoSCen500_boxplot_mareas, 
+                Biovolumen300_boxplot_mareas,
+                PesoHum300_boxplot_mareas,
+                PesoSec300_boxplot_mareas,
+                PesoSCen300_boxplot_mareas)
+   dev.off()
  
  
  
  #####
  
- NO2_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$NO2, Exp_NO2)
- NO3_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$NO3, Exp_NO3)
- PO4_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$PO4, Exp_PO4)
- SiO2_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$SiO2, Exp_SiO2)
- Clorofila_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Clorofila, Exp_Clorofila)
- Conductividad_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Conductividad, Exp_Conductividad)
- Salinidad_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad, Exp_Salinidad)
- pH_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$pH, Exp_pH)
- OD_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$OD, Exp_OD)
- Transparencia_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Transparencia, Exp_Transparencia)
- SST_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$SST, Exp_SST)
- TSI_Clor_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$TSI_Clor, Exp_TSIClorofila)
- TSI_SECCHI_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$TSI_SECCHI, Exp_TSIDiscoSecchi)
- Temperatura_mean_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_mean, Exp_meanTemp)
- Salinidad_mean_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_mean, Exp_meansal)
- Oxigeno_mean_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_mean, Exp_meanoxi)
- Densidad_mean_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_mean, Exp_meanden)
- Temperatura_median_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_median, Exp_medianTemp)
- Salinidad_median_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_median, Exp_mediansal)
- Oxigeno_median_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_median, Exp_medianoxi)
- Densidad_median_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_median, Exp_medianden)
- Temperatura_sd_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_sd, Exp_stdTemp)
- Salinidad_sd_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_sd, Exp_stdsal)
- Oxigeno_sd_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_sd, Exp_stdnoxi)
- Densidad_sd_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_sd, Exp_stdden)
- Temperatura_min_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_min, Exp_minTemp)
- Salinidad_min_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_min, Exp_minsal)
- Oxigeno_min_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_min, Exp_minnoxi)
- Densidad_min_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_min, Exp_minden)
- Temperatura_max_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_max, Exp_maxTemp)
- Salinidad_max_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_max, Exp_maxsal)
- Oxigeno_max_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_max, Exp_maxnoxi)
- Densidad_max_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_max, Exp_maxden)
- Profundidad_max_boxplot_transecto<-IctioExPacificoAnalisisPack::boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Profundidad_max, Exp_maxProf)
+ NO2_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$NO2, Exp_NO2)
+ NO3_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$NO3, Exp_NO3)
+ PO4_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$PO4, Exp_PO4)
+ SiO2_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$SiO2, Exp_SiO2)
+ Clorofila_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Clorofila, Exp_Clorofila)
+ Conductividad_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Conductividad, Exp_Conductividad)
+ Salinidad_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad, Exp_Salinidad)
+ pH_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$pH, Exp_pH)
+ OD_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$OD, Exp_OD)
+ Transparencia_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Transparencia, Exp_Transparencia)
+ SST_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$SST, Exp_SST)
+ TSI_Clor_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$TSI_Clor, Exp_TSIClorofila)
+ TSI_SECCHI_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$TSI_SECCHI, Exp_TSIDiscoSecchi)
+ Temperatura_mean_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_mean, Exp_meanTemp)
+ Salinidad_mean_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_mean, Exp_meansal)
+ Oxigeno_mean_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_mean, Exp_meanoxi)
+ Densidad_mean_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_mean, Exp_meanden)
+ Temperatura_median_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_median, Exp_medianTemp)
+ Salinidad_median_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_median, Exp_mediansal)
+ Oxigeno_median_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_median, Exp_medianoxi)
+ Densidad_median_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_median, Exp_medianden)
+ Temperatura_sd_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_sd, Exp_stdTemp)
+ Salinidad_sd_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_sd, Exp_stdsal)
+ Oxigeno_sd_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_sd, Exp_stdnoxi)
+ Densidad_sd_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_sd, Exp_stdden)
+ Temperatura_min_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_min, Exp_minTemp)
+ Salinidad_min_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_min, Exp_minsal)
+ Oxigeno_min_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_min, Exp_minnoxi)
+ Densidad_min_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_min, Exp_minden)
+ Temperatura_max_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_max, Exp_maxTemp)
+ Salinidad_max_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_max, Exp_maxsal)
+ Oxigeno_max_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_max, Exp_maxnoxi)
+ Densidad_max_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_max, Exp_maxden)
+ Profundidad_max_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$Profundidad_max, Exp_maxProf)
  
  
+ 
+ Biovolumen300_boxplot_transecto<-boxplot_transecto(Datos_Totales_Limpios, Datos_Totales_Limpios$BioVol300, Exp_BioVol300)
+ PesoHum300_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$PesoHum300, Exp_PesoSec300)
+ PesoSec300_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$PesoSec300, Exp_PesoSec300)
+ PesoSCen300_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$PesoSCen300, Exp_PesoSCen300)
+ 
+ Biovolumen500_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$BioVol500, Exp_BioVol500)
+ PesoHum500_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$PesoHum500, Exp_PesoHum500)
+ PesoSec500_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$PesoSec500, Exp_PesoSec500)
+ PesoSCen500_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$PesoSCen500, Exp_PesoSCen500)
  
  
   
@@ -540,40 +569,40 @@ png(filename = "./03_Imagenes/boxplot_transecto_04.png", width = 20, height = 30
  
  
 
-NO2_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$NO2, Exp_NO2)
-NO3_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$NO3, Exp_NO3)
-PO4_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$PO4, Exp_PO4)
-SiO2_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$SiO2, Exp_SiO2)
-Clorofila_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Clorofila, Exp_Clorofila)
-Conductividad_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Conductividad, Exp_Conductividad)
-Salinidad_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad, Exp_Salinidad)
-pH_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$pH, Exp_pH)
-OD_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$OD, Exp_OD)
-Transparencia_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Transparencia, Exp_Transparencia)
-SST_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$SST, Exp_SST)
-TSI_Clor_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$TSI_Clor, Exp_TSIClorofila)
-TSI_SECCHI_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$TSI_SECCHI, Exp_TSIDiscoSecchi)
-Temperatura_mean_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_mean, Exp_meanTemp)
-Salinidad_mean_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_mean, Exp_meansal)
-Oxigeno_mean_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_mean, Exp_meanoxi)
-Densidad_mean_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_mean, Exp_meanden)
-Temperatura_median_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_median, Exp_medianTemp)
-Salinidad_median_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_median, Exp_mediansal)
-Oxigeno_median_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_median, Exp_medianoxi)
-Densidad_median_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_median, Exp_medianden)
-Temperatura_sd_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_sd, Exp_stdTemp)
-Salinidad_sd_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_sd, Exp_stdsal)
-Oxigeno_sd_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_sd, Exp_stdnoxi)
-Densidad_sd_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_sd, Exp_stdden)
-Temperatura_min_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_min, Exp_minTemp)
-Salinidad_min_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_min, Exp_minsal)
-Oxigeno_min_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_min, Exp_minnoxi)
-Densidad_min_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_min, Exp_minden)
-Temperatura_max_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_max, Exp_maxTemp)
-Salinidad_max_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_max, Exp_maxsal)
-Oxigeno_max_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_max, Exp_maxnoxi)
-Densidad_max_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_max, Exp_maxden)
-Profundidad_max_graf_lineas<-IctioExPacificoAnalisisPack::graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Profundidad_max, Exp_maxProf)
+NO2_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$NO2, Exp_NO2)
+NO3_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$NO3, Exp_NO3)
+PO4_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$PO4, Exp_PO4)
+SiO2_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$SiO2, Exp_SiO2)
+Clorofila_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Clorofila, Exp_Clorofila)
+Conductividad_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Conductividad, Exp_Conductividad)
+Salinidad_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad, Exp_Salinidad)
+pH_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$pH, Exp_pH)
+OD_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$OD, Exp_OD)
+Transparencia_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Transparencia, Exp_Transparencia)
+SST_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$SST, Exp_SST)
+TSI_Clor_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$TSI_Clor, Exp_TSIClorofila)
+TSI_SECCHI_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$TSI_SECCHI, Exp_TSIDiscoSecchi)
+Temperatura_mean_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_mean, Exp_meanTemp)
+Salinidad_mean_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_mean, Exp_meansal)
+Oxigeno_mean_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_mean, Exp_meanoxi)
+Densidad_mean_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_mean, Exp_meanden)
+Temperatura_median_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_median, Exp_medianTemp)
+Salinidad_median_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_median, Exp_mediansal)
+Oxigeno_median_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_median, Exp_medianoxi)
+Densidad_median_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_median, Exp_medianden)
+Temperatura_sd_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_sd, Exp_stdTemp)
+Salinidad_sd_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_sd, Exp_stdsal)
+Oxigeno_sd_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_sd, Exp_stdnoxi)
+Densidad_sd_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_sd, Exp_stdden)
+Temperatura_min_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_min, Exp_minTemp)
+Salinidad_min_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_min, Exp_minsal)
+Oxigeno_min_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_min, Exp_minnoxi)
+Densidad_min_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_min, Exp_minden)
+Temperatura_max_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Temperatura_max, Exp_maxTemp)
+Salinidad_max_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_max, Exp_maxsal)
+Oxigeno_max_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Oxigeno_max, Exp_maxnoxi)
+Densidad_max_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_max, Exp_maxden)
+Profundidad_max_graf_lineas<-graf_lineas(Datos_Totales_Limpios, Datos_Totales_Limpios$Profundidad_max, Exp_maxProf)
 
 
 

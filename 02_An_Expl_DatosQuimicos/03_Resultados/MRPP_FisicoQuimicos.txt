@@ -1,0 +1,63 @@
+[1] "MRPP Química - Mareas"
+
+Call:
+mrpp(dat = Datos_Totales_Limpios[, 12:53], grouping = Datos_Totales_Limpios$Marea,      permutations = 999) 
+
+Dissimilarity index: euclidean 
+Weights for groups:  n 
+
+Class means and counts:
+
+      Alta  Baja 
+delta  1206 884.4
+n     18    18   
+
+Chance corrected within-group agreement A: 0.01502 
+Based on observed delta 1045 and expected delta 1061 
+
+Significance of delta: 0.138 
+Permutation: free
+Number of permutations: 999
+
+[1] "MRPP Química - Transecto"
+
+Call:
+mrpp(dat = Datos_Totales_Limpios[, 12:53], grouping = Datos_Totales_Limpios$Transecto,      permutations = 999) 
+
+Dissimilarity index: euclidean 
+Weights for groups:  n 
+
+Class means and counts:
+
+      Amarales Guascama Sanquianga
+delta   753    817.3     1522     
+n     12       12       12        
+
+Chance corrected within-group agreement A: 0.02832 
+Based on observed delta 1031 and expected delta 1061 
+
+Significance of delta: 0.093 
+Permutation: free
+Number of permutations: 999
+
+[1] "MRPP Química - Sectores"
+
+Call:
+mrpp(dat = Datos_Totales_Limpios[, 12:53], grouping = Datos_Totales_Limpios$Sector,      permutations = 999) 
+
+Dissimilarity index: euclidean 
+Weights for groups:  n 
+
+Class means and counts:
+
+      Costero Oceanico
+delta  1412   692.5   
+n     18      18      
+
+Chance corrected within-group agreement A: 0.008153 
+Based on observed delta 1052 and expected delta 1061 
+
+Significance of delta: 0.197 
+Permutation: free
+Number of permutations: 999
+

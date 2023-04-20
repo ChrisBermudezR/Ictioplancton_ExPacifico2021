@@ -1,0 +1,19 @@
+[1] "Salinidad_Transectos_KrusckalPotHoc"
+[1] "Kruskal-Wallis rank sum test"
+
+	Kruskal-Wallis rank sum test
+
+data:  grupo by variable
+Kruskal-Wallis chi-squared = 2731, df = 2683, p-value = 0.2547
+
+[1] "Pairwise comparisons using Wilcoxon rank sum test with continuity correction "
+
+	Pairwise comparisons using Wilcoxon rank sum test with continuity correction 
+
+data:  variable and grupo 
+
+           Amarales Guascama
+Guascama   0.00029  -       
+Sanquianga 9.6e-12  0.01853 
+
+P value adjustment method: bonferroni 

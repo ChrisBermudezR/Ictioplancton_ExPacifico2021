@@ -1,0 +1,18 @@
+[1] "Densidad_Marea_KrusckalPotHoc"
+[1] "Kruskal-Wallis rank sum test"
+
+	Kruskal-Wallis rank sum test
+
+data:  grupo by variable
+Kruskal-Wallis chi-squared = 2740.6, df = 2739, p-value = 0.4876
+
+[1] "Pairwise comparisons using Wilcoxon rank sum test with continuity correction "
+
+	Pairwise comparisons using Wilcoxon rank sum test with continuity correction 
+
+data:  variable and grupo 
+
+     Alta
+Baja 0.8 
+
+P value adjustment method: bonferroni 
