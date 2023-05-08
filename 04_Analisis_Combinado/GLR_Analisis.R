@@ -6,14 +6,16 @@
 #Notas: No olvidar instalar los paquetes necesarios para correr el script
 ###############################################################################################################################
 
-library(dplyr)    # 
-library(ggplot2)  # 
-library(tidyr)    # 
-library(bit64)
 
-library(h2o)  # Para el ajuste de los modelos.
 
-datos_GLR <- read.csv("./01_Datos/Datos_Totales_CCCP.csv")
+if(!require(dplyr))install.packages("dplyr")
+if(!require(ggplot2))install.packages("ggplot2")
+if(!require(tidyr))install.packages("tidyr")
+if(!require(bit64))install.packages("bit64")# Para el ajuste de los modelos.
+if(!require(h2o))install.packages("h2o")# Para el ajuste de los modelos.
+
+
+datos_GLR <- utils::read.csv("./01_Datos/Datos_Totales_CCCP.csv")
 
 datos_GLR <- datos_GLR[,11:42]
 head(datos_GLR)

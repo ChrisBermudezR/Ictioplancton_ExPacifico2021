@@ -1,14 +1,18 @@
 ###############################Caluculo de Correlacion Espacial
 #Calculo de distancias####
 
-install.packages("ncf")
-library(ape)
-library(gstat)
-library(pgirmess)
-library(ncf)
+
+if(!require(ape))install.packages("ape")
+if(!require(gstat))install.packages("gstat")
+if(!require(pgirmess))install.packages("pgirmess")
+if(!require(ncf))install.packages("ncf")
+
+datosDF <- read.csv("./01_Datos/Datos_Totales_CCCP.csv")
 
 
-geo_dis<-as.matrix(dist(cbind(datosDF$x, datosDF$y)))
+
+
+geo_dis<-as.matrix(dist(cbind(datosDF$longitud, datosDF$latitud)))
 geo_Inv_Dist_Baja<-1/geo_dis
 diag(geo_Inv_Dist_Baja)<-0
 

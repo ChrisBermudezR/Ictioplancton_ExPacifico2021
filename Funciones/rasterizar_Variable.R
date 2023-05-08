@@ -1,4 +1,8 @@
+ 
+
  rasterizar_Variable<-function(nombre_variable,longitud, latitud, variable, marea, leyenda){
+ if(!require(tidyverse))install.packages("tidyverse")
+ if(!require(oce))install.packages("oce")
   assign("WIRE",interpBarnes(longitud, latitud, variable), envir = parent.frame())
   assign(paste0("pts.grid"),expand.grid(Longitud=WIRE$x, Latitud=WIRE$y), envir = parent.frame())
   assign(paste0("pts.grid"), mutate(pts.grid, variable=as.vector(WIRE$zg)), envir = parent.frame())

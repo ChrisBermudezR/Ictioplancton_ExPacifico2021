@@ -1,5 +1,8 @@
 #' Grafica del ciclo mareal.
-#'
+if(!require(tidyverse))install.packages("tidyverse")
+if(!require(dplyr))install.packages("dplyr")
+if(!require(ggrepel))install.packages("ggrepel")
+if(!require(scales))install.packages("scales")
 #' @param datos: Conjunto de datos de donde se obtiene el ciclo mareal.
 #' @param fecha_hora: Vector o columna con los datos de la fecha y la hora guardados como as.POSIXct(). Se debe usar el pacquete "scales"
 #' @param altura: vector o comna con los datos de la Altura mareal referída al MLWS (m).
@@ -12,7 +15,7 @@ ciclo_mareal<-function(datos, fecha_hora, altura){
   ggplot()+
     geom_line(data=datos, aes(x=fecha_hora, y=altura),size=1, colour="grey")+
     geom_hline(yintercept = 1:3,linetype='dotted', col = 'red')+
-    labs(x = "Fecha", y = "Altura mareal referída al MLWS [m]") +
+    labs(x = "Fecha", y = "Altura mareal referida al MLWS [m]") +
     theme_classic()+
     scale_x_datetime(
       breaks = seq(as.POSIXct("2021-04-29 00:00:00"),
