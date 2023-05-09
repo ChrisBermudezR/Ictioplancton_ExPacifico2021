@@ -1,7 +1,10 @@
-library(vegan)
-library(dplyr)
-library(tidyverse)
-library(tidyr)
+
+if(!require(vegan))install.packages("vegan")
+if(!require(dplyr))install.packages("dplyr")
+if(!require(tidyverse))install.packages("tidyverse")
+if(!require(tidyr))install.packages("tidyr")
+
+
 
 source("../Funciones/boxplot_Marea.R")
 source("../Funciones/boxplot_Sector.R")
