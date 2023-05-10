@@ -1,0 +1,126 @@
+[1] "MRPP para los transectos Comparando la diversidad con los números de Hill"
+
+Call:
+vegan::mrpp(dat = Diversidad_Estaciones[, 9:11], grouping = Diversidad_Estaciones$Transecto,      permutations = 2000, distance = "bray") 
+
+Dissimilarity index: bray 
+Weights for groups:  n 
+
+Class means and counts:
+
+      Amarales Guascama Sanquianga
+delta 0.1965   0.1655   0.2168    
+n     12       12       12        
+
+Chance corrected within-group agreement A: 0.1777 
+Based on observed delta 0.193 and expected delta 0.2346 
+
+Significance of delta: 0.00049975 
+Permutation: free
+Number of permutations: 2000
+
+[1] "MRPP para las Mareas Comparando la diversidad con los números de Hill"
+
+Call:
+vegan::mrpp(dat = Diversidad_Estaciones[, 9:11], grouping = Diversidad_Estaciones$Marea,      permutations = 2000, distance = "bray") 
+
+Dissimilarity index: bray 
+Weights for groups:  n 
+
+Class means and counts:
+
+      Alta  Baja  
+delta 0.271 0.1743
+n     18    18    
+
+Chance corrected within-group agreement A: 0.05107 
+Based on observed delta 0.2227 and expected delta 0.2346 
+
+Significance of delta: 0.016992 
+Permutation: free
+Number of permutations: 2000
+
+[1] "MRPP para los Sectores Comparando la diversidad con los números de Hill"
+
+Call:
+vegan::mrpp(dat = Diversidad_Estaciones[, 9:11], grouping = Diversidad_Estaciones$Sector,      permutations = 2000, distance = "bray") 
+
+Dissimilarity index: bray 
+Weights for groups:  n 
+
+Class means and counts:
+
+      Costero Oceanico
+delta 0.2628  0.215   
+n     18      18      
+
+Chance corrected within-group agreement A: -0.0181 
+Based on observed delta 0.2389 and expected delta 0.2346 
+
+Significance of delta: 0.95652 
+Permutation: free
+Number of permutations: 2000
+
+[1] "MRPP para los transectos Comparando la Abundancia"
+
+Call:
+vegan::mrpp(dat = Diversidad_Estaciones[, 12], grouping = Diversidad_Estaciones$Transecto,      permutations = 2000, distance = "bray") 
+
+Dissimilarity index: bray 
+Weights for groups:  n 
+
+Class means and counts:
+
+      Amarales Guascama Sanquianga
+delta 0.4396   0.3775   0.5451    
+n     12       12       12        
+
+Chance corrected within-group agreement A: 0.08127 
+Based on observed delta 0.454 and expected delta 0.4942 
+
+Significance of delta: 0.010995 
+Permutation: free
+Number of permutations: 2000
+
+[1] "MRPP para los Mareas Comparando la Abundancia"
+
+Call:
+vegan::mrpp(dat = Diversidad_Estaciones[, 12], grouping = Diversidad_Estaciones$Marea,      permutations = 2000, distance = "bray") 
+
+Dissimilarity index: bray 
+Weights for groups:  n 
+
+Class means and counts:
+
+      Alta   Baja 
+delta 0.5174 0.455
+n     18     18   
+
+Chance corrected within-group agreement A: 0.01615 
+Based on observed delta 0.4862 and expected delta 0.4942 
+
+Significance of delta: 0.16242 
+Permutation: free
+Number of permutations: 2000
+
+[1] "MRPP para los Sectores Comparando la Abundancia"
+
+Call:
+vegan::mrpp(dat = Diversidad_Estaciones[, 12], grouping = Diversidad_Estaciones$Sector,      permutations = 2000, distance = "bray") 
+
+Dissimilarity index: bray 
+Weights for groups:  n 
+
+Class means and counts:
+
+      Costero Oceanico
+delta 0.5538  0.3871  
+n     18      18      
+
+Chance corrected within-group agreement A: 0.04808 
+Based on observed delta 0.4704 and expected delta 0.4942 
+
+Significance of delta: 0.025487 
+Permutation: free
+Number of permutations: 2000
+

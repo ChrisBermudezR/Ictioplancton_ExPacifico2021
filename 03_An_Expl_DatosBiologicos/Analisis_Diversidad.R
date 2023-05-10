@@ -3,13 +3,17 @@ if(!require(vegan))install.packages("vegan")
 if(!require(dplyr))install.packages("dplyr")
 if(!require(tidyverse))install.packages("tidyverse")
 if(!require(tidyr))install.packages("tidyr")
-
+if(!require(stars))install.packages("stars")
+if(!require(gstat))install.packages("gstat")
 
 
 source("../Funciones/boxplot_Marea.R")
 source("../Funciones/boxplot_Sector.R")
 source("../Funciones/boxplot_transecto.R")
 
+
+
+####Analisis de diversidad de fitoplancton####
 Codigo_fito_Densidad<-read.table("./Biologicos/DatosP_Fitoplancton/Definitiva/Matriz_Densidad.csv", sep=",", header = TRUE)
 
 Div_Code_fito<-Codigo_fito_Densidad[,6:145]
@@ -52,7 +56,7 @@ Densidad$DenRelativa<-Densidad$Densidad/183086
 
 
 Diversidad_Estaciones<-cbind(Codigo_fito_Densidad[,1:4],indices, Densidad)
-write.table(Diversidad_Estaciones, file="./Resultados/Diversidad_Estaciones.csv", sep=",", col.names = TRUE, row.names = FALSE)
+write.table(Diversidad_Estaciones, file="./Resultados/Fito_Diversidad_Estaciones.csv", sep=",", col.names = TRUE, row.names = FALSE)
 
 
 MRPP_Transecto_Diversidad_Estaciones<-vegan::mrpp(dat = Diversidad_Estaciones[,9:11],  Diversidad_Estaciones$Transecto, permutations = 2000, distance = "bray")
@@ -78,7 +82,7 @@ capture.output("MRPP para los transectos Comparando la diversidad con los númer
                MRPP_Marea_Densidad_Estaciones,
                "MRPP para los Sectores Comparando la densidad",
                MRPP_Sector_Densidad_Estaciones,
-                           file = "./Resultados/MRPP_Hill_Observados.txt"
+                           file = "./Resultados/Fito_MRPP_Hill_Observados.txt"
                
                
                )
@@ -100,7 +104,7 @@ q2_bxplt_Sector<-boxplot_Sector(Diversidad_Estaciones, Diversidad_Estaciones$q2,
 q2_bxplt_Transecto<-boxplot_Transecto(Diversidad_Estaciones, Diversidad_Estaciones$q2, expression(paste(""^2,"D")))
 
 
-png(filename="./Imagenes/boxplot_Hill.png", height =25 , width = 20, units = "cm", res=400)
+png(filename="./Imagenes/Fito_boxplot_Hill.png", height =25 , width = 20, units = "cm", res=400)
 gridExtra:: grid.arrange(q0_bxplt_Marea,
                          q0_bxplt_Sector,
                          q0_bxplt_Transecto,
@@ -120,7 +124,7 @@ Densidad_bxplt_Sector<-boxplot_Sector(Diversidad_Estaciones, Diversidad_Estacion
 Densidad_bxplt_Transecto<-boxplot_Transecto(Diversidad_Estaciones, Diversidad_Estaciones$Densidad, expression(paste("Densidad ["~Cel.L^-1~"]")))
 
 
-png(filename="./Imagenes/boxplot_densidad.png", height =25 , width = 15, units = "cm", res=400)
+png(filename="./Imagenes/Fito_boxplot_densidad.png", height =25 , width = 15, units = "cm", res=400)
 gridExtra:: grid.arrange(Densidad_bxplt_Marea,
                          Densidad_bxplt_Sector,
                          Densidad_bxplt_Transecto,
@@ -132,8 +136,8 @@ dev.off()
 ####Análisis de autocorrelación Espacila####
 library(spdep)
 
-Baja <- read.csv(file="./Resultados/Baja_Diversidad_Estaciones_Coordenadas.csv")
-Alta <- read.csv(file="./Resultados/Alta_Diversidad_Estaciones_Coordenadas.csv")
+Baja <- read.csv(file="./Resultados/Fito_Baja_Diversidad_Estaciones_Coordenadas.csv")
+Alta <- read.csv(file="./Resultados/Fito_Alta_Diversidad_Estaciones_Coordenadas.csv")
 #Calculo de distancias
 
 install.packages("ape")
@@ -443,11 +447,5 @@ plot(raster.layer)
 
 
 writeRaster(raster.layer, filename="./Resultados/Densidad_kriging.tif", format="GTiff", overwrite=TRUE)
-
-
-
-
-
-
 
 

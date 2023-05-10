@@ -1,0 +1,16 @@
+[1] "Datos del analisis de Densidad por Transecto"
+  Assemblage        n S.obs SC f1 f2 f3 f4 f5 f6 f7 f8 f9 f10
+1   Amarales  55261.0    19  1  0  0  0  0  0  0  0  0  0   0
+2 Sanquianga 116704.5    22  1  0  0  0  0  0  0  0  0  0   0
+3   Guascama 190620.6    26  1  0  0  0  0  0  0  0  0  0   0
+[1] "Estimadores para Q0, Q1, Q2"
+  Assemblage         Diversity  Observed Estimator        s.e.       LCL       UCL
+1   Amarales  Species richness 19.000000 19.000000 0.000000000 19.000000 19.000000
+2   Amarales Shannon diversity  4.621825  4.622578 0.030466290  4.562865  4.682291
+3   Amarales Simpson diversity  2.311138  2.311193 0.012898121  2.285913  2.336473
+4   Guascama  Species richness 26.000000 26.000000 0.000000000 26.000000 26.000000
+5   Guascama Shannon diversity  3.249149  3.249362 0.012917715  3.224044  3.274680
+6   Guascama Simpson diversity  1.680601  1.680607 0.004069612  1.672630  1.688583
+7 Sanquianga  Species richness 22.000000 22.000000 0.000000000 22.000000 22.000000
+8 Sanquianga Shannon diversity  4.839225  4.839661 0.018474988  4.803451  4.875871
+9 Sanquianga Simpson diversity  3.118166  3.118222 0.008502462  3.101558  3.134887
