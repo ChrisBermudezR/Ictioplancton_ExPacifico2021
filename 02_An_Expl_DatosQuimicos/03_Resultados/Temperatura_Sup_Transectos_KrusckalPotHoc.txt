@@ -1,0 +1,19 @@
+[1] " Temperatura_Sup_Transectos_KrusckalPotHoc"
+[1] "Kruskal-Wallis rank sum test"
+
+	Kruskal-Wallis rank sum test
+
+data:  grupo by variable
+Kruskal-Wallis chi-squared = 35, df = 35, p-value = 0.4682
+
+[1] "Pairwise comparisons using Wilcoxon rank sum test with continuity correction "
+
+	Pairwise comparisons using Wilcoxon rank sum exact test 
+
+data:  variable and grupo 
+
+           Guascama Sanquianga
+Sanquianga 1        -         
+Amarales   1        1         
+
+P value adjustment method: bonferroni 

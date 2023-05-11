@@ -33,6 +33,7 @@ Datos_CTDO_CCCP<-readr::read_csv("./02_DatosFisicos/Datos_CTDO_CCCP.csv")
 Datos_CTDO_CCCP$No.Estacion<-as.factor(Datos_CTDO_CCCP$No.Estacion)
 Datos_CTDO_CCCP$Marea<-as.factor(Datos_CTDO_CCCP$Marea)
 Datos_CTDO_CCCP$Codigo<-as.factor(Datos_CTDO_CCCP$Codigo)
+Datos_CTDO_CCCP$Transecto <- factor(Datos_CTDO_CCCP$Transecto, levels = c("Guascama", "Sanquianga", "Amarales"))
 Datos_CTDO_CCCP <- Datos_CTDO_CCCP %>% group_by(Codigo)
 
 Datos_CTDO_CCCP<-Datos_CTDO_CCCP %>% mutate(Sector = case_when(
@@ -49,6 +50,8 @@ Datos_CTDO_CCCP$Sector<-as.factor(Datos_CTDO_CCCP$Sector)
 EstadisticasDescrip<-Datos_CTDO_CCCP %>% summarise_each(funs(median(., na.rm = TRUE),IQR(., na.rm = TRUE),max(., na.rm = TRUE)), Temperatura, Salinidad, Oxigeno, Densidad, Profundidad)
 
 write_csv(EstadisticasDescrip, "./01_Resultados/Fisicos_EstadisticasDescrip_CCCP.csv", col_names = TRUE)
+
+
 
 
 library(vegan)

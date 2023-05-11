@@ -56,6 +56,7 @@ Datos_Totales_CCCP <- base::merge(Datos_Quimica,Datos_Fisica_Sup_CCCP, by="Codig
 
 
 
+
 colnames(Datos_Totales_CCCP)
 
 Datos_Totales_Limpios<-Datos_Totales_CCCP %>% dplyr::select(
@@ -97,6 +98,13 @@ colnames(Datos_Totales_Limpios)
 Datos_Totales_Limpios$Transecto <- factor(Datos_Totales_Limpios$Transecto, levels = c("Guascama", "Sanquianga", "Amarales"))
 write_csv(Datos_Totales_Limpios, "./01_Datos_Quimicos/Datos_Totales_CCCP.csv", col_names = TRUE)
 variables<-colnames(Datos_Totales_Limpios[12:31])
+
+
+
+datos_descriptivos_Alta<-as.data.frame(summary(Datos_Totales_Limpios[Datos_Totales_Limpios$Marea == "Alta",]))
+datos_descriptivos_Baja<-as.data.frame(summary(Datos_Totales_Limpios[Datos_Totales_Limpios$Marea == "Baja",]))
+capture.output("#######################Marea Alta", datos_descriptivos_Alta, file = "datos_descriptivos_Marea_Alta.txt")
+capture.output("#####################Marea baja", datos_descriptivos_Baja, file = "datos_descriptivos_Marea_baja.txt")
 
 
 #Expresiones para las leyendas de las variables
@@ -174,10 +182,6 @@ for (i in 1:34){
  Salinidad_Sup_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Salinidad_Sup, Exp_SalSup)
  Densidad_Sup_boxplot_mareas<-boxplot_marea(Datos_Totales_Limpios, Datos_Totales_Limpios$Densidad_Sup, Exp_DenSup)
 
-
- 
- 
- 
 
  
  for (i in 1:34){
@@ -504,6 +508,184 @@ dev.off()
 
 
 
+library(spdep)
+marea_alta<-Datos_Totales_Limpios%>% filter(Marea=="Alta")
+marea_baja<-Datos_Totales_Limpios%>% filter(Marea=="Baja")
+#Calculo de distancias
+
+install.packages("ape")
+library(ape)
+
+
+
+
+geo_dis<-as.matrix(dist(cbind(marea_alta$longitud, marea_alta$latitud)))
+geo_Inv_Dist<-1/geo_dis
+diag(geo_Inv_Dist)<-0
+
+
+library(gstat)
+
+
+source("../Funciones/Wilcoxon.R")
+source("../Funciones/KrusckalPotHoc.R")
+NO2_KrusckalPotHoc_mareas<-KrusckalPotHoc(Datos_Totales_Limpios$Transecto, Datos_Totales_Limpios$ NO2, "./03_Resultados/NO2_Transectos_KrusckalPotHoc.txt", " NO2_Transectos_KrusckalPotHoc")
+NO2_Marea_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Marea, Datos_Totales_Limpios$NO2, "./03_Resultados/NO2_Marea_Wilcoxon.txt", "NO2_Marea_Wilcoxon")
+NO2_Sector_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Sector, Datos_Totales_Limpios$NO2, "./03_Resultados/NO2_Sector_Wilcoxon.txt", "NO2_Sector_Wilcoxon")
+
+moran_Baja_NO2<-Moran.I(marea_baja$NO2, geo_Inv_Dist)
+moran_Alta_NO2<-Moran.I(marea_alta$NO2, geo_Inv_Dist)
+
+
+NO3_KrusckalPotHoc_mareas<-KrusckalPotHoc(Datos_Totales_Limpios$Transecto, Datos_Totales_Limpios$NO3, "./03_Resultados/NO3_Transectos_KrusckalPotHoc.txt", " NO3_Transectos_KrusckalPotHoc")
+NO3_Marea_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Marea, Datos_Totales_Limpios$NO3, "./03_Resultados/NO3_Marea_Wilcoxon.txt", "NO3_Marea_Wilcoxon")
+NO3_Sector_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Sector, Datos_Totales_Limpios$NO3, "./03_Resultados/NO3_Sector_Wilcoxon.txt", "NO3_Sector_Wilcoxon")
+
+moran_Baja_NO3<-Moran.I(marea_baja$NO3, geo_Inv_Dist)
+moran_Alta_NO3<-Moran.I(marea_alta$NO3, geo_Inv_Dist)
+
+PO4_KrusckalPotHoc_mareas<-KrusckalPotHoc(Datos_Totales_Limpios$Transecto, Datos_Totales_Limpios$PO4, "./03_Resultados/PO4_Transectos_KrusckalPotHoc.txt", " PO4_Transectos_KrusckalPotHoc")
+PO4_Marea_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Marea, Datos_Totales_Limpios$PO4, "./03_Resultados/PO4_Marea_Wilcoxon.txt", "PO4_Marea_Wilcoxon")
+PO4_Sector_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Sector, Datos_Totales_Limpios$PO4, "./03_Resultados/PO4_Sector_Wilcoxon.txt", "PO4_Sector_Wilcoxon")
+
+moran_Baja_PO4<-Moran.I(marea_baja$PO4, geo_Inv_Dist)
+moran_Alta_PO4<-Moran.I(marea_alta$PO4, geo_Inv_Dist)
+
+SiO2_KrusckalPotHoc_mareas<-KrusckalPotHoc(Datos_Totales_Limpios$Transecto, Datos_Totales_Limpios$SiO2, "./03_Resultados/SiO2_Transectos_KrusckalPotHoc.txt", " SiO2_Transectos_KrusckalPotHoc")
+SiO2_Marea_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Marea, Datos_Totales_Limpios$SiO2, "./03_Resultados/SiO2_Marea_Wilcoxon.txt", "SiO2_Marea_Wilcoxon")
+SiO2_Sector_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Sector, Datos_Totales_Limpios$SiO2, "./03_Resultados/SiO2_Sector_Wilcoxon.txt", "SiO2_Sector_Wilcoxon")
+
+moran_Baja_SiO2<-Moran.I(marea_baja$SiO2, geo_Inv_Dist)
+moran_Alta_SiO2<-Moran.I(marea_alta$SiO2, geo_Inv_Dist)
+
+pH_KrusckalPotHoc_mareas<-KrusckalPotHoc(Datos_Totales_Limpios$Transecto, Datos_Totales_Limpios$pH, "./03_Resultados/pH_Transectos_KrusckalPotHoc.txt", " pH_Transectos_KrusckalPotHoc")
+pH_Marea_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Marea, Datos_Totales_Limpios$pH, "./03_Resultados/pH_Marea_Wilcoxon.txt", "pH_Marea_Wilcoxon")
+pH_Sector_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Sector, Datos_Totales_Limpios$pH, "./03_Resultados/pH_Sector_Wilcoxon.txt", "pH_Sector_Wilcoxon")
+
+moran_Baja_pH<-Moran.I(marea_baja$pH, geo_Inv_Dist)
+moran_Alta_pH<-Moran.I(marea_alta$pH, geo_Inv_Dist)
+
+
+OD_KrusckalPotHoc_mareas<-KrusckalPotHoc(Datos_Totales_Limpios$Transecto, Datos_Totales_Limpios$OD, "./03_Resultados/OD_Transectos_KrusckalPotHoc.txt", " OD_Transectos_KrusckalPotHoc")
+OD_Marea_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Marea, Datos_Totales_Limpios$OD, "./03_Resultados/OD_Marea_Wilcoxon.txt", "OD_Marea_Wilcoxon")
+OD_Sector_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Sector, Datos_Totales_Limpios$OD, "./03_Resultados/OD_Sector_Wilcoxon.txt", "OD_Sector_Wilcoxon")
+
+moran_Baja_OD<-Moran.I(marea_baja$OD, geo_Inv_Dist)
+moran_Alta_OD<-Moran.I(marea_alta$OD, geo_Inv_Dist)
+
+
+
+Transparencia_KrusckalPotHoc_mareas<-KrusckalPotHoc(Datos_Totales_Limpios$Transecto, Datos_Totales_Limpios$Transparencia, "./03_Resultados/Transparencia_Transectos_KrusckalPotHoc.txt", " Transparencia_Transectos_KrusckalPotHoc")
+Transparencia_Marea_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Marea, Datos_Totales_Limpios$Transparencia, "./03_Resultados/Transparencia_Marea_Wilcoxon.txt", "Transparencia_Marea_Wilcoxon")
+Transparencia_Sector_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Sector, Datos_Totales_Limpios$Transparencia, "./03_Resultados/Transparencia_Sector_Wilcoxon.txt", "Transparencia_Sector_Wilcoxon")
+
+moran_Baja_Transparencia<-Moran.I(marea_baja$Transparencia, geo_Inv_Dist)
+moran_Alta_Transparencia<-Moran.I(marea_alta$Transparencia, geo_Inv_Dist)
+
+SST_KrusckalPotHoc_mareas<-KrusckalPotHoc(Datos_Totales_Limpios$Transecto, Datos_Totales_Limpios$SST, "./03_Resultados/SST_Transectos_KrusckalPotHoc.txt", " SST_Transectos_KrusckalPotHoc")
+SST_Marea_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Marea, Datos_Totales_Limpios$SST, "./03_Resultados/SST_Marea_Wilcoxon.txt", "SST_Marea_Wilcoxon")
+SST_Sector_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Sector, Datos_Totales_Limpios$SST, "./03_Resultados/SST_Sector_Wilcoxon.txt", "SST_Sector_Wilcoxon")
+
+moran_Baja_SST<-Moran.I(marea_baja$SST, geo_Inv_Dist)
+moran_Alta_SST<-Moran.I(marea_alta$SST, geo_Inv_Dist)
+
+
+TSI_SECCHI_KrusckalPotHoc_mareas<-KrusckalPotHoc(Datos_Totales_Limpios$Transecto, Datos_Totales_Limpios$TSI_SECCHI, "./03_Resultados/TSI_SECCHI_Transectos_KrusckalPotHoc.txt", " TSI_SECCHI_Transectos_KrusckalPotHoc")
+TSI_SECCHI_Marea_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Marea, Datos_Totales_Limpios$TSI_SECCHI, "./03_Resultados/TSI_SECCHI_Marea_Wilcoxon.txt", "TSI_SECCHI_Marea_Wilcoxon")
+TSI_SECCHI_Sector_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Sector, Datos_Totales_Limpios$TSI_SECCHI, "./03_Resultados/TSI_SECCHI_Sector_Wilcoxon.txt", "TSI_SECCHI_Sector_Wilcoxon")
+
+moran_Baja_TSI_SECCHI<-Moran.I(marea_baja$TSI_SECCHI, geo_Inv_Dist)
+moran_Alta_TSI_SECCHI<-Moran.I(marea_alta$TSI_SECCHI, geo_Inv_Dist)
+
+
+
+
+
+Temperatura_median_KrusckalPotHoc_mareas<-KrusckalPotHoc(Datos_Totales_Limpios$Transecto, Datos_Totales_Limpios$Temperatura_median, "./03_Resultados/Temperatura_median_Transectos_KrusckalPotHoc.txt", " Temperatura_median_Transectos_KrusckalPotHoc")
+Temperatura_median_Marea_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Marea, Datos_Totales_Limpios$Temperatura_median, "./03_Resultados/Temperatura_median_Marea_Wilcoxon.txt", "Temperatura_median_Marea_Wilcoxon")
+Temperatura_median_Sector_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Sector, Datos_Totales_Limpios$Temperatura_median, "./03_Resultados/Temperatura_median_Sector_Wilcoxon.txt", "Temperatura_median_Sector_Wilcoxon")
+
+moran_Baja_Temperatura_median<-Moran.I(marea_baja$Temperatura_median, geo_Inv_Dist)
+moran_Alta_Temperatura_median<-Moran.I(marea_alta$Temperatura_median, geo_Inv_Dist)
+
+Salinidad_median_KrusckalPotHoc_mareas<-KrusckalPotHoc(Datos_Totales_Limpios$Transecto, Datos_Totales_Limpios$Salinidad_median, "./03_Resultados/Salinidad_median_Transectos_KrusckalPotHoc.txt", " Salinidad_median_Transectos_KrusckalPotHoc")
+Salinidad_median_Marea_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Marea, Datos_Totales_Limpios$Salinidad_median, "./03_Resultados/Salinidad_median_Marea_Wilcoxon.txt", "Salinidad_median_Marea_Wilcoxon")
+Salinidad_median_Sector_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Sector, Datos_Totales_Limpios$Salinidad_median, "./03_Resultados/Salinidad_median_Sector_Wilcoxon.txt", "Salinidad_median_Sector_Wilcoxon")
+
+moran_Baja_Salinidad_median<-Moran.I(marea_baja$Salinidad_median, geo_Inv_Dist)
+moran_Alta_Salinidad_median<-Moran.I(marea_alta$Salinidad_median, geo_Inv_Dist)
+
+
+Oxigeno_median_KrusckalPotHoc_mareas<-KrusckalPotHoc(Datos_Totales_Limpios$Transecto, Datos_Totales_Limpios$Oxigeno_median, "./03_Resultados/Oxigeno_median_Transectos_KrusckalPotHoc.txt", " Oxigeno_median_Transectos_KrusckalPotHoc")
+Oxigeno_median_Marea_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Marea, Datos_Totales_Limpios$Oxigeno_median, "./03_Resultados/Oxigeno_median_Marea_Wilcoxon.txt", "Oxigeno_median_Marea_Wilcoxon")
+Oxigeno_median_Sector_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Sector, Datos_Totales_Limpios$Oxigeno_median, "./03_Resultados/Oxigeno_median_Sector_Wilcoxon.txt", "Oxigeno_median_Sector_Wilcoxon")
+
+moran_Baja_Oxigeno_median<-Moran.I(marea_baja$Oxigeno_median, geo_Inv_Dist)
+moran_Alta_Oxigeno_median<-Moran.I(marea_alta$Oxigeno_median, geo_Inv_Dist)
+
+
+
+Densidad_median_KrusckalPotHoc_mareas<-KrusckalPotHoc(Datos_Totales_Limpios$Transecto, Datos_Totales_Limpios$Densidad_median, "./03_Resultados/Densidad_median_Transectos_KrusckalPotHoc.txt", " Densidad_median_Transectos_KrusckalPotHoc")
+Densidad_median_Marea_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Marea, Datos_Totales_Limpios$Densidad_median, "./03_Resultados/Densidad_median_Marea_Wilcoxon.txt", "Densidad_median_Marea_Wilcoxon")
+Densidad_median_Sector_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Sector, Datos_Totales_Limpios$Densidad_median, "./03_Resultados/Densidad_median_Sector_Wilcoxon.txt", "Densidad_median_Sector_Wilcoxon")
+
+moran_Baja_Densidad_median<-Moran.I(marea_baja$Densidad_median, geo_Inv_Dist)
+moran_Alta_Densidad_median<-Moran.I(marea_alta$Densidad_median, geo_Inv_Dist)
+
+
+Temperatura_IQR_KrusckalPotHoc_mareas<-KrusckalPotHoc(Datos_Totales_Limpios$Transecto, Datos_Totales_Limpios$Temperatura_IQR, "./03_Resultados/Temperatura_IQR_Transectos_KrusckalPotHoc.txt", " Temperatura_IQR_Transectos_KrusckalPotHoc")
+Temperatura_IQR_Marea_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Marea, Datos_Totales_Limpios$Temperatura_IQR, "./03_Resultados/Temperatura_IQR_Marea_Wilcoxon.txt", "Temperatura_IQR_Marea_Wilcoxon")
+Temperatura_IQR_Sector_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Sector, Datos_Totales_Limpios$Temperatura_IQR, "./03_Resultados/Temperatura_IQR_Sector_Wilcoxon.txt", "Temperatura_IQR_Sector_Wilcoxon")
+
+moran_Baja_Temperatura_IQR<-Moran.I(marea_baja$Temperatura_IQR, geo_Inv_Dist)
+moran_Alta_Temperatura_IQR<-Moran.I(marea_alta$Temperatura_IQR, geo_Inv_Dist)
+
+Salinidad_IQR_KrusckalPotHoc_mareas<-KrusckalPotHoc(Datos_Totales_Limpios$Transecto, Datos_Totales_Limpios$Salinidad_IQR , "./03_Resultados/Salinidad_IQR _Transectos_KrusckalPotHoc.txt", " Salinidad_IQR _Transectos_KrusckalPotHoc")
+Salinidad_IQR_Marea_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Marea, Datos_Totales_Limpios$Salinidad_IQR , "./03_Resultados/Salinidad_IQR _Marea_Wilcoxon.txt", "Salinidad_IQR _Marea_Wilcoxon")
+Salinidad_IQR_Sector_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Sector, Datos_Totales_Limpios$Salinidad_IQR , "./03_Resultados/Salinidad_IQR _Sector_Wilcoxon.txt", "Salinidad_IQR _Sector_Wilcoxon")
+
+moran_Baja_Salinidad_IQR <-Moran.I(marea_baja$Salinidad_IQR , geo_Inv_Dist)
+moran_Alta_Salinidad_IQR <-Moran.I(marea_alta$Salinidad_IQR , geo_Inv_Dist)
+
+Oxigeno_IQR_KrusckalPotHoc_mareas<-KrusckalPotHoc(Datos_Totales_Limpios$Transecto, Datos_Totales_Limpios$Oxigeno_IQR, "./03_Resultados/Oxigeno_IQR_Transectos_KrusckalPotHoc.txt", " Oxigeno_IQR_Transectos_KrusckalPotHoc")
+Oxigeno_IQR_Marea_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Marea, Datos_Totales_Limpios$Oxigeno_IQR, "./03_Resultados/Oxigeno_IQR_Marea_Wilcoxon.txt", "Oxigeno_IQR_Marea_Wilcoxon")
+Oxigeno_IQR_Sector_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Sector, Datos_Totales_Limpios$Oxigeno_IQR, "./03_Resultados/Oxigeno_IQR_Sector_Wilcoxon.txt", "Oxigeno_IQR_Sector_Wilcoxon")
+
+moran_Baja_Oxigeno_IQR<-Moran.I(marea_baja$Oxigeno_IQR, geo_Inv_Dist)
+moran_Alta_Oxigeno_IQR<-Moran.I(marea_alta$Oxigeno_IQR, geo_Inv_Dist)
+
+
+Densidad_IQR_KrusckalPotHoc_mareas<-KrusckalPotHoc(Datos_Totales_Limpios$Transecto, Datos_Totales_Limpios$Densidad_IQR, "./03_Resultados/Densidad_IQR_Transectos_KrusckalPotHoc.txt", " Densidad_IQR_Transectos_KrusckalPotHoc")
+Densidad_IQR_Marea_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Marea, Datos_Totales_Limpios$Densidad_IQR, "./03_Resultados/Densidad_IQR_Marea_Wilcoxon.txt", "Densidad_IQR_Marea_Wilcoxon")
+Densidad_IQR_Sector_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Sector, Datos_Totales_Limpios$Densidad_IQR, "./03_Resultados/Densidad_IQR_Sector_Wilcoxon.txt", "Densidad_IQR_Sector_Wilcoxon")
+
+moran_Baja_Densidad_IQR<-Moran.I(marea_baja$Densidad_IQR, geo_Inv_Dist)
+moran_Alta_Densidad_IQR<-Moran.I(marea_alta$Densidad_IQR, geo_Inv_Dist)
+
+
+Temperatura_Sup_KrusckalPotHoc_mareas<-KrusckalPotHoc(Datos_Totales_Limpios$Transecto, Datos_Totales_Limpios$Temperatura_Sup, "./03_Resultados/Temperatura_Sup_Transectos_KrusckalPotHoc.txt", " Temperatura_Sup_Transectos_KrusckalPotHoc")
+Temperatura_Sup_Marea_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Marea, Datos_Totales_Limpios$Temperatura_Sup, "./03_Resultados/Temperatura_Sup_Marea_Wilcoxon.txt", "Temperatura_Sup_Marea_Wilcoxon")
+Temperatura_Sup_Sector_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Sector, Datos_Totales_Limpios$Temperatura_Sup, "./03_Resultados/Temperatura_Sup_Sector_Wilcoxon.txt", "Temperatura_Sup_Sector_Wilcoxon")
+
+moran_Baja_Temperatura_Sup<-Moran.I(marea_baja$Temperatura_Sup, geo_Inv_Dist)
+moran_Alta_Temperatura_Sup<-Moran.I(marea_alta$Temperatura_Sup, geo_Inv_Dist)
+
+
+
+Salinidad_Sup_KrusckalPotHoc_mareas<-KrusckalPotHoc(Datos_Totales_Limpios$Transecto, Datos_Totales_Limpios$Salinidad_Sup , "./03_Resultados/Salinidad_Sup _Transectos_KrusckalPotHoc.txt", " Salinidad_Sup _Transectos_KrusckalPotHoc")
+Salinidad_Sup_Marea_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Marea, Datos_Totales_Limpios$Salinidad_Sup , "./03_Resultados/Salinidad_Sup _Marea_Wilcoxon.txt", "Salinidad_Sup _Marea_Wilcoxon")
+Salinidad_Sup_Sector_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Sector, Datos_Totales_Limpios$Salinidad_Sup , "./03_Resultados/Salinidad_Sup _Sector_Wilcoxon.txt", "Salinidad_Sup _Sector_Wilcoxon")
+
+moran_Baja_Salinidad_Sup <-Moran.I(marea_baja$Salinidad_Sup , geo_Inv_Dist)
+moran_Alta_Salinidad_Sup <-Moran.I(marea_alta$Salinidad_Sup , geo_Inv_Dist)
+
+
+Densidad_Sup_KrusckalPotHoc_mareas<-KrusckalPotHoc(Datos_Totales_Limpios$Transecto, Datos_Totales_Limpios$Densidad_Sup, "./03_Resultados/Densidad_Sup_Transectos_KrusckalPotHoc.txt", " Densidad_Sup_Transectos_KrusckalPotHoc")
+Densidad_Sup_Marea_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Marea, Datos_Totales_Limpios$Densidad_Sup, "./03_Resultados/Densidad_Sup_Marea_Wilcoxon.txt", "Densidad_Sup_Marea_Wilcoxon")
+Densidad_Sup_Sector_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Sector, Datos_Totales_Limpios$Densidad_Sup, "./03_Resultados/Densidad_Sup_Sector_Wilcoxon.txt", "Densidad_Sup_Sector_Wilcoxon")
+
+moran_Baja_Densidad_Sup<-Moran.I(marea_baja$Densidad_Sup, geo_Inv_Dist)
+moran_Alta_Densidad_Sup<-Moran.I(marea_alta$Densidad_Sup, geo_Inv_Dist)
 
 
 

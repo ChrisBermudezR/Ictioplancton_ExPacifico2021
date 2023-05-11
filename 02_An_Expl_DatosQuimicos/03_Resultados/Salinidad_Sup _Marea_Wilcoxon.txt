@@ -1,0 +1,9 @@
+[1] "Salinidad_Sup _Marea_Wilcoxon"
+[1] "Kruskal-Wallis rank sum test"
+
+	Wilcoxon rank sum exact test
+
+data:  variable by grupo
+W = 225, p-value = 0.04708
+alternative hypothesis: true location shift is not equal to 0
+

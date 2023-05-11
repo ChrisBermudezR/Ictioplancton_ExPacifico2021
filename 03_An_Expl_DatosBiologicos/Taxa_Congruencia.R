@@ -1,4 +1,6 @@
-
+library(vegan)
+library(ggplot2)
+library(dplyr)
 
 FitoData<-read.table("./Resultados/Fito_Diversidad_Estaciones.csv", sep=",", header = TRUE)
 IctioData<-read.table("./Resultados/Ictio_Diversidad_Estaciones.csv", sep=",", header = TRUE)
@@ -23,6 +25,46 @@ cor.test(Fito_q2,Ictio_q2, method = "spearman")
 cor.test(Fito_Densidad,Ictio_Densidad, method = "spearman")
 cor.test(Fito_Clorofila,Ictio_Densidad, method = "spearman")
 
+
+Congruence_q0_plot<-ggplot() + 
+  geom_point(aes(x=Fito_q0, y=Ictio_q0))+
+  xlab(expression(paste("Fitoplancton ("^0,"D)")))+
+  ylab(expression(paste("Ictioplancton ("^0,"D)")))+
+  labs(title = "(a)",
+       subtitle = "Cor. spearman = 0.02")+
+  theme_bw()
+
+Congruence_q1_plot<-ggplot() + 
+  geom_point(aes(x=Fito_q1, y=Ictio_q1))+
+  xlab(expression(paste("Fitoplancton ("^1,"D)")))+
+  ylab(expression(paste("Ictioplancton ("^1,"D)")))+
+  labs(title = "(b)",
+       subtitle = "Cor. spearman = 0.02")+
+  theme_bw()
+
+Congruence_q2_plot<-ggplot() + 
+  geom_point(aes(x=Fito_q2, y=Ictio_q2))+
+  xlab(expression(paste("Fitoplancton ("^2,"D)")))+
+  ylab(expression(paste("Ictioplancton ("^2,"D)")))+
+  labs(title = "(c)",
+       subtitle = "Cor. spearman = -0.07")+
+  theme_bw()
+
+Congruence_den_plot<-ggplot() + 
+  geom_point(aes(x=Fito_Densidad, y=Ictio_Densidad))+
+  xlab(expression(paste("Densidad de Fitoplancton ["~Cel.L^-1~"]")))+
+  ylab(expression(paste("Densidad de Ictioplancton ["~ Ind.1000m^-3~"]")))+
+  labs(title = "(d)",
+       subtitle = "Cor. spearman = -0.1")+
+  theme_bw()
+
+Congruence_clor_plot<-ggplot() + 
+  geom_point(aes(x=Fito_Clorofila, y=Ictio_Densidad))+
+  xlab(expression(paste("Clorofila [",mu,"g.L"^-1,"]")))+
+  ylab(expression(paste("Densidad de Ictioplancton ["~ Ind.1000m^-3~"]")))+
+  labs(title = "(e)",
+       subtitle = "Cor. spearman = -0.01")+
+  theme_bw()
 
 
 plot(Fito_q0,Ictio_q0)
@@ -61,7 +103,7 @@ Ictio_Densidad_Relativa_distmat <-
 
 Ictio_Densidad_Relativa_distmat <- 
   as.matrix(Ictio_Densidad_Relativa_distmat, labels = T)
-write.csv(Ictio_Densidad_Relativa_distmat, "./Resultados/Ictio_Densidad_Relativa_distmat.csv")
+
 
 # Running NMDS in vegan (metaMDS)
 Ictio_Densidad_Relativa_NMS <-
@@ -115,17 +157,40 @@ Fito_coordenadas <- as.data.frame(scores(Fito_Densidad_Relativa_NMS[["points"]])
 Fito_nmds1<-Fito_coordenadas$MDS1
 Ictio_nmds1<-Ictio_coordenadas$MDS1
 
-cor.test(Fito_nmds1,Ictio_nmds1, method = "spearman")
 
-plot(Fito_nmds1,Ictio_nmds1)
+
+
+
+cor.test(Fito_nmds1,Ictio_nmds1, method = "spearman")
+Congruence_nmds_plot<-ggplot() + 
+  geom_point(aes(x=Fito_nmds1, y=Ictio_nmds1))+
+  xlab(expression(paste("NMDS1 (Fitoplancton)")))+
+  ylab(expression(paste("NMDS1 (Ictioplancton)")))+
+  labs(title = "(f)",
+       subtitle = "Cor. spearman = 0.06")+
+  theme_bw()
+
+
+
+
+
+png(filename="./Imagenes/Congruence_Taxa_plot.png", height =25 , width = 20, units = "cm", res=400)
+gridExtra:: grid.arrange(Congruence_q0_plot,
+                         Congruence_den_plot,
+                         Congruence_q1_plot,
+                         Congruence_clor_plot,
+                         Congruence_q2_plot,
+                         Congruence_nmds_plot,
+                         ncol=2)
+dev.off()
+
+
 
 
 #Congruencia con el medio ambiente
 
-Componentes_principales_valores_Var_CCCP
 
-
-PCA_Data<-read.table("../04_Analisis_Combinado/Componentes_principales_valores_Var_CCCP.csv", sep=",", header = TRUE, nrow = FALSE)
+PCA_Data<-read.table("../04_Analisis_Combinado/Componentes_principales_valores_Var_CCCP.csv", sep=",", header = TRUE, row.names = 1)
 
 
 PC01<-PCA_Data$PC01

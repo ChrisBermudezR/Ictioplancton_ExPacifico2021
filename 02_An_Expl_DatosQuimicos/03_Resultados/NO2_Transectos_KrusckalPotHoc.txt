@@ -1,0 +1,19 @@
+[1] " NO2_Transectos_KrusckalPotHoc"
+[1] "Kruskal-Wallis rank sum test"
+
+	Kruskal-Wallis rank sum test
+
+data:  grupo by variable
+Kruskal-Wallis chi-squared = 25.764, df = 26, p-value = 0.4761
+
+[1] "Pairwise comparisons using Wilcoxon rank sum test with continuity correction "
+
+	Pairwise comparisons using Wilcoxon rank sum test with continuity correction 
+
+data:  variable and grupo 
+
+           Guascama Sanquianga
+Sanquianga 1.000    -         
+Amarales   0.058    0.377     
+
+P value adjustment method: bonferroni 

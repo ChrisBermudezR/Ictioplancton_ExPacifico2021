@@ -1,0 +1,9 @@
+[1] "Temperatura_Sup_Marea_Wilcoxon"
+[1] "Kruskal-Wallis rank sum test"
+
+	Wilcoxon rank sum exact test
+
+data:  variable by grupo
+W = 139, p-value = 0.4812
+alternative hypothesis: true location shift is not equal to 0
+

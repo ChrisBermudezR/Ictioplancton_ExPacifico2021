@@ -1,0 +1,19 @@
+[1] " TSI_SECCHI_Transectos_KrusckalPotHoc"
+[1] "Kruskal-Wallis rank sum test"
+
+	Kruskal-Wallis rank sum test
+
+data:  grupo by variable
+Kruskal-Wallis chi-squared = 24.549, df = 19, p-value = 0.1759
+
+[1] "Pairwise comparisons using Wilcoxon rank sum test with continuity correction "
+
+	Pairwise comparisons using Wilcoxon rank sum test with continuity correction 
+
+data:  variable and grupo 
+
+           Guascama Sanquianga
+Sanquianga 0.49     -         
+Amarales   0.11     1.00      
+
+P value adjustment method: bonferroni 

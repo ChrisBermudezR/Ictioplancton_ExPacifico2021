@@ -17,7 +17,7 @@ if(!require(h2o))install.packages("h2o")# Para el ajuste de los modelos.
 
 datos_GLR <- utils::read.csv("./01_Datos/Datos_Totales_CCCP.csv")
 
-t(datos_GLR)
+
 
 datos_GLR <- datos_GLR[,12:31]
 head(datos_GLR)
@@ -79,16 +79,31 @@ Arch2 <- t(basico_glrm@model$archetypes) %>%
   mutate(feature = row.names(.)) %>%
   ggplot(aes(Arch2, reorder(feature, Arch2))) +
   geom_point()
+Arch3 <- t(basico_glrm@model$archetypes) %>% 
+  as.data.frame() %>% 
+  mutate(feature = row.names(.)) %>%
+  ggplot(aes(Arch3, reorder(feature, Arch3))) +
+  geom_point()
 
 
-
-p2 <- t(basico_glrm@model$archetypes) %>% 
+p1 <- t(basico_glrm@model$archetypes) %>% 
   as.data.frame() %>% 
   mutate(feature = row.names(.)) %>%
   ggplot(aes(Arch1, Arch2, label = feature)) +
   geom_text()
 
-gridExtra::grid.arrange(Arch1, Arch2, p2, nrow = 2, ncol=2)
+p2 <- t(basico_glrm@model$archetypes) %>% 
+  as.data.frame() %>% 
+  mutate(feature = row.names(.)) %>%
+  ggplot(aes(Arch1, Arch3, label = feature)) +
+  geom_text()
+p3 <- t(basico_glrm@model$archetypes) %>% 
+  as.data.frame() %>% 
+  mutate(feature = row.names(.)) %>%
+  ggplot(aes(Arch2, Arch3, label = feature)) +
+  geom_text()
+
+gridExtra::grid.arrange(Arch1, Arch2, Arch3, p1,p2,p3, nrow = 2, ncol=3)
 
 
 ArchCor <- t(basico_glrm@model$archetypes)
@@ -97,6 +112,35 @@ write.table(ArchCor, "GLRM_Archetipes.csv", dec = ".", sep=",", row.names = TRUE
 
 
 
-png(filename = "./02_Imagenes/PCA_CCCP_COR.png",width = 20, height = 20, units = "cm", res=300, pointsize = 0.1)
-corrplot(pruebacor, is.corr=FALSE)
+png(filename = "./02_Imagenes/Arch_Basi_k20.png",width = 20, height = 20, units = "cm", res=300, pointsize = 0.1)
+gridExtra::grid.arrange(Arch1, p1, Arch2, p2, Arch3, p3, nrow = 3, ncol=2)
 dev.off()
+
+
+
+# Re-run model with k = 8
+k8_glrm <- h2o.glrm(
+  training_frame = datos_GLR.h2o,
+  k = 6, 
+  loss = "Quadratic",
+  regularization_x = "None", 
+  regularization_y = "None", 
+  transform = "STANDARDIZE", 
+  max_iterations = 2000,
+  seed = 123
+)
+my_reconstruction <- h2o.reconstruct(k8_glrm, datos_GLR.h2o, reverse_transform = TRUE)
+my_reconstruction[1:5, 1:5]
+
+Data_Reconstruida<-as.data.frame(my_reconstruction)
+data_propia<-as.data.frame(datos_GLR.h2o)
+
+
+
+plot(abs(Data_Reconstruida$reconstr_Salinidad_Su), data_propia$Salinidad_Sup)
+cor.test(abs(Data_Reconstruida$reconstr_Salinidad_Su), data_propia$Salinidad_Sup)
+
+shapiro.test(Data_Reconstruida$reconstr_Salinidad_Su)
+shapiro.test(log10(abs(Data_Reconstruida$reconstr_Temperatura_IQR)))
+shapiro.test(log10(Data_Reconstruida$reconstr_Temperatura_IQR))
+shapiro.test(log10(NO2))

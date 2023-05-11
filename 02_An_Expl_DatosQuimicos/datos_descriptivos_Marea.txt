@@ -1,0 +1,285 @@
+[1] "#######################Marea Alta"
+    Var1               Var2               Freq
+78                      NO2   Min.   :0.0500  
+79                      NO2   1st Qu.:0.0625  
+80                      NO2   Median :0.1050  
+81                      NO2   Mean   :0.1856  
+82                      NO2   3rd Qu.:0.1500  
+83                      NO2   Max.   :0.7700  
+84                      NO2               <NA>
+85                      NO3   Min.   :0.2700  
+86                      NO3   1st Qu.:0.4850  
+87                      NO3   Median :0.7000  
+88                      NO3   Mean   :0.8717  
+89                      NO3   3rd Qu.:1.1450  
+90                      NO3   Max.   :2.2800  
+91                      NO3               <NA>
+92                      PO4   Min.   :0.0600  
+93                      PO4   1st Qu.:0.1300  
+94                      PO4   Median :0.1900  
+95                      PO4   Mean   :0.1972  
+96                      PO4   3rd Qu.:0.2475  
+97                      PO4   Max.   :0.4200  
+98                      PO4               <NA>
+99                     SiO2    Min.   : 3.51  
+100                    SiO2    1st Qu.: 9.75  
+101                    SiO2    Median :11.49  
+102                    SiO2    Mean   :14.55  
+103                    SiO2    3rd Qu.:16.28  
+104                    SiO2    Max.   :44.44  
+105                    SiO2               <NA>
+106                      pH    Min.   :8.030  
+107                      pH    1st Qu.:8.160  
+108                      pH    Median :8.200  
+109                      pH    Mean   :8.191  
+110                      pH    3rd Qu.:8.227  
+111                      pH    Max.   :8.290  
+112                      pH               <NA>
+113                      OD    Min.   :6.120  
+114                      OD    1st Qu.:6.795  
+115                      OD    Median :7.240  
+116                      OD    Mean   :7.167  
+117                      OD    3rd Qu.:7.617  
+118                      OD    Max.   :8.060  
+119                      OD               <NA>
+120           Transparencia   Min.   : 0.600  
+121           Transparencia   1st Qu.: 1.975  
+122           Transparencia   Median : 2.500  
+123           Transparencia   Mean   : 4.367  
+124           Transparencia   3rd Qu.: 6.000  
+125           Transparencia   Max.   :13.000  
+126           Transparencia               <NA>
+127                     SST   Min.   : 16.30  
+128                     SST   1st Qu.: 22.04  
+129                     SST   Median : 24.98  
+130                     SST   Mean   : 38.04  
+131                     SST   3rd Qu.: 37.05  
+132                     SST   Max.   :160.97  
+133                     SST               <NA>
+134              TSI_SECCHI    Min.   :23.00  
+135              TSI_SECCHI    1st Qu.:34.00  
+136              TSI_SECCHI    Median :47.00  
+137              TSI_SECCHI    Mean   :43.28  
+138              TSI_SECCHI    3rd Qu.:50.75  
+139              TSI_SECCHI    Max.   :67.00  
+140              TSI_SECCHI               <NA>
+141      Temperatura_median    Min.   :20.22  
+142      Temperatura_median    1st Qu.:24.38  
+143      Temperatura_median    Median :27.28  
+144      Temperatura_median    Mean   :25.91  
+145      Temperatura_median    3rd Qu.:27.82  
+146      Temperatura_median    Max.   :28.19  
+147      Temperatura_median               <NA>
+148        Salinidad_median    Min.   :25.18  
+149        Salinidad_median    1st Qu.:30.38  
+150        Salinidad_median    Median :32.17  
+151        Salinidad_median    Mean   :31.64  
+152        Salinidad_median    3rd Qu.:33.49  
+153        Salinidad_median    Max.   :34.50  
+154        Salinidad_median               <NA>
+155          Oxigeno_median    Min.   :3.818  
+156          Oxigeno_median    1st Qu.:4.492  
+157          Oxigeno_median    Median :4.911  
+158          Oxigeno_median    Mean   :4.795  
+159          Oxigeno_median    3rd Qu.:5.135  
+160          Oxigeno_median    Max.   :5.455  
+161          Oxigeno_median               <NA>
+162         Densidad_median     Min.   :1016  
+163         Densidad_median     1st Qu.:1019  
+164         Densidad_median     Median :1020  
+165         Densidad_median     Mean   :1021  
+166         Densidad_median     3rd Qu.:1022  
+167         Densidad_median     Max.   :1024  
+168         Densidad_median               <NA>
+169         Temperatura_IQR   Min.   :0.0548  
+170         Temperatura_IQR   1st Qu.:0.2040  
+171         Temperatura_IQR   Median :0.3900  
+172         Temperatura_IQR   Mean   :3.0604  
+173         Temperatura_IQR   3rd Qu.:6.0485  
+174         Temperatura_IQR   Max.   :9.3642  
+175         Temperatura_IQR               <NA>
+176           Salinidad_IQR  Min.   :0.04445  
+177           Salinidad_IQR  1st Qu.:1.17791  
+178           Salinidad_IQR  Median :1.70837  
+179           Salinidad_IQR  Mean   :1.72034  
+180           Salinidad_IQR  3rd Qu.:2.45104  
+181           Salinidad_IQR  Max.   :3.30835  
+182           Salinidad_IQR               <NA>
+183             Oxigeno_IQR  Min.   :0.03728  
+184             Oxigeno_IQR  1st Qu.:0.28818  
+185             Oxigeno_IQR  Median :0.55296  
+186             Oxigeno_IQR  Mean   :0.90343  
+187             Oxigeno_IQR  3rd Qu.:1.22893  
+188             Oxigeno_IQR  Max.   :3.49515  
+189             Oxigeno_IQR               <NA>
+190            Densidad_IQR   Min.   :0.1356  
+191            Densidad_IQR   1st Qu.:0.9384  
+192            Densidad_IQR   Median :1.9364  
+193            Densidad_IQR   Mean   :2.2242  
+194            Densidad_IQR   3rd Qu.:3.6848  
+195            Densidad_IQR   Max.   :4.9496  
+196            Densidad_IQR               <NA>
+197         Temperatura_Sup    Min.   :24.67  
+198         Temperatura_Sup    1st Qu.:26.80  
+199         Temperatura_Sup    Median :27.16  
+200         Temperatura_Sup    Mean   :27.02  
+201         Temperatura_Sup    3rd Qu.:27.58  
+202         Temperatura_Sup    Max.   :27.91  
+203         Temperatura_Sup               <NA>
+204           Salinidad_Sup   Min.   : 7.195  
+205           Salinidad_Sup   1st Qu.:22.725  
+206           Salinidad_Sup   Median :26.383  
+207           Salinidad_Sup   Mean   :23.456  
+208           Salinidad_Sup   3rd Qu.:28.223  
+209           Salinidad_Sup   Max.   :29.474  
+210           Salinidad_Sup               <NA>
+211            Densidad_Sup     Min.   :1003  
+212            Densidad_Sup     1st Qu.:1014  
+213            Densidad_Sup     Median :1016  
+214            Densidad_Sup     Mean   :1014  
+215            Densidad_Sup     3rd Qu.:1018  
+216            Densidad_Sup     Max.   :1018  
+217            Densidad_Sup               <NA>
+[1] "#####################Marea Alta"
+    Var1               Var2               Freq
+
+78                      NO2      Min.   : NA  
+79                      NO2      1st Qu.: NA  
+80                      NO2      Median : NA  
+81                      NO2      Mean   :NaN  
+82                      NO2      3rd Qu.: NA  
+83                      NO2      Max.   : NA  
+84                      NO2               <NA>
+85                      NO3      Min.   : NA  
+86                      NO3      1st Qu.: NA  
+87                      NO3      Median : NA  
+88                      NO3      Mean   :NaN  
+89                      NO3      3rd Qu.: NA  
+90                      NO3      Max.   : NA  
+91                      NO3               <NA>
+92                      PO4      Min.   : NA  
+93                      PO4      1st Qu.: NA  
+94                      PO4      Median : NA  
+95                      PO4      Mean   :NaN  
+96                      PO4      3rd Qu.: NA  
+97                      PO4      Max.   : NA  
+98                      PO4               <NA>
+99                     SiO2      Min.   : NA  
+100                    SiO2      1st Qu.: NA  
+101                    SiO2      Median : NA  
+102                    SiO2      Mean   :NaN  
+103                    SiO2      3rd Qu.: NA  
+104                    SiO2      Max.   : NA  
+105                    SiO2               <NA>
+106                      pH      Min.   : NA  
+107                      pH      1st Qu.: NA  
+108                      pH      Median : NA  
+109                      pH      Mean   :NaN  
+110                      pH      3rd Qu.: NA  
+111                      pH      Max.   : NA  
+112                      pH               <NA>
+113                      OD      Min.   : NA  
+114                      OD      1st Qu.: NA  
+115                      OD      Median : NA  
+116                      OD      Mean   :NaN  
+117                      OD      3rd Qu.: NA  
+118                      OD      Max.   : NA  
+119                      OD               <NA>
+120           Transparencia      Min.   : NA  
+121           Transparencia      1st Qu.: NA  
+122           Transparencia      Median : NA  
+123           Transparencia      Mean   :NaN  
+124           Transparencia      3rd Qu.: NA  
+125           Transparencia      Max.   : NA  
+126           Transparencia               <NA>
+127                     SST      Min.   : NA  
+128                     SST      1st Qu.: NA  
+129                     SST      Median : NA  
+130                     SST      Mean   :NaN  
+131                     SST      3rd Qu.: NA  
+132                     SST      Max.   : NA  
+133                     SST               <NA>
+134              TSI_SECCHI      Min.   : NA  
+135              TSI_SECCHI      1st Qu.: NA  
+136              TSI_SECCHI      Median : NA  
+137              TSI_SECCHI      Mean   :NaN  
+138              TSI_SECCHI      3rd Qu.: NA  
+139              TSI_SECCHI      Max.   : NA  
+140              TSI_SECCHI               <NA>
+141      Temperatura_median      Min.   : NA  
+142      Temperatura_median      1st Qu.: NA  
+143      Temperatura_median      Median : NA  
+144      Temperatura_median      Mean   :NaN  
+145      Temperatura_median      3rd Qu.: NA  
+146      Temperatura_median      Max.   : NA  
+147      Temperatura_median               <NA>
+148        Salinidad_median      Min.   : NA  
+149        Salinidad_median      1st Qu.: NA  
+150        Salinidad_median      Median : NA  
+151        Salinidad_median      Mean   :NaN  
+152        Salinidad_median      3rd Qu.: NA  
+153        Salinidad_median      Max.   : NA  
+154        Salinidad_median               <NA>
+155          Oxigeno_median      Min.   : NA  
+156          Oxigeno_median      1st Qu.: NA  
+157          Oxigeno_median      Median : NA  
+158          Oxigeno_median      Mean   :NaN  
+159          Oxigeno_median      3rd Qu.: NA  
+160          Oxigeno_median      Max.   : NA  
+161          Oxigeno_median               <NA>
+162         Densidad_median      Min.   : NA  
+163         Densidad_median      1st Qu.: NA  
+164         Densidad_median      Median : NA  
+165         Densidad_median      Mean   :NaN  
+166         Densidad_median      3rd Qu.: NA  
+167         Densidad_median      Max.   : NA  
+168         Densidad_median               <NA>
+169         Temperatura_IQR      Min.   : NA  
+170         Temperatura_IQR      1st Qu.: NA  
+171         Temperatura_IQR      Median : NA  
+172         Temperatura_IQR      Mean   :NaN  
+173         Temperatura_IQR      3rd Qu.: NA  
+174         Temperatura_IQR      Max.   : NA  
+175         Temperatura_IQR               <NA>
+176           Salinidad_IQR      Min.   : NA  
+177           Salinidad_IQR      1st Qu.: NA  
+178           Salinidad_IQR      Median : NA  
+179           Salinidad_IQR      Mean   :NaN  
+180           Salinidad_IQR      3rd Qu.: NA  
+181           Salinidad_IQR      Max.   : NA  
+182           Salinidad_IQR               <NA>
+183             Oxigeno_IQR      Min.   : NA  
+184             Oxigeno_IQR      1st Qu.: NA  
+185             Oxigeno_IQR      Median : NA  
+186             Oxigeno_IQR      Mean   :NaN  
+187             Oxigeno_IQR      3rd Qu.: NA  
+188             Oxigeno_IQR      Max.   : NA  
+189             Oxigeno_IQR               <NA>
+190            Densidad_IQR      Min.   : NA  
+191            Densidad_IQR      1st Qu.: NA  
+192            Densidad_IQR      Median : NA  
+193            Densidad_IQR      Mean   :NaN  
+194            Densidad_IQR      3rd Qu.: NA  
+195            Densidad_IQR      Max.   : NA  
+196            Densidad_IQR               <NA>
+197         Temperatura_Sup      Min.   : NA  
+198         Temperatura_Sup      1st Qu.: NA  
+199         Temperatura_Sup      Median : NA  
+200         Temperatura_Sup      Mean   :NaN  
+201         Temperatura_Sup      3rd Qu.: NA  
+202         Temperatura_Sup      Max.   : NA  
+203         Temperatura_Sup               <NA>
+204           Salinidad_Sup      Min.   : NA  
+205           Salinidad_Sup      1st Qu.: NA  
+206           Salinidad_Sup      Median : NA  
+207           Salinidad_Sup      Mean   :NaN  
+208           Salinidad_Sup      3rd Qu.: NA  
+209           Salinidad_Sup      Max.   : NA  
+210           Salinidad_Sup               <NA>
+211            Densidad_Sup      Min.   : NA  
+212            Densidad_Sup      1st Qu.: NA  
+213            Densidad_Sup      Median : NA  
+214            Densidad_Sup      Mean   :NaN  
+215            Densidad_Sup      3rd Qu.: NA  
+216            Densidad_Sup      Max.   : NA  
+217            Densidad_Sup               <NA>

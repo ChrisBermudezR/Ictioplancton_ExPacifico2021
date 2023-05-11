@@ -1,0 +1,9 @@
+[1] "Transparencia_Marea_Wilcoxon"
+[1] "Kruskal-Wallis rank sum test"
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  variable by grupo
+W = 233.5, p-value = 0.02418
+alternative hypothesis: true location shift is not equal to 0
+
