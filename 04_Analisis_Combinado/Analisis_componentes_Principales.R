@@ -14,13 +14,16 @@ library(gridExtra)
 library(ggplot2)
 library(factoextra)
 library(corrplot)
+library(psych)
 
 datos_CCCP<-read.csv("./01_Datos/Datos_Totales_CCCP.csv")
 
 
 
+
+
 #Separar la matriz de variables
-data_completo_CCCP<-datos_CCCP[c(12:42)]
+data_completo_CCCP<-datos_CCCP[,12:31]
 #dar nombres a las filas utilizando el codigo para las estaciones en cada tipo de marea
 rownames(data_completo_CCCP)<-datos_CCCP$Codigo   
 
@@ -39,16 +42,11 @@ colnames(Comp_var)<-c("PC01", "PC02",
                       "PC13", "PC14",
                       "PC15", "PC16", 
                       "PC17", "PC18",
-                      "PC19", "PC20",
-                      "PC21", "PC22",
-                      "PC23", "PC24",
-                      "PC25", "PC26",
-                      "PC27", "PC28",
-                      "PC29", "PC30"
+                      "PC19", "PC20"
                       
 )
 #exportar los valores de los residuales del cáculo de los componentes
-write.table(Comp_var, "Componentes_principales_valores_Var_CCCP.csv", dec = ".", sep=",")
+write.table(Comp_var, "Componentes_principales_valores_Var_CCCP.csv", dec = ".", sep=",", row.names = TRUE)
 
 
 ######Gráficas de los componentes principales#####

@@ -6,17 +6,13 @@
 #Notas: 
 ###############################################################################################################################
 
-
-
-#Este script tiene cómo objetivo realizar las gráficas del componente físico de la Expedición Pacífico.
-
-library(tidyverse)
-library(gridExtra)
-library(gsw)
-library(oce)
-library(pastecs)
-library(devtools)
-library(dunn.test)
+if(!require(tidyverse))install.packages("tidyverse")
+if(!require(gridExtra))install.packages("gridExtra")
+if(!require(gsw))install.packages("gsw")
+if(!require(oce))install.packages("oce")
+if(!require(pastecs))install.packages("pastecs")
+if(!require(devtools))install.packages("devtools")
+if(!require(dunn.test))install.packages("dunn.test")
 
 
 source("../Funciones/boxplot_CTDO.R")
@@ -50,7 +46,7 @@ Datos_CTDO_CCCP<-Datos_CTDO_CCCP %>% mutate(Sector = case_when(
 Datos_CTDO_CCCP$Sector<-as.factor(Datos_CTDO_CCCP$Sector)
 ####Estadistica descriptiva####
   
-EstadisticasDescrip<-Datos_CTDO_CCCP %>% summarise_each(funs(mean(., na.rm = TRUE),   median(., na.rm = TRUE),n(),sd(., na.rm = TRUE), min(., na.rm = TRUE),max(., na.rm = TRUE)), Temperatura, Salinidad, Oxigeno, Densidad, Profundidad)
+EstadisticasDescrip<-Datos_CTDO_CCCP %>% summarise_each(funs(median(., na.rm = TRUE),IQR(., na.rm = TRUE),max(., na.rm = TRUE)), Temperatura, Salinidad, Oxigeno, Densidad, Profundidad)
 
 write_csv(EstadisticasDescrip, "./01_Resultados/Fisicos_EstadisticasDescrip_CCCP.csv", col_names = TRUE)
 

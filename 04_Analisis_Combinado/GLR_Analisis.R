@@ -17,7 +17,9 @@ if(!require(h2o))install.packages("h2o")# Para el ajuste de los modelos.
 
 datos_GLR <- utils::read.csv("./01_Datos/Datos_Totales_CCCP.csv")
 
-datos_GLR <- datos_GLR[,11:42]
+t(datos_GLR)
+
+datos_GLR <- datos_GLR[,12:31]
 head(datos_GLR)
 dim(datos_GLR)
 
@@ -66,11 +68,19 @@ arquetipos<-as.data.frame(t(basico_glrm@model$archetypes))
 
 
 #Plots
-p1 <- t(basico_glrm@model$archetypes) %>% 
+Arch1 <- t(basico_glrm@model$archetypes) %>% 
   as.data.frame() %>% 
   mutate(feature = row.names(.)) %>%
   ggplot(aes(Arch1, reorder(feature, Arch1))) +
   geom_point()
+
+Arch2 <- t(basico_glrm@model$archetypes) %>% 
+  as.data.frame() %>% 
+  mutate(feature = row.names(.)) %>%
+  ggplot(aes(Arch2, reorder(feature, Arch2))) +
+  geom_point()
+
+
 
 p2 <- t(basico_glrm@model$archetypes) %>% 
   as.data.frame() %>% 
@@ -78,7 +88,15 @@ p2 <- t(basico_glrm@model$archetypes) %>%
   ggplot(aes(Arch1, Arch2, label = feature)) +
   geom_text()
 
-gridExtra::grid.arrange(p1, p2, nrow = 1)
+gridExtra::grid.arrange(Arch1, Arch2, p2, nrow = 2, ncol=2)
+
+
+ArchCor <- t(basico_glrm@model$archetypes)
+
+write.table(ArchCor, "GLRM_Archetipes.csv", dec = ".", sep=",", row.names = TRUE)
 
 
 
+png(filename = "./02_Imagenes/PCA_CCCP_COR.png",width = 20, height = 20, units = "cm", res=300, pointsize = 0.1)
+corrplot(pruebacor, is.corr=FALSE)
+dev.off()

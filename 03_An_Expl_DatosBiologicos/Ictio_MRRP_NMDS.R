@@ -9,41 +9,41 @@ Div_Code_Ictio<-Codigo_Ictio[,5:37]
 row.names(Div_Code_Ictio) <- Codigo_Ictio[,1]
 
 
-groups_df<-Codigo_Ictio[2:4]
-row.names(groups_df)<-Codigo_Ictio$Especie
-groups_df$Transecto<-as.factor(groups_df$Transecto)
+Ictio_groups_df<-Codigo_Ictio[2:4]
+row.names(Ictio_groups_df)<-Codigo_Ictio$Especie
+Ictio_groups_df$Transecto<-as.factor(Ictio_groups_df$Transecto)
 
 
 
-Densidad_Relativa <-         
+Ictio_Densidad_Relativa <-         
   vegan::decostand(Div_Code_Ictio, method = "total")
 # Calculate distance matrix
-Densidad_Relativa_distmat <- 
-  vegdist(Densidad_Relativa, method = "bray")
+Ictio_Densidad_Relativa_distmat <- 
+  vegdist(Ictio_Densidad_Relativa, method = "bray")
 
-Densidad_Relativa_distmat <- 
-  as.matrix(Densidad_Relativa_distmat, labels = T)
-write.csv(Densidad_Relativa_distmat, "./Resultados/Ictio_Densidad_Relativa_distmat.csv")
+Ictio_Densidad_Relativa_distmat <- 
+  as.matrix(Ictio_Densidad_Relativa_distmat, labels = T)
+write.csv(Ictio_Densidad_Relativa_distmat, "./Resultados/Ictio_Densidad_Relativa_distmat.csv")
 
 
 
 #Evaluación de la composición entre transectos sectores y mareas basados en al Densidad
-MRPP_Transecto_Densidad<-vegan::mrpp(dat = Densidad_Relativa_distmat,  Codigo_Ictio$Transecto, permutations = 2000, distance = "bray")
-MRPP_Marea_Densidad<-vegan::mrpp(dat = Densidad_Relativa_distmat,  Codigo_Ictio$Marea, permutations = 2000, distance = "bray")
-MRPP_Sector_Densidad<-vegan::mrpp(dat = Densidad_Relativa_distmat,  Codigo_Ictio$Sector, permutations = 2000, distance = "bray")
+Ictio_MRPP_Transecto_Densidad<-vegan::mrpp(dat = Ictio_Densidad_Relativa_distmat,  Codigo_Ictio$Transecto, permutations = 2000, distance = "bray")
+Ictio_MRPP_Marea_Densidad<-vegan::mrpp(dat = Ictio_Densidad_Relativa_distmat,  Codigo_Ictio$Marea, permutations = 2000, distance = "bray")
+Ictio_MRPP_Sector_Densidad<-vegan::mrpp(dat = Ictio_Densidad_Relativa_distmat,  Codigo_Ictio$Sector, permutations = 2000, distance = "bray")
 
 
 capture.output("Comparación Densidad relativa - MRPP - Transectos",
-               MRPP_Transecto_Densidad,
+               Ictio_MRPP_Transecto_Densidad,
                "MRPP - Marea",
-               MRPP_Marea_Densidad, 
+               Ictio_MRPP_Marea_Densidad, 
                "MRPP - Sector",
-               MRPP_Sector_Densidad, 
+               Ictio_MRPP_Sector_Densidad, 
                file = "./Resultados/Ictio_mrpp_resultados_ComposicionBasadaDensidad.txt")
 
 # Running NMDS in vegan (metaMDS)
-Densidad_Relativa_NMS <-
-  metaMDS(Densidad_Relativa_distmat,
+Ictio_Densidad_Relativa_NMS <-
+  metaMDS(Ictio_Densidad_Relativa_distmat,
           distance = "bray",
           k = 3,
           maxit = 999, 
@@ -51,40 +51,40 @@ Densidad_Relativa_NMS <-
           wascores = TRUE)
 
 capture.output("Resultados NMDS",
-               Densidad_Relativa_NMS, 
+               Ictio_Densidad_Relativa_NMS, 
                file = "./Resultados/Ictio_NMS_Resultados.txt")
 
 # Shepards test/goodness of fit
-goodness(Densidad_Relativa_NMS) # Produces a results of test statistics for goodness of fit for each point
+goodness(Ictio_Densidad_Relativa_NMS) # Produces a results of test statistics for goodness of fit for each point
 
 
 
-stressplot(Densidad_Relativa_NMS) # Produces a Shepards diagram
+stressplot(Ictio_Densidad_Relativa_NMS) # Produces a Shepards diagram
 
 
-coordenadas <- as.data.frame(scores(Densidad_Relativa_NMS[["points"]]))
-coordenadas$Estaciones<-Codigo_Ictio$Especie
-coordenadas$Sector <- as.factor(groups_df$Sector)
-coordenadas$Transecto <- as.factor(groups_df$Transecto)
-coordenadas$Marea <- as.factor(groups_df$Marea)
+Ictio_coordenadas <- as.data.frame(scores(Ictio_Densidad_Relativa_NMS[["points"]]))
+Ictio_coordenadas$Estaciones<-Codigo_Ictio$Especie
+Ictio_coordenadas$Sector <- as.factor(groups_df$Sector)
+Ictio_coordenadas$Transecto <- as.factor(groups_df$Transecto)
+Ictio_coordenadas$Marea <- as.factor(groups_df$Marea)
 
 
 
-Marea_group <- coordenadas %>%
+Ictio_Marea_group <- Ictio_coordenadas %>%
   ggplot(aes(x = MDS1,
              y = MDS2,
              color=Marea,
              label=Estaciones))+
   geom_point()+geom_text(hjust=0, vjust=0)
 
-hull_data <- 
-  coordenadas %>%
+Ictio_hull_data <- 
+  Ictio_coordenadas %>%
   tidyr::drop_na() %>%
   group_by(Marea) %>% 
   slice(chull(MDS1, MDS2))
 
-Marea_group<-Marea_group+
-  geom_polygon(data = hull_data,
+Ictio_Marea_group<-Ictio_Marea_group+
+  geom_polygon(data = Ictio_hull_data,
                aes(fill = Marea,
                    colour = Marea),
                alpha = 0.3,
@@ -95,20 +95,20 @@ Marea_group<-Marea_group+
   theme(axis.title.x = element_text(size=18), # remove x-axis labels
         axis.title.y = element_text(size=18))
 
-Sector_group <- coordenadas %>%
+Ictio_Sector_group <- Ictio_coordenadas %>%
   ggplot(aes(x = MDS1,
              y = MDS2,
              color=Sector,
              label=Estaciones))+
   geom_point()+geom_text(hjust=0, vjust=0)
 
-hull_data <- 
-  coordenadas %>%
+Ictio_hull_data <- 
+  Ictio_coordenadas %>%
   tidyr::drop_na() %>%
   group_by(Sector) %>% 
   slice(chull(MDS1, MDS2))
 
-Sector_group<-Sector_group+
+Ictio_Sector_group<-Ictio_Sector_group+
   geom_polygon(data = hull_data,
                aes(fill = Sector,
                    colour = Sector),
@@ -121,20 +121,20 @@ Sector_group<-Sector_group+
         axis.title.y = element_text(size=18))
 
 
-Transecto_group <- coordenadas %>%
+Ictio_Transecto_group <- Ictio_coordenadas %>%
   ggplot(aes(x = MDS1,
              y = MDS2,
              color=Transecto,
              label=Estaciones))+
   geom_point()+geom_text(hjust=0, vjust=0)
 
-hull_data <- 
-  coordenadas %>%
+Ictio_hull_data <- 
+  Ictio_coordenadas %>%
   tidyr::drop_na() %>%
   group_by(Transecto) %>% 
   slice(chull(MDS1, MDS2))
 
-Transecto_group<-Transecto_group+
+Ictio_Transecto_group<-Ictio_Transecto_group+
   geom_polygon(data = hull_data,
                aes(fill = Transecto,
                    colour = Transecto),
@@ -148,12 +148,12 @@ Transecto_group<-Transecto_group+
 
 ####Stresplot
 
-str(stressplot(Densidad_Relativa_NMS))
+str(stressplot(Ictio_Densidad_Relativa_NMS))
 
 # Create a tibble that contains the data from stressplot
-StresPlot1 <- tibble(x = stressplot(Densidad_Relativa_NMS)$x,
-                     y = stressplot(Densidad_Relativa_NMS)$y,
-                     yf = stressplot(Densidad_Relativa_NMS)$yf) %>%
+Ictio_StresPlot1 <- tibble(x = stressplot(Ictio_Densidad_Relativa_NMS)$x,
+                     y = stressplot(Ictio_Densidad_Relativa_NMS)$y,
+                     yf = stressplot(Ictio_Densidad_Relativa_NMS)$yf) %>%
   # Change data to long format
   tidyr::pivot_longer(cols = c(y, yf),
                       names_to = "var")

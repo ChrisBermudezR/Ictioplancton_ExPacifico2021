@@ -45,32 +45,34 @@ indices <- dplyr::mutate(as.data.frame(indices),
                          q1 = exp(Shannon), # Exponencial de Shannon (q = 1)
                          q2 = 1 / (1 - Simpson)) # Inverso de Simpson (q = 2)
 
-Densidad.t <- as.data.frame(t(Div_Code_Ictio))
-Densidad_Ictio <- as.data.frame(colSums(Densidad.t))
+Ictio_Densidad.t <- as.data.frame(t(Div_Code_Ictio))
+Densidad_Ictio <- as.data.frame(colSums(Ictio_Densidad.t))
 
 colnames(Densidad_Ictio)<-c("Densidad")
 
-Diversidad_Estaciones<-cbind(Codigo_Ictio[,1:4],indices, Densidad_Ictio)
-write.table(Diversidad_Estaciones, file="./Resultados/Ictio_Diversidad_Estaciones.csv", sep=",", col.names = TRUE, row.names = FALSE)
+Ictio_Diversidad_Estaciones<-cbind(Codigo_Ictio[,1:4],indices, Densidad_Ictio)
+Ictio_Diversidad_Estaciones$Transecto <- factor(Ictio_Diversidad_Estaciones$Transecto, levels = c("Guascama", "Sanquianga", "Amarales"))
+
+write.table(Ictio_Diversidad_Estaciones, file="./Resultados/Ictio_Diversidad_Estaciones.csv", sep=",", col.names = TRUE, row.names = FALSE)
 
 
-MRPP_Transecto_Diversidad_Estaciones<-vegan::mrpp(dat = Diversidad_Estaciones[,9:11],  Diversidad_Estaciones$Transecto, permutations = 2000, distance = "bray")
-MRPP_Marea_Diversidad_Estaciones<-vegan::mrpp(dat = Diversidad_Estaciones[,9:11],  Diversidad_Estaciones$Marea, permutations = 2000, distance = "bray")
-MRPP_Sector_Diversidad_Estaciones<-vegan::mrpp(dat = Diversidad_Estaciones[,9:11],  Diversidad_Estaciones$Sector, permutations = 2000, distance = "bray")
+MRPP_Transecto_Ictio_Diversidad_Estaciones<-vegan::mrpp(dat = Ictio_Diversidad_Estaciones[,9:11],  Ictio_Diversidad_Estaciones$Transecto, permutations = 2000, distance = "bray")
+MRPP_Marea_Ictio_Diversidad_Estaciones<-vegan::mrpp(dat = Ictio_Diversidad_Estaciones[,9:11],  Ictio_Diversidad_Estaciones$Marea, permutations = 2000, distance = "bray")
+MRPP_Sector_Ictio_Diversidad_Estaciones<-vegan::mrpp(dat = Ictio_Diversidad_Estaciones[,9:11],  Ictio_Diversidad_Estaciones$Sector, permutations = 2000, distance = "bray")
 
-MRPP_Transecto_Densidad_Estaciones<-vegan::mrpp(dat = Diversidad_Estaciones[,12],  Diversidad_Estaciones$Transecto, permutations = 2000, distance = "bray")
-MRPP_Marea_Densidad_Estaciones<-vegan::mrpp(dat = Diversidad_Estaciones[,12],  Diversidad_Estaciones$Marea, permutations = 2000, distance = "bray")
-MRPP_Sector_Densidad_Estaciones<-vegan::mrpp(dat = Diversidad_Estaciones[,12],  Diversidad_Estaciones$Sector, permutations = 2000, distance = "bray")
+MRPP_Transecto_Densidad_Estaciones<-vegan::mrpp(dat = Ictio_Diversidad_Estaciones[,12],  Ictio_Diversidad_Estaciones$Transecto, permutations = 2000, distance = "bray")
+MRPP_Marea_Densidad_Estaciones<-vegan::mrpp(dat = Ictio_Diversidad_Estaciones[,12],  Ictio_Diversidad_Estaciones$Marea, permutations = 2000, distance = "bray")
+MRPP_Sector_Densidad_Estaciones<-vegan::mrpp(dat = Ictio_Diversidad_Estaciones[,12],  Ictio_Diversidad_Estaciones$Sector, permutations = 2000, distance = "bray")
 
 
 
 
 capture.output("MRPP para los transectos Comparando la diversidad con los números de Hill",
-               MRPP_Transecto_Diversidad_Estaciones,
+               MRPP_Transecto_Ictio_Diversidad_Estaciones,
                "MRPP para las Mareas Comparando la diversidad con los números de Hill",
-               MRPP_Marea_Diversidad_Estaciones,
+               MRPP_Marea_Ictio_Diversidad_Estaciones,
                "MRPP para los Sectores Comparando la diversidad con los números de Hill",
-               MRPP_Sector_Diversidad_Estaciones,
+               MRPP_Sector_Ictio_Diversidad_Estaciones,
                "MRPP para los transectos Comparando la Abundancia",
                MRPP_Transecto_Densidad_Estaciones,
                "MRPP para los Mareas Comparando la Abundancia",
@@ -82,48 +84,38 @@ capture.output("MRPP para los transectos Comparando la diversidad con los númer
                
 )
 
+Datos_Quimica<-read.table("../02_An_Expl_DatosQuimicos/01_Datos_Quimicos/Datos_Quimica.csv", header = TRUE, sep=",")
+
+No.Estacion<-as.data.frame(Datos_Quimica$No.Estacion)
+colnames(No.Estacion)<-c("No.Estacion")
+Ictio_Diversidad_Estaciones<-cbind(Ictio_Diversidad_Estaciones,No.Estacion)
+
+write.table(Ictio_Diversidad_Estaciones, file="./Resultados/Ictio_Diversidad_Estaciones.csv", sep=",", col.names = TRUE, row.names = FALSE)
+
+q0_bxplt_Marea<-boxplot_marea(Ictio_Diversidad_Estaciones, Ictio_Diversidad_Estaciones$q0, expression(paste(""^0,"D")))
+q0_graf_lineas<-graf_lineas(Ictio_Diversidad_Estaciones, Ictio_Diversidad_Estaciones$q0, expression(paste(""^0,"D")))
+
+q1_bxplt_Marea<-boxplot_marea(Ictio_Diversidad_Estaciones, Ictio_Diversidad_Estaciones$q1, expression(paste(""^1,"D")))
+q1_graf_lineas<-graf_lineas(Ictio_Diversidad_Estaciones, Ictio_Diversidad_Estaciones$q1, expression(paste(""^1,"D")))
+
+q2_bxplt_Marea<-boxplot_marea(Ictio_Diversidad_Estaciones, Ictio_Diversidad_Estaciones$q2, expression(paste(""^2,"D")))
+q2_graf_lineas<-graf_lineas(Ictio_Diversidad_Estaciones, Ictio_Diversidad_Estaciones$q2, expression(paste(""^2,"D")))
 
 
-q0_bxplt_Marea<-boxplot_Marea(Diversidad_Estaciones, Diversidad_Estaciones$q0, expression(paste(""^0,"D")))
-q0_bxplt_Sector<-boxplot_Sector(Diversidad_Estaciones, Diversidad_Estaciones$q0, expression(paste(""^0,"D")))
-q0_bxplt_Transecto<-boxplot_Transecto(Diversidad_Estaciones, Diversidad_Estaciones$q0, expression(paste(""^0,"D")))
+Densidad_bxplt_Marea<-boxplot_marea(Ictio_Diversidad_Estaciones, Ictio_Diversidad_Estaciones$Densidad, expression(paste("Densidad ["~ Ind.1000m^-3~"]")))
 
-
-q1_bxplt_Marea<-boxplot_Marea(Diversidad_Estaciones, Diversidad_Estaciones$q1, expression(paste(""^1,"D")))
-q1_bxplt_Sector<-boxplot_Sector(Diversidad_Estaciones, Diversidad_Estaciones$q1, expression(paste(""^1,"D")))
-q1_bxplt_Transecto<-boxplot_Transecto(Diversidad_Estaciones, Diversidad_Estaciones$q1, expression(paste(""^1,"D")))
-
-
-q2_bxplt_Marea<-boxplot_Marea(Diversidad_Estaciones, Diversidad_Estaciones$q2, expression(paste(""^2,"D")))
-q2_bxplt_Sector<-boxplot_Sector(Diversidad_Estaciones, Diversidad_Estaciones$q2, expression(paste(""^2,"D")))
-q2_bxplt_Transecto<-boxplot_Transecto(Diversidad_Estaciones, Diversidad_Estaciones$q2, expression(paste(""^2,"D")))
-
+Densidad_graf_lineas<-graf_lineas(Ictio_Diversidad_Estaciones, Ictio_Diversidad_Estaciones$Densidad, expression(paste("Densidad ["~ Ind.1000m^-3~"]")))
 
 png(filename="./Imagenes/Ictio_boxplot_Hill.png", height =25 , width = 20, units = "cm", res=400)
 gridExtra:: grid.arrange(q0_bxplt_Marea,
-                         q0_bxplt_Sector,
-                         q0_bxplt_Transecto,
+                         q0_graf_lineas,
                          q1_bxplt_Marea,
-                         q1_bxplt_Sector,
-                         q1_bxplt_Transecto,
+                         q1_graf_lineas,
                          q2_bxplt_Marea,
-                         q2_bxplt_Sector,
-                         q2_bxplt_Transecto,
-                         ncol=3)
-dev.off()
-
-
-
-Densidad_bxplt_Marea<-boxplot_Marea(Diversidad_Estaciones, Diversidad_Estaciones$Densidad, expression(paste("Densidad ["~ Ind.1000m^-3~"]")))
-Densidad_bxplt_Sector<-boxplot_Sector(Diversidad_Estaciones, Diversidad_Estaciones$Densidad, expression(paste("Densidad ["~ Ind.1000m^-3~"]")))
-Densidad_bxplt_Transecto<-boxplot_Transecto(Diversidad_Estaciones, Diversidad_Estaciones$Densidad, expression(paste("Densidad ["~ Ind.1000m^-3~"]")))
-
-
-png(filename="./Imagenes/Ictio_boxplot_densidad.png", height =25 , width = 15, units = "cm", res=400)
-gridExtra:: grid.arrange(Densidad_bxplt_Marea,
-                         Densidad_bxplt_Sector,
-                         Densidad_bxplt_Transecto,
-                         ncol=1)
+                         q2_graf_lineas,
+                         Densidad_bxplt_Marea,
+                         Densidad_graf_lineas,
+                         ncol=2)
 dev.off()
 
 
@@ -131,8 +123,8 @@ dev.off()
 ####Análisis de autocorrelación Espacila####
 
 
-Baja <- read.csv(file="./Resultados/Ictio_Baja_Diversidad_Estaciones.csv")
-Alta <- read.csv(file="./Resultados/Ictio_Alta_Diversidad_Estaciones.csv")
+Baja <- read.csv(file="./Resultados/Ictio_Baja_Ictio_Diversidad_Estaciones.csv")
+Alta <- read.csv(file="./Resultados/Ictio_Alta_Ictio_Diversidad_Estaciones.csv")
 #Calculo de distancias
 
 

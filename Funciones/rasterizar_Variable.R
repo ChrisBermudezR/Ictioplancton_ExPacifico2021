@@ -1,6 +1,6 @@
  
 
- rasterizar_Variable<-function(nombre_variable,longitud, latitud, variable, marea, leyenda){
+ rasterizar_Variable<-function(nombre_variable,longitud, latitud, variable, marea, leyenda, titulo){
  if(!require(tidyverse))install.packages("tidyverse")
  if(!require(oce))install.packages("oce")
   assign("WIRE",interpBarnes(longitud, latitud, variable), envir = parent.frame())
@@ -20,6 +20,6 @@
     theme_bw()+
     scale_fill_gradientn(colours = c("#fef0d9", "#fdd49e", "#fdbb84", "#fc8d59", "#ef6548", "#d7301f", "#990000"))+
     geom_point(data=marea_baja, aes(x= longitud, y= latitud))+
-    labs(fill=leyenda, title= paste(nombre_variable,"-",marea))
+    labs(fill=leyenda, title= titulo)
     #ggrepel::geom_text_repel(data=marea_alta,aes(x=longitud, y=latitud,label = Estacion),box.padding   = 0.3, direction = "x")
 }

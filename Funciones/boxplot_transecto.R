@@ -22,7 +22,7 @@ boxplot_Transecto<-function(datos,variable, y_etiqueta){
     geom_boxplot()+
     stat_summary(fun=mean, geom="point", shape=20, size=5, color="blue", fill="blue") +
     labs( y = y_etiqueta, x = "Transecto")+
-    scale_x_discrete(limits=c("Amarales","Guascama", "Sanquianga"))+
+    scale_x_discrete(limits=c("Guascama", "Sanquianga","Amarales"))+
     scale_color_manual(values=c("chocolate1", "deepskyblue", "red"))+
     theme_bw()+
     geom_point(position = position_jitterdodge())+
