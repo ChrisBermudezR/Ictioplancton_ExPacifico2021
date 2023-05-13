@@ -55,70 +55,70 @@
 130                     SST   Mean   : 48.73  
 131                     SST   3rd Qu.: 50.26  
 132                     SST   Max.   :188.05  
-133                     SST               <NA>
+
 134              TSI_SECCHI    Min.   :29.00  
 135              TSI_SECCHI    1st Qu.:47.75  
 136              TSI_SECCHI    Median :55.50  
 137              TSI_SECCHI    Mean   :52.50  
 138              TSI_SECCHI    3rd Qu.:61.50  
 139              TSI_SECCHI    Max.   :67.00  
-140              TSI_SECCHI               <NA>
+
 141      Temperatura_median    Min.   :21.58  
 142      Temperatura_median    1st Qu.:26.53  
 143      Temperatura_median    Median :27.34  
 144      Temperatura_median    Mean   :26.56  
 145      Temperatura_median    3rd Qu.:27.75  
 146      Temperatura_median    Max.   :27.90  
-147      Temperatura_median               <NA>
+
 148        Salinidad_median    Min.   :15.87  
 149        Salinidad_median    1st Qu.:26.06  
 150        Salinidad_median    Median :31.56  
 151        Salinidad_median    Mean   :28.71  
 152        Salinidad_median    3rd Qu.:32.67  
 153        Salinidad_median    Max.   :34.41  
-154        Salinidad_median               <NA>
+
 155          Oxigeno_median    Min.   :4.206  
 156          Oxigeno_median    1st Qu.:4.381  
 157          Oxigeno_median    Median :4.759  
 158          Oxigeno_median    Mean   :4.744  
 159          Oxigeno_median    3rd Qu.:5.103  
 160          Oxigeno_median    Max.   :5.389  
-161          Oxigeno_median               <NA>
+
 162         Densidad_median     Min.   :1008  
 163         Densidad_median     1st Qu.:1016  
 164         Densidad_median     Median :1020  
 165         Densidad_median     Mean   :1018  
 166         Densidad_median     3rd Qu.:1021  
 167         Densidad_median     Max.   :1024  
-168         Densidad_median               <NA>
+
 169         Temperatura_IQR  Min.   :0.04025  
 170         Temperatura_IQR  1st Qu.:0.11838  
 171         Temperatura_IQR  Median :0.31360  
 172         Temperatura_IQR  Mean   :2.82871  
 173         Temperatura_IQR  3rd Qu.:5.83429  
 174         Temperatura_IQR  Max.   :9.12462  
-175         Temperatura_IQR               <NA>
+
 176           Salinidad_IQR   Min.   :0.2878  
 177           Salinidad_IQR   1st Qu.:1.4347  
 178           Salinidad_IQR   Median :2.2328  
 179           Salinidad_IQR   Mean   :2.0276  
 180           Salinidad_IQR   3rd Qu.:2.4761  
 181           Salinidad_IQR   Max.   :3.6277  
-182           Salinidad_IQR               <NA>
+
 183             Oxigeno_IQR   Min.   :0.0465  
 184             Oxigeno_IQR   1st Qu.:0.2777  
 185             Oxigeno_IQR   Median :0.6871  
 186             Oxigeno_IQR   Mean   :0.7452  
 187             Oxigeno_IQR   3rd Qu.:1.1491  
 188             Oxigeno_IQR   Max.   :1.7607  
-189             Oxigeno_IQR               <NA>
+
 190            Densidad_IQR   Min.   :0.1145  
 191            Densidad_IQR   1st Qu.:1.1581  
 192            Densidad_IQR   Median :2.3404  
 193            Densidad_IQR   Mean   :2.3648  
 194            Densidad_IQR   3rd Qu.:3.4517  
 195            Densidad_IQR   Max.   :4.7626  
-196            Densidad_IQR               <NA>
+
 197         Temperatura_Sup    Min.   :25.47  
 198         Temperatura_Sup    1st Qu.:26.90  
 199         Temperatura_Sup    Median :27.26  

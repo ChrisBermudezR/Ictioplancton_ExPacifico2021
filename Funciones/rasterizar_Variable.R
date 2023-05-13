@@ -10,7 +10,7 @@
   assign(paste0(nombre_variable,"_",marea,"_pts.grid"),  rasterFromXYZ(pts.grid), envir = parent.frame())
   raster::writeRaster(export, filename=paste("../SIG_Datos/grids/",nombre_variable,"_",marea, ".tif", sep = ""),overwrite=TRUE)
   
-  
+ assign(paste0(nombre_variable,"_plot"), 
   ggplot(pts.grid, aes(Longitud, Latitud)) +
     geom_raster(aes(fill = variable))+
     geom_polygon(data=costa, aes(x= long, y= lat, group=group), colour="#3aaa05", fill="#3aaa05") +
@@ -18,8 +18,8 @@
     coord_sf(xlim = c(-78.4055, -78.217), ylim = c(2.55, 2.853), expand = FALSE)+   
     geom_polygon(data=areas_protegidas, aes(x= long, y= lat, group=group), colour="red", fill="transparent") +
     theme_bw()+
-    scale_fill_gradientn(colours = c("#fef0d9", "#fdd49e", "#fdbb84", "#fc8d59", "#ef6548", "#d7301f", "#990000"))+
+    scale_fill_gradientn(colours = c("#4d4d4d", "#999999", "#e0e0e0", "#ffffff", "#fddbc7", "#ef8a62", "#b2182b"))+
     geom_point(data=marea_baja, aes(x= longitud, y= latitud))+
-    labs(fill=leyenda, title= titulo)
-    #ggrepel::geom_text_repel(data=marea_alta,aes(x=longitud, y=latitud,label = Estacion),box.padding   = 0.3, direction = "x")
+    labs(fill=leyenda, title= titulo), envir = parent.frame())
+  
 }

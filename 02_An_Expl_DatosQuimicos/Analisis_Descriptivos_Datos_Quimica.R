@@ -512,6 +512,17 @@ dev.off()
 library(spdep)
 marea_alta<-Datos_Totales_Limpios%>% filter(Marea=="Alta")
 marea_baja<-Datos_Totales_Limpios%>% filter(Marea=="Baja")
+
+
+row.names(marea_alta)<-marea_alta$Estacion
+row.names(marea_baja)<-marea_baja$Estacion
+
+marea_bajacoor<-marea_baja
+marea_altacoor<-marea_alta
+
+coordinates(marea_bajacoor) <- c("longitud", "latitud")
+coordinates(marea_altacoor) <- c("longitud", "latitud")
+
 #Calculo de distancias
 
 install.packages("ape")
@@ -536,6 +547,8 @@ NO2_Sector_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Sector, Datos_Totales_Limpio
 
 moran_Baja_NO2<-Moran.I(marea_baja$NO2, geo_Inv_Dist)
 moran_Alta_NO2<-Moran.I(marea_alta$NO2, geo_Inv_Dist)
+
+
 
 
 NO3_KrusckalPotHoc_mareas<-KrusckalPotHoc(Datos_Totales_Limpios$Transecto, Datos_Totales_Limpios$NO3, "./03_Resultados/NO3_Transectos_KrusckalPotHoc.txt", " NO3_Transectos_KrusckalPotHoc")
@@ -831,141 +844,6 @@ capture.output(
 
 
 
- ################################################
-
-   
-   marea_alta<-Datos_Totales_Limpios%>% filter(Marea=="Alta")
-   marea_baja<-Datos_Totales_Limpios%>% filter(Marea=="Baja")
-   
-   costa<-readOGR("../SIG_Datos/costa.shp")
-   rios<-readOGR("../SIG_Datos/rios_wgs84.shp")
-   estaciones<-readOGR("../SIG_Datos/estaciones.shp")
-   areas_protegidas<-readOGR("../SIG_Datos/areas_protegidas.shp")
- 
-
- rasterizar_Variable("NO2", marea_baja$longitud, marea_baja$latitud, marea_baja$NO2, "Baja",Exp_NO2)
- 
-
- for (i in colnames(marea_baja)[11:44]){
-   print(paste0(i, "_BajaGrid<-rasterizar_Variable('",i,"', marea_baja$longitud, marea_baja$latitud, marea_baja$",i,", 'Baja',  Exp_", i, ")"))
-   
- }
- 
- Exp_NO2= expression(paste("[NO"[2]^"-","] [",mu,"M]"))
- Exp_NO3= expression(paste("[NO"[3]^"-","] [",mu,"M]"))
- Exp_PO4= expression(paste("[PO"[4]^-3,"] [",mu,"M]"))
- Exp_SiO2= expression(paste("[SiO"[2],"] [",mu,"M]"))
- #Exp_Clorofila=expression(paste("Clorofila [",mu,"g/L]"))
- Exp_pH="pH en superficie "
- Exp_OD=expression(paste("Ox.D. Sup.[mg O"[2],".L"^-1,"]"))
- Exp_Transparencia="Transparencia (m)"
- Exp_SST=expression(paste("SST[mg.L"^-1,"]"))
- Exp_TSIDiscoSecchi="TSI Disco Secchi (m)"
- Exp_medianTemp=expression(paste("Q"[2]," de la Temp. en prof. (°C)"))
- Exp_mediansal=expression(paste("Q"[2]," de la Sal. en prof. (PSU)"))
- Exp_medianoxi=expression(paste("Q"[2]," del Ox. D. en prof. [mg O"[2],".L"^-1,"]"))
- Exp_medianden=expression(paste("Q"[2]," de la Den. (kg.m"^-3,")"))
- Exp_IQRTemp=expression(paste("RIC Temp. en prof. (°C)"))
- Exp_IQRSal=expression(paste("RIC Sal. en prof. (PSU)"))
- Exp_IQROxi=expression(paste("RIC Ox. D. en prof. [mg O"[2],".L"^-1,"]"))
- Exp_IQRDen=expression(paste("RIC Den.en prof. (kg.m"^-3,")"))
- Exp_TempSup=expression(paste("Temp. Sup. (°C)"))
- Exp_SalSup=expression(paste("Sal. Sup. (PSU)"))
- Exp_DenSup=expression(paste("Den. Sup.(kg.m"^-3,")"))
- 
- NO2_BajaGrid<-rasterizar_Variable('NO2', marea_baja$longitud, marea_baja$latitud, marea_baja$NO2, 'Baja',  Exp_NO2, "Nitritos - Baja")
- NO3_BajaGrid<-rasterizar_Variable('NO3', marea_baja$longitud, marea_baja$latitud, marea_baja$NO3, 'Baja',  Exp_NO3, "Nitratos - Baja")
- PO4_BajaGrid<-rasterizar_Variable('PO4', marea_baja$longitud, marea_baja$latitud, marea_baja$PO4, 'Baja',  Exp_PO4, "Fosfatos - Baja")
- SiO2_BajaGrid<-rasterizar_Variable('SiO2', marea_baja$longitud, marea_baja$latitud, marea_baja$SiO2, 'Baja',  Exp_SiO2, "Silicatos - Baja")
- #Clorofila_BajaGrid<-rasterizar_Variable('Clorofila', marea_baja$longitud, marea_baja$latitud, marea_baja$Clorofila, 'Baja',  Exp_Clorofila2)
- pH_BajaGrid<-rasterizar_Variable('pH', marea_baja$longitud, marea_baja$latitud, marea_baja$pH, 'Baja',  "pH", "pH")
- OD_BajaGrid<-rasterizar_Variable('OD', marea_baja$longitud, marea_baja$latitud, marea_baja$OD, 'Baja',  expression(paste("[mg.L"^-1,"]")),"Oxi. Sup. - Baja")
- Transparencia_BajaGrid<-rasterizar_Variable('Transparencia', marea_baja$longitud, marea_baja$latitud, marea_baja$Transparencia, 'Baja',  "(m)", 'Transparencia - Baja')
- SST_BajaGrid<-rasterizar_Variable('SST', marea_baja$longitud, marea_baja$latitud, marea_baja$SST, 'Baja',  expression(paste("[mg.L"^-1,"]")), 'SST - Baja')
- TSI_SECCHI_BajaGrid<-rasterizar_Variable('TSI_SECCHI', marea_baja$longitud, marea_baja$latitud, marea_baja$TSI_SECCHI, 'Baja',  "(m)", 'TSI_SECCHI - Baja')
- Temperatura_median_BajaGrid<-rasterizar_Variable("Temperatura_median", marea_baja$longitud, marea_baja$latitud, marea_baja$Temperatura_median, 'Baja',  "(°C)", expression(paste("Q"[2]," Temp - Baja")))
- Salinidad_median_BajaGrid<-rasterizar_Variable('Salinidad_median', marea_baja$longitud, marea_baja$latitud, marea_baja$Salinidad_median, 'Baja',  "(PSU)", expression(paste("Q"[2]," Sal - Baja")))
- Oxigeno_median_BajaGrid<-rasterizar_Variable('Oxigeno_median', marea_baja$longitud, marea_baja$latitud, marea_baja$Oxigeno_median, 'Baja',  expression(paste("[mg.L"^-1,"]")), expression(paste("Q"[2]," Oxi - Baja")))
- Densidad_median_BajaGrid<-rasterizar_Variable('Densidad_median', marea_baja$longitud, marea_baja$latitud, marea_baja$Densidad_median, 'Baja',  expression(paste("(kg.m"^-3,")")), expression(paste("Q"[2]," Den - Baja")))
- Temperatura_IQR_BajaGrid<-rasterizar_Variable('Temperatura_IQR', marea_baja$longitud, marea_baja$latitud, marea_baja$Temperatura_IQR, 'Baja',  "(°C)", "RIC Temp - Baja")
- Salinidad_IQR_BajaGrid<-rasterizar_Variable('Salinidad_IQR', marea_baja$longitud, marea_baja$latitud, marea_baja$Salinidad_IQR, 'Baja',  "(PSU)", "RIC Sal - Baja")
- Oxigeno_IQR_BajaGrid<-rasterizar_Variable('Oxigeno_IQR', marea_baja$longitud, marea_baja$latitud, marea_baja$Oxigeno_IQR, 'Baja',  expression(paste("[mg.L"^-1,"]")), "RIC Oxi - Baja")
- Densidad_IQR_BajaGrid<-rasterizar_Variable('Densidad_IQR', marea_baja$longitud, marea_baja$latitud, marea_baja$Densidad_IQR, 'Baja',  expression(paste("(kg.m"^-3,")")), "RIC Den - Baja")
- Temperatura_Sup_BajaGrid<-rasterizar_Variable('Temperatura_Sup', marea_baja$longitud, marea_baja$latitud, marea_baja$Temperatura_Sup, 'Baja',  "(°C)", "Temp. Sup - Baja")
- Salinidad_Sup_BajaGrid<-rasterizar_Variable('Salinidad_Sup', marea_baja$longitud, marea_baja$latitud, marea_baja$Salinidad_Sup, 'Baja',  "(PSU)", "Sal. Sup. - Baja")
- Densidad_Sup_BajaGrid<-rasterizar_Variable('Densidad_Sup', marea_baja$longitud, marea_baja$latitud, marea_baja$Densidad_Sup, 'Baja',  expression(paste("(kg.m"^-3,")")), "Den. Sup. - Baja")
- 
- 
- 
- NO2_AltaGrid<-rasterizar_Variable('NO2', marea_alta$longitud, marea_alta$latitud, marea_alta$NO2, 'Alta',  Exp_NO2, "Nitritos - Alta")
- NO3_AltaGrid<-rasterizar_Variable('NO3', marea_alta$longitud, marea_alta$latitud, marea_alta$NO3, 'Alta',  Exp_NO3, "Nitratos - Alta")
- PO4_AltaGrid<-rasterizar_Variable('PO4', marea_alta$longitud, marea_alta$latitud, marea_alta$PO4, 'Alta',  Exp_PO4, "Fosfatos - Alta")
- SiO2_AltaGrid<-rasterizar_Variable('SiO2', marea_alta$longitud, marea_alta$latitud, marea_alta$SiO2, 'Alta',  Exp_SiO2, "Silicatos - Alta")
- #Clorofila_AltaGrid<-rasterizar_Variable('Clorofila', marea_alta$longitud, marea_alta$latitud, marea_alta$Clorofila, 'Alta',  Exp_Clorofila2)
- pH_AltaGrid<-rasterizar_Variable('pH', marea_alta$longitud, marea_alta$latitud, marea_alta$pH, 'Alta',  "pH", "pH")
- OD_AltaGrid<-rasterizar_Variable('OD', marea_alta$longitud, marea_alta$latitud, marea_alta$OD, 'Alta',  expression(paste("[mg.L"^-1,"]")),"Oxi. Sup. - Alta")
- Transparencia_AltaGrid<-rasterizar_Variable('Transparencia', marea_alta$longitud, marea_alta$latitud, marea_alta$Transparencia, 'Alta',  "(m)", 'Transparencia - Alta')
- SST_AltaGrid<-rasterizar_Variable('SST', marea_alta$longitud, marea_alta$latitud, marea_alta$SST, 'Alta',  expression(paste("[mg.L"^-1,"]")), 'SST - Alta')
- TSI_SECCHI_AltaGrid<-rasterizar_Variable('TSI_SECCHI', marea_alta$longitud, marea_alta$latitud, marea_alta$TSI_SECCHI, 'Alta',  "(m)", 'TSI_SECCHI - Alta')
- Temperatura_median_AltaGrid<-rasterizar_Variable("Temperatura_median", marea_alta$longitud, marea_alta$latitud, marea_alta$Temperatura_median, 'Alta',  "(°C)", expression(paste("Q"[2]," Temp - Alta")))
- Salinidad_median_AltaGrid<-rasterizar_Variable('Salinidad_median', marea_alta$longitud, marea_alta$latitud, marea_alta$Salinidad_median, 'Alta',  "(PSU)", expression(paste("Q"[2]," Sal - Baja")))
- Oxigeno_median_AltaGrid<-rasterizar_Variable('Oxigeno_median', marea_alta$longitud, marea_alta$latitud, marea_alta$Oxigeno_median, 'Alta',  expression(paste("[mg.L"^-1,"]")), expression(paste("Q"[2]," Oxi - Alta")))
- Densidad_median_AltaGrid<-rasterizar_Variable('Densidad_median', marea_alta$longitud, marea_alta$latitud, marea_alta$Densidad_median, 'Alta',  expression(paste("(kg.m"^-3,")")), expression(paste("Q"[2]," Den - Alta")))
- Temperatura_IQR_AltaGrid<-rasterizar_Variable('Temperatura_IQR', marea_alta$longitud, marea_alta$latitud, marea_alta$Temperatura_IQR, 'Alta',  "(°C)", "RIC Temp - Alta")
- Salinidad_IQR_AltaGrid<-rasterizar_Variable('Salinidad_IQR', marea_alta$longitud, marea_alta$latitud, marea_alta$Salinidad_IQR, 'Alta',  "(PSU)", "RIC Sal - Alta")
- Oxigeno_IQR_AltaGrid<-rasterizar_Variable('Oxigeno_IQR', marea_alta$longitud, marea_alta$latitud, marea_alta$Oxigeno_IQR, 'Alta',  expression(paste("[mg.L"^-1,"]")), "RIC Oxi - Alta")
- Densidad_IQR_AltaGrid<-rasterizar_Variable('Densidad_IQR', marea_alta$longitud, marea_alta$latitud, marea_alta$Densidad_IQR, 'Alta',  expression(paste("(kg.m"^-3,")")), "RIC Den - Alta")
- Temperatura_Sup_AltaGrid<-rasterizar_Variable('Temperatura_Sup', marea_alta$longitud, marea_alta$latitud, marea_alta$Temperatura_Sup, 'Alta',  "(°C)", "Temp. Sup - Alta")
- Salinidad_Sup_AltaGrid<-rasterizar_Variable('Salinidad_Sup', marea_alta$longitud, marea_alta$latitud, marea_alta$Salinidad_Sup, 'Alta',  "(PSU)", "Sal. Sup. - Alta")
- Densidad_Sup_AltaGrid<-rasterizar_Variable('Densidad_Sup', marea_alta$longitud, marea_alta$latitud, marea_alta$Densidad_Sup, 'Alta',  expression(paste("(kg.m"^-3,")")), "Den. Sup. - Alta")
- 
- 
- 
- png(filename = "./02_Imagenes/grid_grafica_01.png", width = 14, height = 24, units = "cm", pointsize = 4, bg = "white", res = 300)
- 
- grid.arrange(nrow=4, ncol=2, 
-              NO2_AltaGrid, NO2_BajaGrid,
-              NO3_AltaGrid, NO3_BajaGrid,
-              PO4_AltaGrid, PO4_BajaGrid,
-              SiO2_AltaGrid, SiO2_BajaGrid)
- dev.off()
-
- 
- 
- png(filename = "./02_Imagenes/grid_grafica_02.png", width = 14, height = 24, units = "cm", pointsize = 4, bg = "white", res = 300)
- grid.arrange(nrow=4, ncol=2, 
-              pH_AltaGrid, pH_BajaGrid,
-              OD_AltaGrid, OD_BajaGrid,
-              Transparencia_AltaGrid, Transparencia_BajaGrid,
-              SST_AltaGrid, SST_BajaGrid
-              )
- dev.off()
- 
- png(filename = "./02_Imagenes/grid_grafica_03.png", width = 14, height = 24, units = "cm", pointsize = 4, bg = "white", res = 300)
- grid.arrange(nrow=4, ncol=2, 
-              TSI_SECCHI_AltaGrid, TSI_SECCHI_BajaGrid,
-              Temperatura_median_AltaGrid, Temperatura_median_BajaGrid,
-              Salinidad_median_AltaGrid, Salinidad_median_BajaGrid,
-              Oxigeno_median_AltaGrid, Oxigeno_median_BajaGrid)
- dev.off()
- 
- png(filename = "./02_Imagenes/grid_grafica_04.png", width = 14, height = 24, units = "cm", pointsize = 4, bg = "white", res = 300)
- grid.arrange(nrow=4, ncol=2, 
-              Densidad_median_AltaGrid, Densidad_median_BajaGrid,
-              Temperatura_IQR_AltaGrid, Temperatura_IQR_BajaGrid,
-              Salinidad_IQR_AltaGrid, Salinidad_IQR_BajaGrid,
-              Oxigeno_IQR_AltaGrid, Oxigeno_IQR_BajaGrid)
- dev.off()
- 
- png(filename = "./02_Imagenes/grid_grafica_05.png", width = 14, height = 24, units = "cm", pointsize = 4, bg = "white", res = 300)
- grid.arrange(nrow=4, ncol=2, 
-              Densidad_IQR_AltaGrid, Densidad_IQR_BajaGrid,
-              Temperatura_Sup_AltaGrid, Temperatura_Sup_BajaGrid,
-              Salinidad_Sup_AltaGrid, Salinidad_Sup_BajaGrid,
-              Densidad_Sup_AltaGrid, Densidad_Sup_BajaGrid)
- dev.off()
- 
- 
  
  
  

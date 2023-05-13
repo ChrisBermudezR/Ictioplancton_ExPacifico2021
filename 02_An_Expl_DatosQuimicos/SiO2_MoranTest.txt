@@ -1,0 +1,117 @@
+[1] "###SiO2"
+[1] "##########################Moran Global"
+[1] "###Alta"
+
+	Moran I test under randomisation
+
+data:  variable_alta  
+weights: w    
+
+Moran I statistic standard deviate = 0.061477, p-value = 0.4755
+alternative hypothesis: greater
+sample estimates:
+Moran I statistic       Expectation          Variance 
+     -0.052735014      -0.058823529       0.009808272 
+
+[1] "###Baja"
+
+	Moran I test under randomisation
+
+data:  variable_baja  
+weights: w    
+
+Moran I statistic standard deviate = 5.108, p-value = 1.628e-07
+alternative hypothesis: greater
+sample estimates:
+Moran I statistic       Expectation          Variance 
+       0.53801025       -0.05882353        0.01365212 
+
+[1] "#############################Moran Local"
+[1] "###Alta"
+            Ii          E.Ii       Var.Ii        Z.Ii Pr(z != E(Ii))
+1   0.39717589 -1.309401e-01 1.721399e+00  0.40252100     0.68730064
+2   0.01876661 -3.850863e-02 5.158626e-01  0.07974434     0.93644059
+3  -0.04953412 -4.074891e-01 5.052775e+00  0.15924413     0.87347654
+4  -1.22673489 -1.348072e-01 1.770830e+00 -0.82055063     0.41190228
+5   0.55282157 -7.545533e-02 1.003274e+00  0.62725079     0.53049485
+6   4.27866025 -3.940570e-01 4.900511e+00  2.11080842     0.03478878
+7   1.34580748 -2.901711e-01 3.689972e+00  0.85165970     0.39440299
+8  -0.01003555 -3.243358e-06 4.378530e-05 -1.51613077     0.12948629
+9   0.65730455 -1.347417e-02 1.814111e-01  1.57487962     0.11528423
+10 -3.55737167 -4.233592e-01 5.231420e+00 -1.37022204     0.17061760
+11 -0.49251750 -3.063126e-02 4.109887e-01 -0.72047690     0.47123142
+12  0.23837642 -1.838569e-02 2.472941e-01  0.51632603     0.60562672
+13  0.91275199 -3.445739e-02 4.619691e-01  1.39360450     0.16343707
+14  0.76172743 -4.500756e-02 6.021327e-01  1.03964430     0.29850519
+15  0.61322567 -4.962156e-02 6.632429e-01  0.81391142     0.41569570
+16 -0.38631494 -1.227082e-02 1.652495e-01 -0.92013758     0.35750087
+17 -0.68125543 -9.175862e-02 1.216008e+00 -0.53458059     0.59293991
+18 -8.11900497 -3.103720e+00 1.589091e+01 -1.25811762     0.20834922
+attr(,"call")
+spdep::localmoran(x = variable_alta, listw = w)
+attr(,"class")
+[1] "localmoran" "matrix"     "array"     
+attr(,"quadr")
+        mean    median     pysal
+1    Low-Low   Low-Low   Low-Low
+2   Low-High   Low-Low   Low-Low
+3  High-High High-High  High-Low
+4   Low-High  Low-High  Low-High
+5  High-High High-High High-High
+6  High-High High-High High-High
+7    Low-Low   Low-Low   Low-Low
+8   High-Low  High-Low  High-Low
+9    Low-Low  High-Low   Low-Low
+10  Low-High  Low-High  Low-High
+11  Low-High High-High  Low-High
+12 High-High High-High High-High
+13   Low-Low   Low-Low   Low-Low
+14   Low-Low   Low-Low   Low-Low
+15   Low-Low   Low-Low   Low-Low
+16  Low-High High-High  Low-High
+17  Low-High  Low-High  Low-High
+18  High-Low  High-Low  High-Low
+[1] "###Baja"
+            Ii          E.Ii      Var.Ii       Z.Ii Pr(z != E(Ii))
+1   2.29682613 -0.0677557675  0.90230758  2.4892990    0.012799529
+2   3.16871834 -0.2045700926  2.64870416  2.0727014    0.038200073
+3   2.13607139 -0.1396983964  1.83323612  1.6808119    0.092799448
+4   2.41880528 -0.1943226755  2.52140060  1.6456586    0.099834063
+5   1.51666429 -0.1310684116  1.72304045  1.2552754    0.209378794
+6   0.34687635 -0.0273734786  0.36751883  0.6173363    0.537012936
+7   1.44752102 -0.0713871076  0.94996643  1.5583944    0.119139785
+8  -0.08739909 -0.0009817808  0.01325144 -0.7507048    0.452830310
+9  -0.34697397 -0.0024692410  0.03331829 -1.8873560    0.059112458
+10  8.46314781 -1.2569679228 12.70315239  2.7271918    0.006387590
+11  8.70026560 -0.8804631361  9.79317094  3.0615184    0.002202174
+12  9.57289090 -1.2004455934 12.31512753  3.0699462    0.002140973
+13  2.71950442 -0.4966271690  6.03854271  1.3087833    0.190607771
+14  2.09304221 -0.3889222263  4.84204671  1.1279272    0.259350668
+15  0.54243354 -0.0338789568  0.45426690  0.8550716    0.392511500
+16 -0.18992978 -0.0400729729  0.53664936 -0.2045649    0.837912057
+17  1.34845786 -0.0856953298  1.13705899  1.3449435    0.178643478
+18  2.27399991 -0.0714173884  0.95036355  2.4058871    0.016133251
+attr(,"call")
+spdep::localmoran(x = variable_baja, listw = w)
+attr(,"class")
+[1] "localmoran" "matrix"     "array"     
+attr(,"quadr")
+        mean    median     pysal
+1    Low-Low   Low-Low   Low-Low
+2    Low-Low   Low-Low   Low-Low
+3    Low-Low   Low-Low   Low-Low
+4    Low-Low   Low-Low   Low-Low
+5    Low-Low   Low-Low   Low-Low
+6    Low-Low High-High   Low-Low
+7    Low-Low   Low-Low   Low-Low
+8   Low-High High-High  Low-High
+9   Low-High High-High  Low-High
+10 High-High High-High High-High
+11 High-High High-High High-High
+12 High-High High-High High-High
+13   Low-Low   Low-Low   Low-Low
+14   Low-Low   Low-Low   Low-Low
+15   Low-Low   Low-Low   Low-Low
+16  High-Low High-High  High-Low
+17 High-High High-High High-High
+18 High-High High-High High-High
