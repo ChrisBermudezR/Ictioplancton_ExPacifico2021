@@ -17,6 +17,7 @@ if(!require(raster))install.packages("raster")
 if(!require(rgdal))install.packages("rgdal")
 if(!require(dplyr))install.packages("dplyr")
 if(!require(vegan))install.packages("vegan")
+if(!require(spdep))install.packages("spdep")
 
 source("../Funciones/rasterizar_Variable.R")
 source("../Funciones/KruskalPostHoc.R")
@@ -686,6 +687,147 @@ Densidad_Sup_Sector_Wilcoxon<-Wilcoxon(Datos_Totales_Limpios$Sector, Datos_Total
 
 moran_Baja_Densidad_Sup<-Moran.I(marea_baja$Densidad_Sup, geo_Inv_Dist)
 moran_Alta_Densidad_Sup<-Moran.I(marea_alta$Densidad_Sup, geo_Inv_Dist)
+
+
+spdep::moran.test(marea_baja$Densidad_Sup, geo_Inv_Dist)
+
+
+####Captura de Información####
+capture.output(
+  "######NO2####",
+  
+  "#Baja",
+  moran_Baja_NO2,
+  "#Alta",
+  moran_Alta_NO2,
+  "######NO3####",
+  "#Baja",
+  moran_Baja_NO3,
+  "#Alta",
+  moran_Alta_NO3,
+  
+  "######PO4####",
+  "#Baja",
+  moran_Baja_PO4,
+  "#Alta",
+  moran_Alta_PO4,
+  
+  "######SiO2####",
+  "#Baja",
+  moran_Baja_SiO2,
+  "#Alta",
+  moran_Alta_SiO2,
+  
+  "######pH####",
+  "#Baja",
+  moran_Baja_pH,
+  "#Alta",
+  moran_Alta_pH,
+  
+  
+"######OD####",
+  "#Baja",
+  moran_Baja_OD,
+  "#Alta",
+  moran_Alta_OD,
+  
+"######Transparencia####",
+  "#Baja",
+  moran_Baja_Transparencia,
+  "#Alta",
+  moran_Alta_Transparencia,
+  
+  "######SST####",
+  "#Baja",
+  moran_Baja_SST,
+  "#Alta",
+  moran_Alta_SST,
+  
+  "######TSI####",
+  "#Baja",
+  moran_Baja_TSI_SECCHI,
+  "#Alta",
+  moran_Alta_TSI_SECCHI,
+  
+  "######Temperatura_median####",
+  "#Baja",
+  moran_Baja_Temperatura_median,
+  "#Alta",
+  moran_Alta_Temperatura_median,
+  
+  "######Salinidad_median####",
+  "#Baja",
+  moran_Baja_Salinidad_median,
+  "#Alta",
+  moran_Alta_Salinidad_median,
+  
+  "######Oxigeno_median####",
+  "#Baja",
+  moran_Baja_Oxigeno_median,
+  "#Alta",
+  moran_Alta_Oxigeno_median,
+  
+  "######Densidad_median####",
+  "#Baja",
+  moran_Baja_Densidad_median,
+  "#Alta",
+  moran_Alta_Densidad_median,
+  
+  
+  "######Temperatura_IQR####",
+  "#Baja",
+  moran_Baja_Temperatura_IQR,
+  "#Alta",
+  moran_Alta_Temperatura_IQR,
+  
+  
+  "######Salinidad_IQR####",
+  "#Baja",
+  moran_Baja_Salinidad_IQR,
+  "#Alta",
+  moran_Alta_Salinidad_IQR,
+  
+  
+  "######Oxigeno_IQR####",
+  "#Baja",
+  moran_Baja_Oxigeno_IQR,
+  "#Alta",
+  moran_Alta_Oxigeno_IQR,
+  
+  "######Densidad_IQR####",
+  "#Baja",
+  moran_Baja_Densidad_IQR,
+  "#Alta",
+  moran_Alta_Densidad_IQR,
+  
+  "######Temperatura_Sup####",
+  "#Baja",
+  moran_Baja_Temperatura_Sup,
+  "#Alta",
+  moran_Alta_Temperatura_Sup,
+  
+  
+  "######Salinidad_Sup####",
+  "#Baja",
+  moran_Baja_Salinidad_Sup,
+  "#Alta",
+  moran_Alta_Salinidad_Sup,
+  
+  "######Densidad_Sup####",
+  "#Baja",
+  moran_Baja_Densidad_Sup,
+  "#Alta",
+  moran_Alta_Densidad_Sup,
+  
+  "######Densidad_Sup####",
+  "#Baja",
+  moran_Baja_Densidad_Sup,
+  "#Alta",
+  moran_Alta_Densidad_Sup,
+  
+  
+  file="Autocorrelacion_Espacial_Quimica.txt"  
+)
 
 
 

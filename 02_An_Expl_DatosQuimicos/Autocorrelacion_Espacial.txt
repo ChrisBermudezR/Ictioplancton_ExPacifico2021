@@ -1,0 +1,13 @@
+
+capture.output(
+  "######NO2####"
+"#Baja"
+moran_Baja_NO2,
+#Alta
+moran_Alta_NO2,
+
+
+  
+  
+file="Autocorrelacion_Espacial_Quimica.txt"  
+)
