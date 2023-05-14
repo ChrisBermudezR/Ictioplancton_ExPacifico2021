@@ -20,6 +20,7 @@
     theme_bw()+
     scale_fill_gradientn(colours = c("#4d4d4d", "#999999", "#e0e0e0", "#ffffff", "#fddbc7", "#ef8a62", "#b2182b"))+
     geom_point(data=marea_baja, aes(x= longitud, y= latitud))+
-    labs(fill=leyenda, title= titulo), envir = parent.frame())
+    labs(fill=leyenda, title= titulo)+
+    theme(legend.position = "bottom"), envir = parent.frame())
   
 }

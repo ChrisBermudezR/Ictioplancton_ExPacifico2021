@@ -1,6 +1,9 @@
  rasterizar_Autocorrelacion<-function(nombre_variable,longitud, latitud, moran, probabilidad, marea, leyenda_moran,leyenda_probabilidad,  titulo){
  if(!require(tidyverse))install.packages("tidyverse")
  if(!require(oce))install.packages("oce")
+ if(!require(raster))install.packages("raster")
+
+
   assign("WIRE_moran",interpBarnes(longitud, latitud, moran), envir = parent.frame())
   assign(paste0("pts_moran.grid"),expand.grid(Longitud=WIRE_moran$x, Latitud=WIRE_moran$y), envir = parent.frame())
   assign(paste0("pts_moran.grid"), mutate(pts_moran.grid, variable=as.vector(WIRE_moran$zg)), envir = parent.frame())

@@ -1,4 +1,4 @@
-[1] "#####################Marea baja"
+ 	[1] "#####################Marea baja"
     Var1               Var2               Freq
  NO2   Min.   :0.0600  
 79                      NO2   1st Qu.:0.2400  

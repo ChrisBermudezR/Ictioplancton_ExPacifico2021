@@ -139,7 +139,7 @@ grid.arrange(nrow=4, ncol=2,
              Densidad_Sup_AltaGrid, Densidad_Sup_BajaGrid)
 dev.off()
 
-
+#############################
 
 row.names(marea_alta)<-marea_alta$Estacion
 row.names(marea_baja)<-marea_baja$Estacion
@@ -149,6 +149,13 @@ marea_altacoor<-marea_alta
 
 coordinates(marea_bajacoor) <- c("longitud", "latitud")
 coordinates(marea_altacoor) <- c("longitud", "latitud")
+
+
+
+
+
+
+
 
 
 

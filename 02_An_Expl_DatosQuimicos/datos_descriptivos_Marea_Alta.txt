@@ -119,25 +119,25 @@
 193            Densidad_IQR   Mean   :2.2242  
 194            Densidad_IQR   3rd Qu.:3.6848  
 195            Densidad_IQR   Max.   :4.9496  
-196            Densidad_IQR               <NA>
+
 197         Temperatura_Sup    Min.   :24.67  
 198         Temperatura_Sup    1st Qu.:26.80  
 199         Temperatura_Sup    Median :27.16  
 200         Temperatura_Sup    Mean   :27.02  
 201         Temperatura_Sup    3rd Qu.:27.58  
 202         Temperatura_Sup    Max.   :27.91  
-203         Temperatura_Sup               <NA>
+
 204           Salinidad_Sup   Min.   : 7.195  
 205           Salinidad_Sup   1st Qu.:22.725  
 206           Salinidad_Sup   Median :26.383  
 207           Salinidad_Sup   Mean   :23.456  
 208           Salinidad_Sup   3rd Qu.:28.223  
 209           Salinidad_Sup   Max.   :29.474  
-210           Salinidad_Sup               <NA>
+
 211            Densidad_Sup     Min.   :1003  
 212            Densidad_Sup     1st Qu.:1014  
 213            Densidad_Sup     Median :1016  
 214            Densidad_Sup     Mean   :1014  
 215            Densidad_Sup     3rd Qu.:1018  
 216            Densidad_Sup     Max.   :1018  
-217            Densidad_Sup               <NA>
+
