@@ -55,6 +55,12 @@ var <-get_pca_var(data_completo_CCCP.pca)
 #Gráfica de correlación entre lasvariables y los componentes
 var$cos2
 
+contribucion<-as.data.frame(var[["contrib"]])
+
+sort.list(as.data.frame(contribucion[,1]),  decreasing = TRUE,
+          partial = NULL,    # Vector de índices para ordenado parcial
+          na.last = TRUE)
+
 png(filename = "./02_Imagenes/PCA_CCCP_COR.png",width = 20, height = 20, units = "cm", res=300, pointsize = 0.1)
 corrplot(var$cor, is.corr=TRUE)
 dev.off()
@@ -70,14 +76,14 @@ PCA_12<-factoextra::fviz_pca_biplot(data_completo_CCCP.pca, repel = TRUE,
                                     col.var = "#2E9FDF", # Variables color
                                     col.ind = "#696969"  # Individuals color
 )+
-  labs(x="PC1 (43.7%)", y="PC2 (19.6%)")
+  labs(x="PC1 (45.3%)", y="PC2 (17.5%)")
 
 PCA_23<-factoextra::fviz_pca_biplot(data_completo_CCCP.pca, repel = TRUE,
                                     axes = c(2,3),
                                     col.var = "#2E9FDF", # Variables color
                                     col.ind = "#696969"  # Individuals color
 )+
-  labs(x="PC2 (19.6%)", y="PC3 (10.6%)")
+  labs(x="PC2 (17.5%)", y="PC3 (9%)")
 
 
 Marea <- as.factor(datos_CCCP$Marea)
@@ -90,7 +96,7 @@ PCA_12_marea<-factoextra::fviz_pca_ind(data_completo_CCCP.pca,
                                        legend.title = "Groups",
                                        repel = TRUE
 )+
-  labs(title="PCA - Agrupado por mareas",x="PC1 (43.7%)", y="PC2 (19.6%)")
+  labs(title="PCA - Agrupado por mareas",x="PC1 (45.3%)", y="PC2 (17.5%)")
 
 PCA_23_marea<-factoextra::fviz_pca_ind(data_completo_CCCP.pca,
                                        axes = c(2,3),
@@ -101,7 +107,7 @@ PCA_23_marea<-factoextra::fviz_pca_ind(data_completo_CCCP.pca,
                                        legend.title = "Groups",
                                        repel = TRUE
 )+
-  labs(title="PCA - Agrupado por mareas",x="PC2 (19.6%)", y="PC3 (10.6%)")
+  labs(title="PCA - Agrupado por mareas",x="PC2 (17.5%)", y="PC3 (9%)")
 
 
 
@@ -117,7 +123,7 @@ PCA_12_Transecto<-factoextra::fviz_pca_ind(data_completo_CCCP.pca,
                                        legend.title = "Groups",
                                        repel = TRUE
 )+
-  labs(title="PCA - Agrupado por transectos",x="PC1 (43.7%)", y="PC2 (19.6%)")
+  labs(title="PCA - Agrupado por transectos",x="PC1 (45.3%)", y="PC2 (17.5%)")
 
 PCA_23_Transecto<-factoextra::fviz_pca_ind(data_completo_CCCP.pca,
                                        axes = c(2,3),
@@ -128,7 +134,7 @@ PCA_23_Transecto<-factoextra::fviz_pca_ind(data_completo_CCCP.pca,
                                        legend.title = "Groups",
                                        repel = TRUE
 )+
-  labs(title="PCA - Agrupado por transectos",x="PC2 (19.6%)", y="PC3 (10.6%)")
+  labs(title="PCA - Agrupado por transectos",x="PC2 (17.5%)", y="PC3 (9%)")
 
 
 
@@ -146,7 +152,7 @@ PCA_12_Sector<-factoextra::fviz_pca_ind(data_completo_CCCP.pca,
                                            legend.title = "Groups",
                                            repel = TRUE
 )+
-  labs(title="PCA - Agrupado por sector",x="PC1 (43.7%)", y="PC2 (19.6%))")
+  labs(title="PCA - Agrupado por sector",x="PC1 (45.3%)", y="PC2 (17.5%)")
 
 PCA_23_Sector<-factoextra::fviz_pca_ind(data_completo_CCCP.pca,
                                            axes = c(2,3),
@@ -157,7 +163,7 @@ PCA_23_Sector<-factoextra::fviz_pca_ind(data_completo_CCCP.pca,
                                            legend.title = "Groups",
                                            repel = TRUE
 )+
-  labs(title="PCA - Agrupado por sector",x="PC2 (19.6%)", y="PC3 (10.6%)")
+  labs(title="PCA - Agrupado por sector",x="PC2 (17.5%)", y="PC3 (9%)")
 
 
 png(filename = "./02_Imagenes/PCA_CCCP01.png",width = 20, height = 30, units = "cm", res=300, pointsize = 0.1)

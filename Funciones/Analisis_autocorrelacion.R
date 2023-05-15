@@ -1,7 +1,7 @@
-Analisis_autocorrelacion<-function(nombre_variable){
+Analisis_autocorrelacion<-function(nombre_variable, coordenadas_sp){
 if(!require(sp))install.packages("sp ")
 if(!require(spdep))install.packages("spdep ")
-assign("knn", spdep::knn2nb(knearneigh(coordinates(marea_altacoor), k = 5)),envir = parent.frame())
+assign("knn", spdep::knn2nb(knearneigh(coordinates(coordenadas_sp), k = 5)),envir = parent.frame())
 assign("w", spdep::nb2listw(knn, style = "B"), envir = parent.frame())
 
 # Test for global spatial autocorrelation

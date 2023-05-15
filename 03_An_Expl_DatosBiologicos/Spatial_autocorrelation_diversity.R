@@ -19,32 +19,45 @@ coordenadas_fuente<-read.table("../Sig_Datos/loglat_Estaciones.csv", header = TR
 FitoData<-read.table("./Resultados/Fito_Diversidad_Estaciones.csv", sep=",", header = TRUE)
 IctioData<-read.table("./Resultados/Ictio_Diversidad_Estaciones.csv", sep=",", header = TRUE)
 
-Fito_marea_alta<-FitoData%>% filter(Marea=="Alta")
-Fito_marea_baja<-FitoData%>% filter(Marea=="Baja")
+
+colnames(FitoData)<-c(
+  "Estaciones",  "Transecto",   "Sector",      "Marea",       "Fito_S",           "Fito_Simpson",     "Fito_Shannon",    
+  "Fito_Pielou",      "Fito_q0",          "Fito_q1",          "Fito_q2",          "Fito_Densidad",    "Clorofila",   "No.Estacion"
+)
+colnames(IctioData)<-c(
+  "Estaciones",  "Transecto",   "Sector",      "Marea",       "Ictio_S",           "Ictio_Simpson",     "Ictio_Shannon",    
+  "Ictio_Pielou",      "Ictio_q0",          "Ictio_q1",          "Ictio_q2",          "Ictio_Densidad"
+)
+
+dataTotal<-cbind(FitoData,IctioData[,5:12])
 
 
-marea_bajacoor<-Fito_marea_baja
-marea_altacoor<-Fito_marea_alta
+dataTotal_alta<-dataTotal%>% filter(Marea=="Alta")
+dataTotal_baja<-dataTotal%>% filter(Marea=="Baja")
 
-row.names(marea_bajacoor)<-Fito_marea_alta$Estacion
-row.names(marea_altacoor)<-Fito_marea_baja$Estacion
 
-coordenadas_fuente
 
-marea_bajacoor<-cbind(marea_bajacoor, coordenadas_fuente)
-marea_altacoor<-cbind(marea_altacoor, coordenadas_fuente)
+marea_altacoor<-cbind(dataTotal_alta, coordenadas_fuente)
+marea_bajacoor<-cbind(dataTotal_baja, coordenadas_fuente)
+
+row.names(marea_bajacoor)<-dataTotal_alta$Estaciones
+row.names(marea_altacoor)<-dataTotal_baja$Estaciones
 
 coordinates(marea_bajacoor) <- c("longitud", "latitud")
 coordinates(marea_altacoor) <- c("longitud", "latitud")
+
+coordinates(coordenadas_fuente) <- c("longitud", "latitud")
 
 costa<-readOGR("../SIG_Datos/costa.shp")
 rios<-readOGR("../SIG_Datos/rios_wgs84.shp")
 estaciones<-readOGR("../SIG_Datos/estaciones.shp")
 areas_protegidas<-readOGR("../SIG_Datos/areas_protegidas.shp")
 
-Analisis_autocorrelacion("q0")
-Fito_q0_AltaGrid<-rasterizar_Variable('q0', marea_bajacoor$longitud, marea_bajacoor$latitud, Fito_marea_alta$q0, 'Alta',  "Exp_q0", "q0 - Alta")
-Fito_q0_BajaGrid<-rasterizar_Variable('q0', marea_bajacoor$longitud, marea_bajacoor$latitud, Fito_marea_baja$q0, 'Baja',  "Exp_q0", "q0 - Baja")
+
+
+Analisis_autocorrelacion("Fito_q0", coordenadas_fuente)
+Fito_q0_AltaGrid<-rasterizar_Variable('Fito_q0', marea_bajacoor$longitud, marea_bajacoor$latitud, Fito_marea_alta$Fito_q0, 'Alta',  "Exp_q0", "q0 - Alta")
+Fito_q0_BajaGrid<-rasterizar_Variable('Fito_q0', marea_bajacoor$longitud, marea_bajacoor$latitud, Fito_marea_baja$Fito_q0, 'Baja',  "Exp_q0", "q0 - Baja")
 
 rasterizar_Autocorrelacion('Fito_q0', marea_bajacoor$longitud, marea_bajacoor$latitud, q0_localMoran_Alta_DF$`Var.Ii`, q0_localMoran_Alta_DF$`Pr(z != E(Ii))`,'Alta',  "Var.", "Sig.", "q0 - Alta")
 rasterizar_Autocorrelacion('Fito_q0', marea_bajacoor$longitud, marea_bajacoor$latitud, q0_localMoran_Baja_DF$`Var.Ii`, q0_localMoran_Baja_DF$`Pr(z != E(Ii))`,'Baja',  "Var.", "Sig.", "q0 - Baja")
@@ -62,9 +75,9 @@ grid.arrange(Fito_q0_AltaGrid,
 dev.off()
 
 
-Analisis_autocorrelacion("q1")
-Fito_q1_AltaGrid<-rasterizar_Variable('q1', marea_bajacoor$longitud, marea_bajacoor$latitud, Fito_marea_alta$q1, 'Alta',  "Exp_q1", "q1 - Alta")
-Fito_q1_BajaGrid<-rasterizar_Variable('q1', marea_bajacoor$longitud, marea_bajacoor$latitud, Fito_marea_baja$q1, 'Baja',  "Exp_q1", "q1 - Baja")
+Analisis_autocorrelacion("Fito_q1")
+Fito_q1_AltaGrid<-rasterizar_Variable('q1', marea_bajacoor$longitud, marea_bajacoor$latitud, Fito_marea_alta$Fito_q1, 'Alta',  "Exp_q1", "q1 - Alta")
+Fito_q1_BajaGrid<-rasterizar_Variable('q1', marea_bajacoor$longitud, marea_bajacoor$latitud, Fito_marea_baja$Fito_q1, 'Baja',  "Exp_q1", "q1 - Baja")
 
 rasterizar_Autocorrelacion('Fito_q1', marea_bajacoor$longitud, marea_bajacoor$latitud, q1_localMoran_Alta_DF$`Var.Ii`, q1_localMoran_Alta_DF$`Pr(z != E(Ii))`,'Alta',  "Var.", "Sig.", "q1 - Alta")
 rasterizar_Autocorrelacion('Fito_q1', marea_bajacoor$longitud, marea_bajacoor$latitud, q1_localMoran_Baja_DF$`Var.Ii`, q1_localMoran_Baja_DF$`Pr(z != E(Ii))`,'Baja',  "Var.", "Sig.", "q1 - Baja")
@@ -82,9 +95,9 @@ grid.arrange(Fito_q1_AltaGrid,
 dev.off()
 
 
-Analisis_autocorrelacion("q2")
-Fito_q2_AltaGrid<-rasterizar_Variable('q2', marea_bajacoor$longitud, marea_bajacoor$latitud, Fito_marea_alta$q2, 'Alta',  "Exp_q2", "q2 - Alta")
-Fito_q2_BajaGrid<-rasterizar_Variable('q2', marea_bajacoor$longitud, marea_bajacoor$latitud, Fito_marea_baja$q2, 'Baja',  "Exp_q2", "q2 - Baja")
+Analisis_autocorrelacion("Fito_q2")
+Fito_q2_AltaGrid<-rasterizar_Variable('q2', marea_bajacoor$longitud, marea_bajacoor$latitud, Fito_marea_alta$Fito_q2, 'Alta',  "Exp_q2", "q2 - Alta")
+Fito_q2_BajaGrid<-rasterizar_Variable('q2', marea_bajacoor$longitud, marea_bajacoor$latitud, Fito_marea_baja$Fito_q2, 'Baja',  "Exp_q2", "q2 - Baja")
 
 rasterizar_Autocorrelacion('Fito_q2', marea_bajacoor$longitud, marea_bajacoor$latitud, q2_localMoran_Alta_DF$`Var.Ii`, q2_localMoran_Alta_DF$`Pr(z != E(Ii))`,'Alta',  "Var.", "Sig.", "q2 - Alta")
 rasterizar_Autocorrelacion('Fito_q2', marea_bajacoor$longitud, marea_bajacoor$latitud, q2_localMoran_Baja_DF$`Var.Ii`, q2_localMoran_Baja_DF$`Pr(z != E(Ii))`,'Baja',  "Var.", "Sig.", "q2 - Baja")
@@ -248,5 +261,7 @@ grid.arrange(Ictio_Densidad_AltaGrid,
              nrow=3, 
              ncol=2)
 dev.off()
+
+
 
 

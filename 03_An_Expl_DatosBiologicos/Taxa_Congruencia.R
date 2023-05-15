@@ -1,84 +1,166 @@
 library(vegan)
 library(ggplot2)
 library(dplyr)
+library(spdep)
 
 FitoData<-read.table("./Resultados/Fito_Diversidad_Estaciones.csv", sep=",", header = TRUE)
 IctioData<-read.table("./Resultados/Ictio_Diversidad_Estaciones.csv", sep=",", header = TRUE)
+Datos_Totales_Limpios<-read.table( "../02_An_Expl_DatosQuimicos/01_Datos_Quimicos/Datos_Totales_CCCP.csv", header =  TRUE, sep = ",")
 
-Fito_q0<-FitoData$q0
-Fito_q1<-FitoData$q1
-Fito_q2<-FitoData$q2
-Fito_Densidad<-FitoData$Densidad
-Fito_Clorofila<-FitoData$Clorofila
+coordenadas_fuente<-read.table("../Sig_Datos/loglat_Estaciones.csv", header = TRUE, sep = ",")
+FitoData<-read.table("./Resultados/Fito_Diversidad_Estaciones.csv", sep=",", header = TRUE)
+IctioData<-read.table("./Resultados/Ictio_Diversidad_Estaciones.csv", sep=",", header = TRUE)
 
 
-Ictio_q0<-IctioData$q0
-Ictio_q1<-IctioData$q1
-Ictio_q2<-IctioData$q2
-Ictio_Densidad<-IctioData$Densidad
+colnames(FitoData)<-c(
+  "Estaciones",  "Transecto",   "Sector",      "Marea",       "Fito_S",           "Fito_Simpson",     "Fito_Shannon",    
+  "Fito_Pielou",      "Fito_q0",          "Fito_q1",          "Fito_q2",          "Fito_Densidad",    "Clorofila",   "No.Estacion"
+)
+colnames(IctioData)<-c(
+  "Estaciones",  "Transecto",   "Sector",      "Marea",       "Ictio_S",           "Ictio_Simpson",     "Ictio_Shannon",    
+  "Ictio_Pielou",      "Ictio_q0",          "Ictio_q1",          "Ictio_q2",          "Ictio_Densidad"
+)
 
-#Congruencia en la diversidad
+dataTotal<-cbind(FitoData,IctioData[,5:12], Datos_Totales_Limpios[,12:31])
 
-cor.test(Fito_q0,Ictio_q0, method = "spearman")
-cor.test(Fito_q1,Ictio_q1, method = "spearman")
-cor.test(Fito_q2,Ictio_q2, method = "spearman")
-cor.test(Fito_Densidad,Ictio_Densidad, method = "spearman")
-cor.test(Fito_Clorofila,Ictio_Densidad, method = "spearman")
+dataTotal_alta<-dataTotal%>% filter(Marea=="Alta")
+dataTotal_baja<-dataTotal%>% filter(Marea=="Baja")
 
+
+
+loc_matrix <- as.matrix(coordenadas_fuente[, c('longitud','latitud')])
+
+kn <- knearneigh(loc_matrix, 5)
+nb <- knn2nb(kn)
+
+listw <- nb2listw(nb)
+if(!require(spatialreg))install.packages("spatialreg")
+
+dataTotal_alta
+
+#El método usado para hacer este modelo es: Bivand & Piras (2015) https://www.jstatsoft.org/v63/i18/.
+
+q0_Alta <- spatialreg::lagsarlm(Ictio_q0 ~ Fito_q0,
+                                      data = dataTotal_alta,
+                                      listw = listw)
+q0_Baja <- spatialreg::lagsarlm(Ictio_q0 ~ Fito_q0,
+                                      data = dataTotal_baja,
+                                      listw = listw)
+q1_Alta <- spatialreg::lagsarlm(Ictio_q1 ~ Fito_q1,
+                                data = dataTotal_alta,
+                                listw = listw)
+q1_Baja <- spatialreg::lagsarlm(Ictio_q1 ~ Fito_q1,
+                                data = dataTotal_baja,
+                                listw = listw)
+q2_Alta <- spatialreg::lagsarlm(Ictio_q2 ~ Fito_q2,
+                                data = dataTotal_alta,
+                                listw = listw)
+q2_Baja <- spatialreg::lagsarlm(Ictio_q2 ~ Fito_q2,
+                                data = dataTotal_baja,
+                                listw = listw)
+
+densidad_Alta <- spatialreg::lagsarlm(Ictio_Densidad ~ Fito_Densidad,
+                                      data = dataTotal_alta,
+                                      listw = listw)
+densidad_Baja <- spatialreg::lagsarlm(Ictio_Densidad ~ Fito_Densidad,
+                                      data = dataTotal_baja,
+                                      listw = listw)
+
+
+clorofila_Alta <- spatialreg::lagsarlm(Clorofila ~ Fito_Densidad+ Fito_q0+ Fito_q1+ Fito_q2,
+                                      data = dataTotal_alta,
+                                      listw = listw)
+clorofila_Baja <- spatialreg::lagsarlm(Clorofila ~ Fito_Densidad + Fito_q0+ Fito_q1+ Fito_q2,
+                                       data = dataTotal_baja,
+                                       listw = listw)
+
+
+Ictio_q1_qui_Alta <- spatialreg::lagsarlm(Fito_q1 ~ OD+
+                                            Transparencia+
+                                            Salinidad_median+
+                                            Temperatura_IQR,
+                                data = dataTotal_alta,
+                                listw = listw)
+Ictio_q1_qui_Baja <- spatialreg::lagsarlm(Fito_q1 ~ OD+
+                                            Transparencia+
+                                            Salinidad_median+
+                                            Temperatura_IQR,
+                                          data = dataTotal_baja,
+                                          listw = listw)
+
+
+summary(Ictio_q1_qui_Alta, correlation=TRUE)
+summary(Ictio_q1_qui_Baja, correlation=TRUE)
+
+
+
+summary(q0_Alta)
+
+summary(clorofila_Alta, correlation=TRUE)
+residualesclorofila_Baja =clorofila_Baja$residuals
+shapiro.test(residualesclorofila_Baja)
+Moran.I(residualesclorofila_Baja,listw)
+
+
+cor.test(dataTotal_alta$Fito_q0,dataTotal_alta$Ictio_q0, method = "spearman")
+cor.test(dataTotal_alta$Fito_q1,dataTotal_alta$Ictio_q1, method = "spearman")
+cor.test(dataTotal_alta$Fito_q2,dataTotal_alta$Ictio_q2, method = "spearman")
+cor.test(dataTotal_alta$Fito_Densidad,dataTotal_alta$Ictio_Densidad, method = "spearman")
+cor.test(dataTotal_alta$Clorofila,dataTotal_alta$Fito_Densidad, method = "spearman")
+cor.test(dataTotal_alta$Clorofila,dataTotal_alta$Ictio_Densidad, method = "spearman")
+
+cor.test(dataTotal_baja$Fito_q0,dataTotal_baja$Ictio_q0, method = "spearman")
+cor.test(dataTotal_baja$Fito_q1,dataTotal_baja$Ictio_q1, method = "spearman")
+cor.test(dataTotal_baja$Fito_q2,dataTotal_baja$Ictio_q2, method = "spearman")
+cor.test(dataTotal_baja$Fito_Densidad,dataTotal_baja$Ictio_Densidad, method = "spearman")
+cor.test(dataTotal_baja$Clorofila,dataTotal_baja$Fito_Densidad, method = "spearman")
+cor.test(dataTotal_baja$Clorofila,dataTotal_baja$Ictio_Densidad, method = "spearman")
 
 Congruence_q0_plot<-ggplot() + 
-  geom_point(aes(x=Fito_q0, y=Ictio_q0))+
+  geom_point(aes(x=dataTotal_alta$Fito_q0, y=dataTotal_alta$Ictio_q0), colour="red")+
+  geom_point(aes(x=dataTotal_baja$Fito_q0, y=dataTotal_baja$Ictio_q0), colour="blue")+
   xlab(expression(paste("Fitoplancton ("^0,"D)")))+
   ylab(expression(paste("Ictioplancton ("^0,"D)")))+
   labs(title = "(a)",
-       subtitle = "Cor. spearman = 0.02")+
+       subtitle = "Cor. spearman = Alta: 0.09 Baja: -0.27")+
   theme_bw()
 
 Congruence_q1_plot<-ggplot() + 
-  geom_point(aes(x=Fito_q1, y=Ictio_q1))+
+  geom_point(aes(x=dataTotal_alta$Fito_q1, y=dataTotal_alta$Ictio_q1), colour="red")+
+  geom_point(aes(x=dataTotal_baja$Fito_q1, y=dataTotal_baja$Ictio_q1), colour="blue")+
   xlab(expression(paste("Fitoplancton ("^1,"D)")))+
   ylab(expression(paste("Ictioplancton ("^1,"D)")))+
   labs(title = "(b)",
-       subtitle = "Cor. spearman = 0.02")+
+       subtitle = "Cor. spearman = Alta: 0.13 Baja: -0.2")+
   theme_bw()
 
 Congruence_q2_plot<-ggplot() + 
-  geom_point(aes(x=Fito_q2, y=Ictio_q2))+
+  geom_point(aes(x=dataTotal_alta$Fito_q2, y=dataTotal_alta$Ictio_q2), colour="red")+
+  geom_point(aes(x=dataTotal_baja$Fito_q2, y=dataTotal_baja$Ictio_q2), colour="blue")+
   xlab(expression(paste("Fitoplancton ("^2,"D)")))+
   ylab(expression(paste("Ictioplancton ("^2,"D)")))+
   labs(title = "(c)",
-       subtitle = "Cor. spearman = -0.07")+
+       subtitle = "Cor. spearman = Alta: -0.01 Baja: -0.12")+
   theme_bw()
 
 Congruence_den_plot<-ggplot() + 
-  geom_point(aes(x=Fito_Densidad, y=Ictio_Densidad))+
+  geom_point(aes(x=dataTotal_alta$Fito_Densidad, y=dataTotal_alta$Ictio_Densidad), colour="red")+
+  geom_point(aes(x=dataTotal_baja$Fito_Densidad, y=dataTotal_baja$Ictio_Densidad), colour="blue")+
   xlab(expression(paste("Densidad de Fitoplancton ["~Cel.L^-1~"]")))+
   ylab(expression(paste("Densidad de Ictioplancton ["~ Ind.1000m^-3~"]")))+
   labs(title = "(d)",
-       subtitle = "Cor. spearman = -0.1")+
+       subtitle = "Cor. spearman = Alta: -0.17 Baja: -0.14")+
   theme_bw()
 
 Congruence_clor_plot<-ggplot() + 
-  geom_point(aes(x=Fito_Clorofila, y=Ictio_Densidad))+
+  geom_point(aes(x=dataTotal_alta$Clorofila, y=dataTotal_alta$Ictio_Densidad), colour="red")+
+  geom_point(aes(x=dataTotal_baja$Clorofila, y=dataTotal_baja$Ictio_Densidad), colour="blue")+
   xlab(expression(paste("Clorofila [",mu,"g.L"^-1,"]")))+
   ylab(expression(paste("Densidad de Ictioplancton ["~ Ind.1000m^-3~"]")))+
   labs(title = "(e)",
-       subtitle = "Cor. spearman = -0.01")+
+       subtitle = "Cor. spearman =  Alta: -0.22 Baja: -0.40")+
   theme_bw()
 
-
-plot(Fito_q0,Ictio_q0)
-plot(Fito_q1,Ictio_q1)
-plot(Fito_q2,Ictio_q2)
-plot(Fito_Densidad,Ictio_Densidad)
-plot(Fito_Clorofila,Ictio_Densidad)
-
-
-cor(Fito_q0,Ictio_q0)
-plot(Fito_q1,Ictio_q1)
-plot(Fito_q2,Ictio_q2)
-plot(Fito_Densidad,Ictio_Densidad)
-plot(Fito_Clorofila,Ictio_Densidad)
 
 
 
@@ -129,10 +211,10 @@ row.names(Fito_groups_df)<-Codigo_fito_Densidad$Estaciones
 Fito_groups_df$Transecto<-as.factor(Fito_groups_df$Transecto)
 
 
-# Calculating relative abundance and creating new dataframe with relative abundance data
+
 Fito_Densidad_Relativa <-         
   vegan::decostand(Fito_Densidad_df, method = "total")
-# Calculate distance matrix
+
 Fito_Densidad_Relativa_distmat <- 
   vegdist(Fito_Densidad_Relativa, method = "bray")
 

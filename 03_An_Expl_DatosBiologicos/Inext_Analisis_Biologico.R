@@ -15,7 +15,7 @@ library(tidyverse)
 library(gridExtra)
 library(parallel)
 
-Codigo_fito_abundancia<-read.table("./Biologicos/DatosP_Fitoplancton/Definitiva/Matriz_Abundancia.csv", sep=",", header = TRUE)
+Codigo_fito_abundancia<-read.table("./Biologicos/DatosP_Fitoplancton/Definitiva/Matriz_Densidad.csv", sep=",", header = TRUE)
 
 #Evaluación de la composición entre transectos sectores y mareas
 MRPP_Transecto_Abundancia<-vegan::mrpp(dat = Codigo_fito_abundancia[,5:145],  Codigo_fito_abundancia$Transecto, permutations = 2000)

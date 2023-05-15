@@ -1,6 +1,7 @@
 if(!require(sp))install.packages("sp ")
 if(!require(spdep))install.packages("spdep ")
 if(!require(oce))install.packages("oce")
+if(!require(gridExtra))install.packages("gridExtra")
 
 
 Datos_Totales_Limpios<-read.table( "./01_Datos_Quimicos/Datos_Totales_CCCP.csv", header =  TRUE, sep = ",")
