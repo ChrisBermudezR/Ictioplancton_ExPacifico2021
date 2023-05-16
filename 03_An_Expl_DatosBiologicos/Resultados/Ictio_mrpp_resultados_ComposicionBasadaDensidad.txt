@@ -1,7 +1,7 @@
-[1] "ComparaciÃ³n Densidad relativa - MRPP - Transectos"
+[1] "Comparación Densidad relativa - MRPP - Transectos"
 
 Call:
-vegan::mrpp(dat = Densidad_Relativa_distmat, grouping = Codigo_Ictio$Transecto,      permutations = 2000, distance = "bray") 
+vegan::mrpp(dat = Ictio_Densidad_Relativa_distmat, grouping = Codigo_Ictio$Transecto,      permutations = 2000, distance = "bray") 
 
 Dissimilarity index: user supplied square matrix 
 Weights for groups:  n 
@@ -15,14 +15,14 @@ n     12       12       12
 Chance corrected within-group agreement A: 0.01385 
 Based on observed delta 0.5071 and expected delta 0.5142 
 
-Significance of delta: 0.13743 
+Significance of delta: 0.14593 
 Permutation: free
 Number of permutations: 2000
 
 [1] "MRPP - Marea"
 
 Call:
-vegan::mrpp(dat = Densidad_Relativa_distmat, grouping = Codigo_Ictio$Marea,      permutations = 2000, distance = "bray") 
+vegan::mrpp(dat = Ictio_Densidad_Relativa_distmat, grouping = Codigo_Ictio$Marea,      permutations = 2000, distance = "bray") 
 
 Dissimilarity index: user supplied square matrix 
 Weights for groups:  n 
@@ -36,14 +36,14 @@ n     18     18
 Chance corrected within-group agreement A: 0.03213 
 Based on observed delta 0.4977 and expected delta 0.5142 
 
-Significance of delta: 0.0064968 
+Significance of delta: 0.011494 
 Permutation: free
 Number of permutations: 2000
 
 [1] "MRPP - Sector"
 
 Call:
-vegan::mrpp(dat = Densidad_Relativa_distmat, grouping = Codigo_Ictio$Sector,      permutations = 2000, distance = "bray") 
+vegan::mrpp(dat = Ictio_Densidad_Relativa_distmat, grouping = Codigo_Ictio$Sector,      permutations = 2000, distance = "bray") 
 
 Dissimilarity index: user supplied square matrix 
 Weights for groups:  n 
@@ -57,7 +57,7 @@ n     18      18
 Chance corrected within-group agreement A: 0.02058 
 Based on observed delta 0.5037 and expected delta 0.5142 
 
-Significance of delta: 0.032484 
+Significance of delta: 0.036482 
 Permutation: free
 Number of permutations: 2000
 

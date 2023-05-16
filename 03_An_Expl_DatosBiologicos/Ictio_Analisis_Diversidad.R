@@ -104,7 +104,7 @@ q2_graf_lineas<-graf_lineas(Ictio_Diversidad_Estaciones, Ictio_Diversidad_Estaci
 
 Densidad_bxplt_Marea<-boxplot_marea(Ictio_Diversidad_Estaciones, Ictio_Diversidad_Estaciones$Densidad, expression(paste("Densidad ["~ Ind.1000m^-3~"]")))
 
-Densidad_graf_lineas<-graf_lineas(Ictio_Diversidad_Estaciones, Ictio_Diversidad_Estaciones$Densidad, expression(paste("Densidad ["~ Ind.1000m^-3~"]")))
+Densidad_graf_lineas<-graf_lineas(Ictio_Diversidad_Estaciones, as.numeric(Ictio_Diversidad_Estaciones$Densidad), expression(paste("Densidad ["~ Ind.1000m^-3~"]")))
 
 png(filename="./Imagenes/Ictio_boxplot_Hill.png", height =25 , width = 20, units = "cm", res=400)
 gridExtra:: grid.arrange(q0_bxplt_Marea,

@@ -1,15 +1,15 @@
 [1] "Resultados NMDS"
 
 Call:
-metaMDS(comm = Ictio_Densidad_Relativa_distmat, distance = "bray",      k = 3, trymax = 500, wascores = TRUE, maxit = 999) 
+metaMDS(comm = Densidad_Relativa_distmat, distance = "bray",      k = 3, trymax = 500, wascores = TRUE, maxit = 999) 
 
 global Multidimensional Scaling using monoMDS
 
-Data:     Ictio_Densidad_Relativa_distmat 
+Data:     Densidad_Relativa_distmat 
 Distance: user supplied 
 
 Dimensions: 3 
-Stress:     0.06857541 
+Stress:     0.1211168 
 Stress type 1, weak ties
 Two convergent solutions found after 20 tries
 Scaling: centring, PC rotation 

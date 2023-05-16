@@ -1,28 +1,28 @@
 [1] "MRPP para los transectos Comparando la diversidad con los números de Hill"
 
 Call:
-vegan::mrpp(dat = Diversidad_Estaciones[, 9:11], grouping = Diversidad_Estaciones$Transecto,      permutations = 2000, distance = "bray") 
+vegan::mrpp(dat = Fito_Diversidad_Estaciones[, 9:11], grouping = Fito_Diversidad_Estaciones$Transecto,      permutations = 2000, distance = "bray") 
 
 Dissimilarity index: bray 
 Weights for groups:  n 
 
 Class means and counts:
 
-      Amarales Guascama Sanquianga
-delta 0.2278   0.2527   0.2701    
-n     12       12       12        
+      Guascama Sanquianga Amarales
+delta 0.2527   0.2701     0.2278  
+n     12       12         12      
 
 Chance corrected within-group agreement A: 0.01838 
 Based on observed delta 0.2502 and expected delta 0.2549 
 
-Significance of delta: 0.18291 
+Significance of delta: 0.18641 
 Permutation: free
 Number of permutations: 2000
 
 [1] "MRPP para las Mareas Comparando la diversidad con los números de Hill"
 
 Call:
-vegan::mrpp(dat = Diversidad_Estaciones[, 9:11], grouping = Diversidad_Estaciones$Marea,      permutations = 2000, distance = "bray") 
+vegan::mrpp(dat = Fito_Diversidad_Estaciones[, 9:11], grouping = Fito_Diversidad_Estaciones$Marea,      permutations = 2000, distance = "bray") 
 
 Dissimilarity index: bray 
 Weights for groups:  n 
@@ -36,14 +36,14 @@ n     18     18
 Chance corrected within-group agreement A: -0.004317 
 Based on observed delta 0.256 and expected delta 0.2549 
 
-Significance of delta: 0.51424 
+Significance of delta: 0.50425 
 Permutation: free
 Number of permutations: 2000
 
 [1] "MRPP para los Sectores Comparando la diversidad con los números de Hill"
 
 Call:
-vegan::mrpp(dat = Diversidad_Estaciones[, 9:11], grouping = Diversidad_Estaciones$Sector,      permutations = 2000, distance = "bray") 
+vegan::mrpp(dat = Fito_Diversidad_Estaciones[, 9:11], grouping = Fito_Diversidad_Estaciones$Sector,      permutations = 2000, distance = "bray") 
 
 Dissimilarity index: bray 
 Weights for groups:  n 
@@ -57,35 +57,35 @@ n     18      18
 Chance corrected within-group agreement A: 0.0268 
 Based on observed delta 0.2481 and expected delta 0.2549 
 
-Significance of delta: 0.067466 
+Significance of delta: 0.063968 
 Permutation: free
 Number of permutations: 2000
 
 [1] "MRPP para los transectos Comparando la densidad"
 
 Call:
-vegan::mrpp(dat = Diversidad_Estaciones[, 13], grouping = Diversidad_Estaciones$Transecto,      permutations = 2000, distance = "bray") 
+vegan::mrpp(dat = Fito_Diversidad_Estaciones[, 13], grouping = Fito_Diversidad_Estaciones$Transecto,      permutations = 2000, distance = "bray") 
 
 Dissimilarity index: bray 
 Weights for groups:  n 
 
 Class means and counts:
 
-      Amarales Guascama Sanquianga
-delta 0.4502   0.3954   0.5019    
-n     12       12       12        
+      Guascama Sanquianga Amarales
+delta 0.2455   0.3153     0.4084  
+n     12       12         12      
 
-Chance corrected within-group agreement A: 0.0209 
-Based on observed delta 0.4492 and expected delta 0.4588 
+Chance corrected within-group agreement A: 0.009986 
+Based on observed delta 0.3231 and expected delta 0.3263 
 
-Significance of delta: 0.1954 
+Significance of delta: 0.30085 
 Permutation: free
 Number of permutations: 2000
 
 [1] "MRPP para los Mareas Comparando la densidad"
 
 Call:
-vegan::mrpp(dat = Diversidad_Estaciones[, 13], grouping = Diversidad_Estaciones$Marea,      permutations = 2000, distance = "bray") 
+vegan::mrpp(dat = Fito_Diversidad_Estaciones[, 13], grouping = Fito_Diversidad_Estaciones$Marea,      permutations = 2000, distance = "bray") 
 
 Dissimilarity index: bray 
 Weights for groups:  n 
@@ -93,20 +93,20 @@ Weights for groups:  n
 Class means and counts:
 
       Alta   Baja  
-delta 0.5223 0.3609
+delta 0.2549 0.2786
 n     18     18    
 
-Chance corrected within-group agreement A: 0.03747 
-Based on observed delta 0.4416 and expected delta 0.4588 
+Chance corrected within-group agreement A: 0.1825 
+Based on observed delta 0.2668 and expected delta 0.3263 
 
-Significance of delta: 0.044978 
+Significance of delta: 0.00049975 
 Permutation: free
 Number of permutations: 2000
 
 [1] "MRPP para los Sectores Comparando la densidad"
 
 Call:
-vegan::mrpp(dat = Diversidad_Estaciones[, 13], grouping = Diversidad_Estaciones$Sector,      permutations = 2000, distance = "bray") 
+vegan::mrpp(dat = Fito_Diversidad_Estaciones[, 13], grouping = Fito_Diversidad_Estaciones$Sector,      permutations = 2000, distance = "bray") 
 
 Dissimilarity index: bray 
 Weights for groups:  n 
@@ -114,13 +114,13 @@ Weights for groups:  n
 Class means and counts:
 
       Costero Oceanico
-delta 0.449   0.4024  
+delta 0.4115  0.2042  
 n     18      18      
 
-Chance corrected within-group agreement A: 0.07206 
-Based on observed delta 0.4257 and expected delta 0.4588 
+Chance corrected within-group agreement A: 0.05669 
+Based on observed delta 0.3078 and expected delta 0.3263 
 
-Significance of delta: 0.0074963 
+Significance of delta: 0.027486 
 Permutation: free
 Number of permutations: 2000
 

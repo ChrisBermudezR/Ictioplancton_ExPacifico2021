@@ -11,7 +11,7 @@ source("../Funciones/boxplot_Marea.R")
 source("../Funciones/boxplot_Sector.R")
 source("../Funciones/boxplot_transecto.R")
 source("../Funciones/graf_lineas.R")
-graf_lineas
+
 
 ####Analisis de diversidad de fitoplancton####
 Codigo_fito_Densidad<-read.table("./Biologicos/DatosP_Fitoplancton/Definitiva/Matriz_Densidad.csv", sep=",", header = TRUE)
@@ -123,8 +123,8 @@ Densidad_bxplt_Marea<-boxplot_marea(Fito_Diversidad_Estaciones, Fito_Diversidad_
 Densidad_graf_lineas<-graf_lineas(Fito_Diversidad_Estaciones, Fito_Diversidad_Estaciones$Densidad, expression(paste("Densidad ["~Cel.L^-1~"]")))
 
 
-Clorofila_bxplt_Marea<-boxplot_marea(Fito_Diversidad_Estaciones, Fito_Diversidad_Estaciones$Clorofila, expression(paste("Clorofila [",mu,"g.L"^-1,"]")))
-Clorofila_graf_lineas<-graf_lineas(Fito_Diversidad_Estaciones, Fito_Diversidad_Estaciones$Clorofila, expression(paste("Clorofila [",mu,"g.L"^-1,"]")))
+Clorofila_bxplt_Marea<-boxplot_marea(Fito_Diversidad_Estaciones, Fito_Diversidad_Estaciones$Clorofila, expression(paste("Clorofila [",m,"g.L"^-1,"]")))
+Clorofila_graf_lineas<-graf_lineas(Fito_Diversidad_Estaciones, Fito_Diversidad_Estaciones$Clorofila, expression(paste("Clorofila [",m,"g.L"^-1,"]")))
 
 png(filename="./Imagenes/Fito_boxplot_Hill.png", height =25 , width = 20, units = "cm", res=400)
 gridExtra:: grid.arrange(q0_bxplt_Marea,

@@ -67,12 +67,20 @@ Ictio_coordenadas$Estaciones<-Codigo_Ictio$Especie
 Ictio_coordenadas$Sector <- as.factor(groups_df$Sector)
 Ictio_coordenadas$Transecto <- as.factor(groups_df$Transecto)
 Ictio_coordenadas$Marea <- as.factor(groups_df$Marea)
-
+colnames(Ictio_coordenadas)<-c("NMDS1",
+                         "NMDS2",
+                         "NMDS3",
+                         "Estaciones",
+                         "Sector",
+                         "Transecto",
+                         "Marea"
+                         
+)
 
 
 Ictio_Marea_group <- Ictio_coordenadas %>%
-  ggplot(aes(x = MDS1,
-             y = MDS2,
+  ggplot(aes(x = NMDS1,
+             y = NMDS2,
              color=Marea,
              label=Estaciones))+
   geom_point()+geom_text(hjust=0, vjust=0)
@@ -81,7 +89,7 @@ Ictio_hull_data <-
   Ictio_coordenadas %>%
   tidyr::drop_na() %>%
   group_by(Marea) %>% 
-  slice(chull(MDS1, MDS2))
+  slice(chull(NMDS1, NMDS2))
 
 Ictio_Marea_group<-Ictio_Marea_group+
   geom_polygon(data = Ictio_hull_data,
@@ -90,14 +98,14 @@ Ictio_Marea_group<-Ictio_Marea_group+
                alpha = 0.3,
                show.legend = FALSE)+
   theme_bw() + 
-  geom_text(aes(x = -0.45, y = -0.55,    label = as.character(expression('Stress: 0.07'))), stat = "unique",
+  geom_text(aes(x = 0, y = -0.55,    label = as.character(expression('Stress: 0.07'))), stat = "unique",
             size = 5, color = "black", parse = T)+
   theme(axis.title.x = element_text(size=18), # remove x-axis labels
         axis.title.y = element_text(size=18))
 
 Ictio_Sector_group <- Ictio_coordenadas %>%
-  ggplot(aes(x = MDS1,
-             y = MDS2,
+  ggplot(aes(x = NMDS1,
+             y = NMDS2,
              color=Sector,
              label=Estaciones))+
   geom_point()+geom_text(hjust=0, vjust=0)
@@ -106,24 +114,24 @@ Ictio_hull_data <-
   Ictio_coordenadas %>%
   tidyr::drop_na() %>%
   group_by(Sector) %>% 
-  slice(chull(MDS1, MDS2))
+  slice(chull(NMDS1, NMDS2))
 
 Ictio_Sector_group<-Ictio_Sector_group+
-  geom_polygon(data = hull_data,
+  geom_polygon(data = Ictio_hull_data,
                aes(fill = Sector,
                    colour = Sector),
                alpha = 0.3,
                show.legend = FALSE)+
   theme_bw() + 
-  geom_text(aes(x = -0.45, y = -0.55,    label = as.character(expression('Stress: 0.07'))), stat = "unique",
+  geom_text(aes(x = 0, y = -0.55,    label = as.character(expression('Stress: 0.07'))), stat = "unique",
             size = 5, color = "black", parse = T)+
   theme(axis.title.x = element_text(size=18), # remove x-axis labels
         axis.title.y = element_text(size=18))
 
 
 Ictio_Transecto_group <- Ictio_coordenadas %>%
-  ggplot(aes(x = MDS1,
-             y = MDS2,
+  ggplot(aes(x = NMDS1,
+             y = NMDS2,
              color=Transecto,
              label=Estaciones))+
   geom_point()+geom_text(hjust=0, vjust=0)
@@ -132,16 +140,16 @@ Ictio_hull_data <-
   Ictio_coordenadas %>%
   tidyr::drop_na() %>%
   group_by(Transecto) %>% 
-  slice(chull(MDS1, MDS2))
+  slice(chull(NMDS1, NMDS2))
 
 Ictio_Transecto_group<-Ictio_Transecto_group+
-  geom_polygon(data = hull_data,
+  geom_polygon(data = Ictio_hull_data,
                aes(fill = Transecto,
                    colour = Transecto),
                alpha = 0.3,
                show.legend = FALSE)+
   theme_bw() + 
-  geom_text(aes(x = -0.45, y = -0.55,    label = as.character(expression('Stress: 0.07'))), stat = "unique",
+  geom_text(aes(x = 0, y = -0.55,    label = as.character(expression('Stress: 0.07'))), stat = "unique",
             size = 5, color = "black", parse = T)+
   theme(axis.title.x = element_text(size=18), # remove x-axis labels
         axis.title.y = element_text(size=18))
@@ -191,9 +199,9 @@ StresPlot_DEf<-StresPlot1 %>%
 
 png(filename="./Imagenes/Ictio_NMDS_Total.png", height =30 , width = 30, units = "cm", res=400)
 gridExtra:: grid.arrange(StresPlot_DEf,
-                         Marea_group,
-                         Sector_group,
-                         Transecto_group,
+                         Ictio_Marea_group,
+                         Ictio_Sector_group,
+                         Ictio_Transecto_group,
                          ncol=2)
 dev.off()
 

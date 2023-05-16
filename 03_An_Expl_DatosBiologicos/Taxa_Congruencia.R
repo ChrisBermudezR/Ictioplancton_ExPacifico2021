@@ -2,6 +2,8 @@ library(vegan)
 library(ggplot2)
 library(dplyr)
 library(spdep)
+if(!require(spdep))install.packages("spdep")
+if(!require(spatialreg))install.packages("spatialreg")
 
 FitoData<-read.table("./Resultados/Fito_Diversidad_Estaciones.csv", sep=",", header = TRUE)
 IctioData<-read.table("./Resultados/Ictio_Diversidad_Estaciones.csv", sep=",", header = TRUE)
@@ -34,7 +36,7 @@ kn <- knearneigh(loc_matrix, 5)
 nb <- knn2nb(kn)
 
 listw <- nb2listw(nb)
-if(!require(spatialreg))install.packages("spatialreg")
+
 
 dataTotal_alta
 
@@ -66,22 +68,37 @@ densidad_Baja <- spatialreg::lagsarlm(Ictio_Densidad ~ Fito_Densidad,
                                       data = dataTotal_baja,
                                       listw = listw)
 
+Sum_q0_Alta<-summary(q0_Alta, correlation=TRUE)
+Sum_q0_Baja<-summary(q0_Baja, correlation=TRUE)
+Sum_q1_Alta<-summary(q1_Alta, correlation=TRUE)
+Sum_q1_Baja<-summary(q1_Baja, correlation=TRUE)
+Sum_q2_Alta<-summary(q2_Alta, correlation=TRUE)
+Sum_q2_Baja<-summary(q2_Baja, correlation=TRUE)
+Sum_densidad_Alta<-summary(densidad_Alta, correlation=TRUE)
+Sum_densidad_Baja<-summary(densidad_Baja, correlation=TRUE)
+
+
+
 
 clorofila_Alta <- spatialreg::lagsarlm(Clorofila ~ Fito_Densidad+ Fito_q0+ Fito_q1+ Fito_q2,
                                       data = dataTotal_alta,
                                       listw = listw)
+summary(clorofila_Alta)
 clorofila_Baja <- spatialreg::lagsarlm(Clorofila ~ Fito_Densidad + Fito_q0+ Fito_q1+ Fito_q2,
                                        data = dataTotal_baja,
                                        listw = listw)
 
+summary(clorofila_Baja)
 
-Ictio_q1_qui_Alta <- spatialreg::lagsarlm(Fito_q1 ~ OD+
+Ictio_q1_qui_Alta <- spatialreg::lagsarlm(Ictio_q1 ~ OD+
                                             Transparencia+
                                             Salinidad_median+
                                             Temperatura_IQR,
                                 data = dataTotal_alta,
                                 listw = listw)
-Ictio_q1_qui_Baja <- spatialreg::lagsarlm(Fito_q1 ~ OD+
+summary(Ictio_q1_qui_Alta)
+
+Ictio_q1_qui_Baja <- spatialreg::lagsarlm(Ictio_q1 ~ OD+
                                             Transparencia+
                                             Salinidad_median+
                                             Temperatura_IQR,
@@ -89,17 +106,11 @@ Ictio_q1_qui_Baja <- spatialreg::lagsarlm(Fito_q1 ~ OD+
                                           listw = listw)
 
 
-summary(Ictio_q1_qui_Alta, correlation=TRUE)
-summary(Ictio_q1_qui_Baja, correlation=TRUE)
 
 
 
-summary(q0_Alta)
 
-summary(clorofila_Alta, correlation=TRUE)
-residualesclorofila_Baja =clorofila_Baja$residuals
-shapiro.test(residualesclorofila_Baja)
-Moran.I(residualesclorofila_Baja,listw)
+
 
 
 cor.test(dataTotal_alta$Fito_q0,dataTotal_alta$Ictio_q0, method = "spearman")
@@ -164,6 +175,18 @@ Congruence_clor_plot<-ggplot() +
 
 
 
+
+glm(y ~ roach1 + treatment + senior, offset = log(exposure2),    data = roaches, family = poisson)
+
+
+
+
+
+
+
+
+
+#####
 
 Codigo_Ictio<-read.table("./Biologicos/DatosP_Ictioplancton//Data_Ictio.csv", sep=",", header = TRUE)
 

@@ -1,0 +1,63 @@
+[1] "Comparación Densidad relativa - MRPP - Transectos"
+
+Call:
+vegan::mrpp(dat = Densidad_Relativa_distmat, grouping = Codigo_fito_Densidad$Transecto,      permutations = 2000, distance = "bray") 
+
+Dissimilarity index: user supplied square matrix 
+Weights for groups:  n 
+
+Class means and counts:
+
+      Amarales Guascama Sanquianga
+delta 0.5981   0.5784   0.4863    
+n     12       12       12        
+
+Chance corrected within-group agreement A: 0.03481 
+Based on observed delta 0.5543 and expected delta 0.5743 
+
+Significance of delta: 0.0069965 
+Permutation: free
+Number of permutations: 2000
+
+[1] "MRPP - Marea"
+
+Call:
+vegan::mrpp(dat = Densidad_Relativa_distmat, grouping = Codigo_fito_Densidad$Marea,      permutations = 2000, distance = "bray") 
+
+Dissimilarity index: user supplied square matrix 
+Weights for groups:  n 
+
+Class means and counts:
+
+      Alta   Baja  
+delta 0.5902 0.5571
+n     18     18    
+
+Chance corrected within-group agreement A: 0.001092 
+Based on observed delta 0.5737 and expected delta 0.5743 
+
+Significance of delta: 0.34183 
+Permutation: free
+Number of permutations: 2000
+
+[1] "MRPP - Sector"
+
+Call:
+vegan::mrpp(dat = Densidad_Relativa_distmat, grouping = Codigo_fito_Densidad$Sector,      permutations = 2000, distance = "bray") 
+
+Dissimilarity index: user supplied square matrix 
+Weights for groups:  n 
+
+Class means and counts:
+
+      Costero Oceanico
+delta 0.5657  0.5663  
+n     18      18      
+
+Chance corrected within-group agreement A: 0.01439 
+Based on observed delta 0.566 and expected delta 0.5743 
+
+Significance of delta: 0.036482 
+Permutation: free
+Number of permutations: 2000
+
