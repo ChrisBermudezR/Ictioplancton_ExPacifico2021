@@ -1,0 +1,317 @@
+[1] "####q0"
+
+Call:spatialreg::lagsarlm(formula = Ictio_q0 ~ Fito_q0, data = dataTotal_alta,     listw = listw)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-3.17987 -1.45524 -0.13108  1.32062  3.11408 
+
+Type: lag 
+Coefficients: (asymptotic standard errors) 
+              Estimate Std. Error z value Pr(>|z|)
+(Intercept) 2.27327186 1.60583274  1.4156   0.1569
+Fito_q0     0.00044597 0.04243817  0.0105   0.9916
+
+Rho: 0.49986, LR test value: 2.2788, p-value: 0.13116
+Asymptotic standard error: 0.25349
+    z-value: 1.9719, p-value: 0.048622
+Wald statistic: 3.8884, p-value: 0.048622
+
+Log likelihood: -37.76485 for lag model
+ML residual variance (sigma squared): 3.6848, (sigma: 1.9196)
+Number of observations: 18 
+Number of parameters estimated: 4 
+AIC: 83.53, (AIC for lm: 83.808)
+LM test for residual autocorrelation
+test value: 0.4307, p-value: 0.51164
+
+ Correlation of coefficients 
+            sigma rho   (Intercept)
+rho         -0.19                  
+(Intercept)  0.14 -0.72            
+Fito_q0      0.00  0.00 -0.63      
+
+
+Call:spatialreg::lagsarlm(formula = Ictio_q0 ~ Fito_q0, data = dataTotal_baja,     listw = listw)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-2.967630 -1.132111 -0.044469  1.034856  2.779415 
+
+Type: lag 
+Coefficients: (asymptotic standard errors) 
+             Estimate Std. Error z value Pr(>|z|)
+(Intercept)  3.156154   1.393912  2.2642  0.02356
+Fito_q0     -0.052821   0.035673 -1.4807  0.13868
+
+Rho: 0.71857, LR test value: 7.1535, p-value: 0.0074817
+Asymptotic standard error: 0.16142
+    z-value: 4.4516, p-value: 8.5225e-06
+Wald statistic: 19.817, p-value: 8.5225e-06
+
+Log likelihood: -33.76679 for lag model
+ML residual variance (sigma squared): 2.1767, (sigma: 1.4753)
+Number of observations: 18 
+Number of parameters estimated: 4 
+AIC: 75.534, (AIC for lm: 80.687)
+LM test for residual autocorrelation
+test value: 1.0467, p-value: 0.30626
+
+ Correlation of coefficients 
+            sigma rho   (Intercept)
+rho         -0.25                  
+(Intercept)  0.17 -0.67            
+Fito_q0      0.00  0.00 -0.70      
+
+[1] "####q1"
+
+Call:spatialreg::lagsarlm(formula = Ictio_q1 ~ Fito_q1, data = dataTotal_alta,     listw = listw)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-1.004443 -0.718091 -0.331573  0.059649  4.073546 
+
+Type: lag 
+Coefficients: (asymptotic standard errors) 
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept) 3.730201   1.183581  3.1516 0.001624
+Fito_q1     0.033504   0.057090  0.5869 0.557296
+
+Rho: -0.74265, LR test value: 1.6597, p-value: 0.19765
+Asymptotic standard error: 0.43016
+    z-value: -1.7264, p-value: 0.08427
+Wald statistic: 2.9806, p-value: 0.08427
+
+Log likelihood: -29.60459 for lag model
+ML residual variance (sigma squared): 1.4499, (sigma: 1.2041)
+Number of observations: 18 
+Number of parameters estimated: 4 
+AIC: 67.209, (AIC for lm: 66.869)
+LM test for residual autocorrelation
+test value: 3.7006, p-value: 0.054394
+
+ Correlation of coefficients 
+            sigma rho   (Intercept)
+rho          0.26                  
+(Intercept) -0.22 -0.85            
+Fito_q1      0.00  0.02 -0.48      
+
+
+Call:spatialreg::lagsarlm(formula = Ictio_q1 ~ Fito_q1, data = dataTotal_baja,     listw = listw)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-1.164892 -0.416850 -0.031189  0.250585  1.235478 
+
+Type: lag 
+Coefficients: (asymptotic standard errors) 
+             Estimate Std. Error z value Pr(>|z|)
+(Intercept)  2.115589   0.941977  2.2459  0.02471
+Fito_q1     -0.037833   0.047660 -0.7938  0.42731
+
+Rho: 0.38058, LR test value: 1.199, p-value: 0.27352
+Asymptotic standard error: 0.29336
+    z-value: 1.2973, p-value: 0.19452
+Wald statistic: 1.683, p-value: 0.19452
+
+Log likelihood: -18.45505 for lag model
+ML residual variance (sigma squared): 0.44207, (sigma: 0.66488)
+Number of observations: 18 
+Number of parameters estimated: 4 
+AIC: 44.91, (AIC for lm: 44.109)
+LM test for residual autocorrelation
+test value: 1.0744, p-value: 0.29994
+
+ Correlation of coefficients 
+            sigma rho   (Intercept)
+rho         -0.15                  
+(Intercept)  0.13 -0.86            
+Fito_q1      0.00 -0.03 -0.47      
+
+[1] "####q2"
+
+Call:spatialreg::lagsarlm(formula = Ictio_q2 ~ Fito_q2, data = dataTotal_alta,     listw = listw)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.93912 -0.69266 -0.32430  0.15237  3.94562 
+
+Type: lag 
+Coefficients: (asymptotic standard errors) 
+             Estimate Std. Error z value Pr(>|z|)
+(Intercept)  2.799275   0.967858  2.8922 0.003825
+Fito_q2     -0.023302   0.066025 -0.3529 0.724138
+
+Rho: -0.37003, LR test value: 0.4641, p-value: 0.49572
+Asymptotic standard error: 0.4322
+    z-value: -0.85615, p-value: 0.39191
+Wald statistic: 0.73299, p-value: 0.39191
+
+Log likelihood: -28.14168 for lag model
+ML residual variance (sigma squared): 1.3073, (sigma: 1.1434)
+Number of observations: 18 
+Number of parameters estimated: 4 
+AIC: 64.283, (AIC for lm: 62.747)
+LM test for residual autocorrelation
+test value: 0.8453, p-value: 0.35788
+
+ Correlation of coefficients 
+            sigma rho   (Intercept)
+rho          0.14                  
+(Intercept) -0.12 -0.86            
+Fito_q2      0.00 -0.01 -0.41      
+
+
+Call:spatialreg::lagsarlm(formula = Ictio_q2 ~ Fito_q2, data = dataTotal_baja,     listw = listw)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.89968 -0.46023 -0.11448  0.43079  1.02848 
+
+Type: lag 
+Coefficients: (asymptotic standard errors) 
+             Estimate Std. Error z value Pr(>|z|)
+(Intercept)  1.747547   0.785751  2.2240  0.02615
+Fito_q2     -0.017285   0.058930 -0.2933  0.76929
+
+Rho: 0.21143, LR test value: 0.31911, p-value: 0.57214
+Asymptotic standard error: 0.34178
+    z-value: 0.61861, p-value: 0.53617
+Wald statistic: 0.38268, p-value: 0.53617
+
+Log likelihood: -15.46065 for lag model
+ML residual variance (sigma squared): 0.32361, (sigma: 0.56886)
+Number of observations: 18 
+Number of parameters estimated: 4 
+AIC: 38.921, (AIC for lm: 37.24)
+LM test for residual autocorrelation
+test value: 0.26415, p-value: 0.60728
+
+ Correlation of coefficients 
+            sigma rho   (Intercept)
+rho         -0.08                  
+(Intercept)  0.08 -0.91            
+Fito_q2      0.00 -0.02 -0.37      
+
+[1] "####densidad"
+
+Call:spatialreg::lagsarlm(formula = Ictio_Densidad ~ Fito_Densidad, 
+    data = dataTotal_alta, listw = listw)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-6673.54 -3833.01 -1777.60   500.31 22649.40 
+
+Type: lag 
+Coefficients: (numerical Hessian approximate standard errors) 
+                Estimate Std. Error z value Pr(>|z|)
+(Intercept)   6143.57285 2770.94496  2.2171  0.02661
+Fito_Densidad   -0.41748    0.22700 -1.8392  0.06589
+
+Rho: 0.41021, LR test value: 1.5642, p-value: 0.21106
+Approximate (numerical Hessian) standard error: 0.29938
+    z-value: 1.3702, p-value: 0.17063
+Wald statistic: 1.8774, p-value: 0.17063
+
+Log likelihood: -184.905 for lag model
+ML residual variance (sigma squared): 47340000, (sigma: 6880.4)
+Number of observations: 18 
+Number of parameters estimated: 4 
+AIC: 377.81, (AIC for lm: 377.37)
+
+ Approximate correlation of coefficients 
+              rho   (Intercept)
+(Intercept)   -0.69            
+Fito_Densidad -0.24 -0.24      
+
+
+Call:spatialreg::lagsarlm(formula = Ictio_Densidad ~ Fito_Densidad, 
+    data = dataTotal_baja, listw = listw)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-14743.5  -6993.1  -4531.9   3333.9  22161.9 
+
+Type: lag 
+Coefficients: (numerical Hessian approximate standard errors) 
+                Estimate Std. Error z value Pr(>|z|)
+(Intercept)   6346.15736 5644.82047  1.1242   0.2609
+Fito_Densidad    0.78084    0.82580  0.9456   0.3444
+
+Rho: 0.22334, LR test value: 0.41838, p-value: 0.51775
+Approximate (numerical Hessian) standard error: 0.33436
+    z-value: 0.66795, p-value: 0.50416
+Wald statistic: 0.44616, p-value: 0.50416
+
+Log likelihood: -192.7163 for lag model
+ML residual variance (sigma squared): 115620000, (sigma: 10753)
+Number of observations: 18 
+Number of parameters estimated: 4 
+AIC: 393.43, (AIC for lm: 391.85)
+
+ Approximate correlation of coefficients 
+              rho   (Intercept)
+(Intercept)   -0.58            
+Fito_Densidad -0.31 -0.47      
+
+[1] "####Clorofila"
+
+Call:spatialreg::lagsarlm(formula = Ictio_Densidad ~ Clorofila, data = dataTotal_alta, 
+    listw = listw)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-6658.8 -4424.1 -2478.2  1498.2 24439.3 
+
+Type: lag 
+Coefficients: (numerical Hessian approximate standard errors) 
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept)   6832.6     3833.5  1.7824  0.07469
+Clorofila    -1441.4     1954.7 -0.7374  0.46088
+
+Rho: 0.21711, LR test value: 0.40113, p-value: 0.52651
+Approximate (numerical Hessian) standard error: 0.33329
+    z-value: 0.65141, p-value: 0.51479
+Wald statistic: 0.42433, p-value: 0.51479
+
+Log likelihood: -186.1516 for lag model
+ML residual variance (sigma squared): 55782000, (sigma: 7468.8)
+Number of observations: 18 
+Number of parameters estimated: 4 
+AIC: 380.3, (AIC for lm: 378.7)
+
+ Approximate correlation of coefficients 
+            rho   (Intercept)
+(Intercept) -0.72            
+Clorofila    0.16 -0.62      
+
+
+Call:spatialreg::lagsarlm(formula = Ictio_Densidad ~ Clorofila, data = dataTotal_baja, 
+    listw = listw)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-13887.3  -7162.4  -4594.4   3073.1  26143.4 
+
+Type: lag 
+Coefficients: (numerical Hessian approximate standard errors) 
+             Estimate Std. Error z value Pr(>|z|)
+(Intercept) 8931.2281  4429.9771  2.0161  0.04379
+Clorofila      4.7341        NaN     NaN      NaN
+
+Rho: 0.31316, LR test value: 0.89666, p-value: 0.34368
+Approximate (numerical Hessian) standard error: 0.31066
+    z-value: 1.008, p-value: 0.31343
+Wald statistic: 1.0162, p-value: 0.31343
+
+Log likelihood: -193.1576 for lag model
+ML residual variance (sigma squared): 120260000, (sigma: 10966)
+Number of observations: 18 
+Number of parameters estimated: 4 
+AIC: 394.32, (AIC for lm: 393.21)
+
+ Approximate correlation of coefficients 
+            rho   (Intercept)
+(Intercept) -1.00            
+Clorofila     NaN   NaN      
+

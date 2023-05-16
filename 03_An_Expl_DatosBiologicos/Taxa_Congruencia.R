@@ -40,6 +40,12 @@ dataTotal_alta
 
 #El método usado para hacer este modelo es: Bivand & Piras (2015) https://www.jstatsoft.org/v63/i18/.
 
+
+
+
+
+
+
 q0_Alta <- spatialreg::lagsarlm(Ictio_q0 ~ Fito_q0,
                                       data = dataTotal_alta,
                                       listw = listw)
@@ -67,12 +73,46 @@ densidad_Baja <- spatialreg::lagsarlm(Ictio_Densidad ~ Fito_Densidad,
                                       listw = listw)
 
 
-clorofila_Alta <- spatialreg::lagsarlm(Clorofila ~ Fito_Densidad+ Fito_q0+ Fito_q1+ Fito_q2,
+
+clorofila_Alta <- spatialreg::lagsarlm(Ictio_Densidad ~ Clorofila,
                                       data = dataTotal_alta,
                                       listw = listw)
-clorofila_Baja <- spatialreg::lagsarlm(Clorofila ~ Fito_Densidad + Fito_q0+ Fito_q1+ Fito_q2,
+clorofila_Baja <- spatialreg::lagsarlm(Ictio_Densidad ~ Clorofila,
                                        data = dataTotal_baja,
                                        listw = listw)
+
+lagsarlm_q0_Alta<-summary(q0_Alta, correlation=TRUE)
+lagsarlm_q0_Baja<-summary(q0_Baja, correlation=TRUE)
+lagsarlm_q1_Alta<-summary(q1_Alta, correlation=TRUE)
+lagsarlm_q1_Baja<-summary(q1_Baja, correlation=TRUE)
+lagsarlm_q2_Alta<-summary(q2_Alta, correlation=TRUE)
+lagsarlm_q2_Baja<-summary(q2_Baja, correlation=TRUE)
+lagsarlm_densidad_Alta<-summary(densidad_Alta, correlation=TRUE)
+lagsarlm_densidad_Baja<-summary(densidad_Baja, correlation=TRUE)
+lagsarlm_clorofila_Alta<-summary(clorofila_Alta, correlation=TRUE)
+lagsarlm_clorofila_Baja<-summary(clorofila_Baja, correlation=TRUE)
+
+
+
+capture.output("####q0",
+               lagsarlm_q0_Alta,
+               lagsarlm_q0_Baja,
+               "####q1",
+               lagsarlm_q1_Alta,
+               lagsarlm_q1_Baja,
+               "####q2",
+               lagsarlm_q2_Alta,
+               lagsarlm_q2_Baja,
+               "####densidad",
+               lagsarlm_densidad_Alta,
+               lagsarlm_densidad_Baja,
+               "####Clorofila",
+               lagsarlm_clorofila_Alta,
+               lagsarlm_clorofila_Baja,
+               file="SAR_Congruencias.txt"
+  
+)
+
 
 
 Ictio_q1_qui_Alta <- spatialreg::lagsarlm(Fito_q1 ~ OD+
@@ -94,12 +134,7 @@ summary(Ictio_q1_qui_Baja, correlation=TRUE)
 
 
 
-summary(q0_Alta)
 
-summary(clorofila_Alta, correlation=TRUE)
-residualesclorofila_Baja =clorofila_Baja$residuals
-shapiro.test(residualesclorofila_Baja)
-Moran.I(residualesclorofila_Baja,listw)
 
 
 cor.test(dataTotal_alta$Fito_q0,dataTotal_alta$Ictio_q0, method = "spearman")
@@ -122,7 +157,7 @@ Congruence_q0_plot<-ggplot() +
   xlab(expression(paste("Fitoplancton ("^0,"D)")))+
   ylab(expression(paste("Ictioplancton ("^0,"D)")))+
   labs(title = "(a)",
-       subtitle = "Cor. spearman = Alta: 0.09 Baja: -0.27")+
+        subtitle = expression("SAR Alta"~ rho~"= 0.49 Baja:"~ rho~"= 0.71*"))+
   theme_bw()
 
 Congruence_q1_plot<-ggplot() + 
@@ -131,7 +166,7 @@ Congruence_q1_plot<-ggplot() +
   xlab(expression(paste("Fitoplancton ("^1,"D)")))+
   ylab(expression(paste("Ictioplancton ("^1,"D)")))+
   labs(title = "(b)",
-       subtitle = "Cor. spearman = Alta: 0.13 Baja: -0.2")+
+       subtitle = expression("SAR Alta"~ rho~"= -0.74 Baja:"~ rho~"= 0.38"))+
   theme_bw()
 
 Congruence_q2_plot<-ggplot() + 
@@ -140,7 +175,9 @@ Congruence_q2_plot<-ggplot() +
   xlab(expression(paste("Fitoplancton ("^2,"D)")))+
   ylab(expression(paste("Ictioplancton ("^2,"D)")))+
   labs(title = "(c)",
-       subtitle = "Cor. spearman = Alta: -0.01 Baja: -0.12")+
+      
+  subtitle = expression("SAR Alta"~ rho~"= -0.37 Baja:"~ rho~"= 0.21"))+
+  
   theme_bw()
 
 Congruence_den_plot<-ggplot() + 
@@ -149,7 +186,8 @@ Congruence_den_plot<-ggplot() +
   xlab(expression(paste("Densidad de Fitoplancton ["~Cel.L^-1~"]")))+
   ylab(expression(paste("Densidad de Ictioplancton ["~ Ind.1000m^-3~"]")))+
   labs(title = "(d)",
-       subtitle = "Cor. spearman = Alta: -0.17 Baja: -0.14")+
+       
+  subtitle = expression("SAR Alta"~ rho~"= -0.22 Baja:"~ rho~"= 0.22"))+
   theme_bw()
 
 Congruence_clor_plot<-ggplot() + 
@@ -158,7 +196,8 @@ Congruence_clor_plot<-ggplot() +
   xlab(expression(paste("Clorofila [",mu,"g.L"^-1,"]")))+
   ylab(expression(paste("Densidad de Ictioplancton ["~ Ind.1000m^-3~"]")))+
   labs(title = "(e)",
-       subtitle = "Cor. spearman =  Alta: -0.22 Baja: -0.40")+
+       
+  subtitle = expression("SAR Alta"~ rho~"= 0.21 Baja:"~ rho~"= 0.31"))+
   theme_bw()
 
 
@@ -241,8 +280,6 @@ Ictio_nmds1<-Ictio_coordenadas$MDS1
 
 
 
-
-
 cor.test(Fito_nmds1,Ictio_nmds1, method = "spearman")
 Congruence_nmds_plot<-ggplot() + 
   geom_point(aes(x=Fito_nmds1, y=Ictio_nmds1))+
@@ -272,29 +309,62 @@ dev.off()
 #Congruencia con el medio ambiente
 
 
-PCA_Data<-read.table("../04_Analisis_Combinado/Componentes_principales_valores_Var_CCCP.csv", sep=",", header = TRUE, row.names = 1)
+Diversidad_q0_MA_Icito<-spatialreg::lagsarlm(Ictio_q0 ~
+                                OD+
+                                Temperatura_Sup+
+                                Salinidad_Sup+
+                                Salinidad_IQR+
+                                Oxigeno_median  
+                               
+                                 ,
+                              data = dataTotal_alta,
+                              listw = listw)     
+q0_MA_Icito_LagSAR<-summary(Diversidad_q0_MA_Icito)
 
 
-PC01<-PCA_Data$PC01
+Diversidad_q0_MB_Icito<-spatialreg::lagsarlm(Ictio_q0 ~
+                                               OD+
+                                               Temperatura_Sup+
+                                               Salinidad_Sup+
+                                               Salinidad_IQR+
+                                               Oxigeno_median  
+                                             
+                                             ,
+                                             data = dataTotal_baja,
+                                             listw = listw)     
+q0_MB_Icito_LagSAR<-summary(Diversidad_q0_MB_Icito)
 
-cor.test(Fito_q0,PC01, method = "spearman")
-cor.test(Ictio_q0,PC01, method = "spearman")
+Diversidad_q0__MA_Fito<-spatialreg::lagsarlm(Fito_q0 ~
+                                            OD+
+                                            Temperatura_Sup+
+                                            Salinidad_Sup+
+                                            Salinidad_IQR+
+                                            Oxigeno_median  
+                                          
+                                          ,
+                                          data = dataTotal_alta,
+                                          listw = listw)     
+q0_MA_Fito_LagSAR<-summary(Diversidad_q0__MA_Fito)
 
-cor.test(Fito_q1,PC01, method = "spearman")
-cor.test(Ictio_q1,PC01, method = "spearman")
-
-cor.test(Fito_q2,PC01, method = "spearman")
-cor.test(Ictio_q2,PC01, method = "spearman")
-
-cor.test(Fito_Densidad,PC01, method = "spearman")
-cor.test(Ictio_Densidad,PC01, method = "spearman")
-
-cor.test(Fito_Clorofila,PC01, method = "spearman")
-
-plot(Fito_q0,PC01)
-
+Diversidad_q0__Mb_Fito<-spatialreg::lagsarlm(Fito_q0 ~
+                                               OD+
+                                               Temperatura_Sup+
+                                               Salinidad_Sup+
+                                               Salinidad_IQR+
+                                               Oxigeno_median  
+                                             
+                                             ,
+                                             data = dataTotal_baja,
+                                             listw = listw)     
+q0_MB_Fito_LagSAR<-summary(Diversidad_q0__Mb_Fito)
 
 
-
-Arch_Data<-read.table("../04_Analisis_Combinado/GLRM_Archetipes.csv", sep=",", header = TRUE, nrow = FALSE)
-
+capture.output("####Modelos para explicar la diversidad de ictio",
+               q0_MA_Icito_LagSAR,
+               q0_MB_Icito_LagSAR,
+               "###Modelo para explicar la diversidad de fito",
+               q0_MA_Fito_LagSAR,
+               q0_MB_Fito_LagSAR,
+               file ="Modelos_SAR.txt"
+  
+)

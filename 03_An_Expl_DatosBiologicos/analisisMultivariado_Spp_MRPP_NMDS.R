@@ -71,8 +71,8 @@ coordenadas$Marea <- as.factor(groups_df$Marea)
 
 
 Marea_group <- coordenadas %>%
-  ggplot(aes(x = MDS1,
-             y = MDS2,
+  ggplot(aes(x = NMDS1,
+             y = NMDS2,
               color=Marea,
              label=Estaciones))+
   geom_point()+geom_text(hjust=0, vjust=0)
@@ -81,7 +81,7 @@ hull_data <-
   coordenadas %>%
   tidyr::drop_na() %>%
   group_by(Marea) %>% 
-  slice(chull(MDS1, MDS2))
+  slice(chull(NMDS1, NMDS2))
 
 Marea_group<-Marea_group+
 geom_polygon(data = hull_data,
@@ -96,8 +96,8 @@ geom_polygon(data = hull_data,
         axis.title.y = element_text(size=18))
 
 Sector_group <- coordenadas %>%
-  ggplot(aes(x = MDS1,
-             y = MDS2,
+  ggplot(aes(x = NMDS1,
+             y = NMDS2,
              color=Sector,
              label=Estaciones))+
   geom_point()+geom_text(hjust=0, vjust=0)
@@ -106,7 +106,7 @@ hull_data <-
   coordenadas %>%
   tidyr::drop_na() %>%
   group_by(Sector) %>% 
-  slice(chull(MDS1, MDS2))
+  slice(chull(NMDS1, NMDS2))
 
 Sector_group<-Sector_group+
   geom_polygon(data = hull_data,
@@ -122,8 +122,8 @@ Sector_group<-Sector_group+
 
 
 Transecto_group <- coordenadas %>%
-  ggplot(aes(x = MDS1,
-             y = MDS2,
+  ggplot(aes(x = NMDS1,
+             y = NMDS2,
              color=Transecto,
              label=Estaciones))+
   geom_point()+geom_text(hjust=0, vjust=0)
@@ -132,7 +132,7 @@ hull_data <-
   coordenadas %>%
   tidyr::drop_na() %>%
   group_by(Transecto) %>% 
-  slice(chull(MDS1, MDS2))
+  slice(chull(NMDS1, NMDS2))
 
 Transecto_group<-Transecto_group+
   geom_polygon(data = hull_data,
