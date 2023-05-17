@@ -1,0 +1,16 @@
+[1] "###Fito_q2ODBaja"
+
+Partial Mantel statistic based on Spearman's rank correlation rho 
+
+Call:
+mantel.partial(xdis = Matriz_Bio, ydis = Matrix_Var, zdis = matriz_distancias,      method = "spearman", permutations = 999) 
+
+Mantel statistic r: -0.02133 
+      Significance: 0.551 
+
+Upper quantiles of permutations (null model):
+  90%   95% 97.5%   99% 
+0.134 0.184 0.226 0.270 
+Permutation: free
+Number of permutations: 999
+

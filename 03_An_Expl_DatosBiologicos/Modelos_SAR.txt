@@ -1,0 +1,128 @@
+[1] "####Modelos para explicar la diversidad de ictio"
+
+Call:spatialreg::lagsarlm(formula = Ictio_q0 ~ OD + Temperatura_Sup + 
+    Salinidad_Sup + Salinidad_IQR + Fito_q0 + Oxigeno_median,     data = dataTotal_alta, listw = listw)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-2.64854 -0.96267 -0.62901  1.14109  3.25784 
+
+Type: lag 
+Coefficients: (asymptotic standard errors) 
+                 Estimate Std. Error z value Pr(>|z|)
+(Intercept)     19.483805  21.556458  0.9039  0.36607
+OD               0.061389   1.187183  0.0517  0.95876
+Temperatura_Sup -0.687400   0.540904 -1.2708  0.20379
+Salinidad_Sup    0.157158   0.069551  2.2596  0.02384
+Salinidad_IQR   -0.461976   0.713556 -0.6474  0.51736
+Fito_q0          0.063814   0.066763  0.9558  0.33916
+Oxigeno_median  -0.804155   1.203349 -0.6683  0.50396
+
+Rho: 0.58125, LR test value: 3.6458, p-value: 0.056211
+Asymptotic standard error: 0.221
+    z-value: 2.6301, p-value: 0.0085348
+Wald statistic: 6.9177, p-value: 0.0085348
+
+Log likelihood: -34.20932 for lag model
+ML residual variance (sigma squared): 2.4239, (sigma: 1.5569)
+Number of observations: 18 
+Number of parameters estimated: 9 
+AIC: 86.419, (AIC for lm: 88.064)
+LM test for residual autocorrelation
+test value: 0.25739, p-value: 0.61192
+
+
+Call:spatialreg::lagsarlm(formula = Ictio_q0 ~ OD + Temperatura_Sup + 
+    Salinidad_Sup + Salinidad_IQR + Fito_q0 + Oxigeno_median,     data = dataTotal_baja, listw = listw)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-2.25490 -0.86150 -0.19805  0.77793  2.74622 
+
+Type: lag 
+Coefficients: (asymptotic standard errors) 
+                 Estimate Std. Error z value Pr(>|z|)
+(Intercept)     19.607664  13.443018  1.4586   0.1447
+OD               1.137009   0.716338  1.5873   0.1125
+Temperatura_Sup -0.850909   0.583157 -1.4591   0.1445
+Salinidad_Sup    0.040199   0.059504  0.6756   0.4993
+Salinidad_IQR   -0.129047   0.419238 -0.3078   0.7582
+Fito_q0         -0.046626   0.037203 -1.2533   0.2101
+Oxigeno_median  -0.282437   1.100170 -0.2567   0.7974
+
+Rho: 0.74411, LR test value: 6.4688, p-value: 0.010978
+Asymptotic standard error: 0.15031
+    z-value: 4.9504, p-value: 7.4045e-07
+Wald statistic: 24.507, p-value: 7.4045e-07
+
+Log likelihood: -32.28531 for lag model
+ML residual variance (sigma squared): 1.8197, (sigma: 1.349)
+Number of observations: 18 
+Number of parameters estimated: 9 
+AIC: 82.571, (AIC for lm: 87.039)
+LM test for residual autocorrelation
+test value: 0.57718, p-value: 0.44742
+
+[1] "###Modelo para explicar la diversidad de fito"
+
+Call:spatialreg::lagsarlm(formula = Fito_q0 ~ OD + Temperatura_Sup + 
+    Salinidad_Sup + Salinidad_IQR + Oxigeno_median, data = dataTotal_alta,     listw = listw)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-13.06500  -3.66808   0.81709   3.76115   8.99878 
+
+Type: lag 
+Coefficients: (asymptotic standard errors) 
+                 Estimate Std. Error z value Pr(>|z|)
+(Intercept)     117.12917   72.39769  1.6179 0.105693
+OD              -11.25866    3.53640 -3.1836 0.001454
+Temperatura_Sup   0.90134    1.88306  0.4787 0.632182
+Salinidad_Sup    -0.51420    0.20684 -2.4861 0.012917
+Salinidad_IQR    -5.50042    2.12471 -2.5888 0.009631
+Oxigeno_median   -4.10541    4.07191 -1.0082 0.313345
+
+Rho: 0.18022, LR test value: 0.49928, p-value: 0.47981
+Asymptotic standard error: 0.27065
+    z-value: 0.66588, p-value: 0.50549
+Wald statistic: 0.44339, p-value: 0.50549
+
+Log likelihood: -56.04511 for lag model
+ML residual variance (sigma squared): 29.473, (sigma: 5.4289)
+Number of observations: 18 
+Number of parameters estimated: 8 
+AIC: 128.09, (AIC for lm: 126.59)
+LM test for residual autocorrelation
+test value: 6.7475, p-value: 0.0093881
+
+
+Call:spatialreg::lagsarlm(formula = Fito_q0 ~ OD + Temperatura_Sup + 
+    Salinidad_Sup + Salinidad_IQR + Oxigeno_median, data = dataTotal_baja,     listw = listw)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-14.7250  -3.8028  -1.0020   6.0103  11.8466 
+
+Type: lag 
+Coefficients: (asymptotic standard errors) 
+                Estimate Std. Error z value Pr(>|z|)
+(Intercept)     88.89866   75.72092  1.1740  0.24038
+OD              -7.19366    4.16071 -1.7290  0.08382
+Temperatura_Sup -0.14110    3.31128 -0.0426  0.96601
+Salinidad_Sup   -0.10050    0.33597 -0.2991  0.76484
+Salinidad_IQR    3.35637    2.29618  1.4617  0.14382
+Oxigeno_median   1.68856    6.27077  0.2693  0.78772
+
+Rho: -0.82034, LR test value: 2.3377, p-value: 0.12628
+Asymptotic standard error: 0.39597
+    z-value: -2.0717, p-value: 0.038292
+Wald statistic: 4.292, p-value: 0.038292
+
+Log likelihood: -62.99136 for lag model
+ML residual variance (sigma squared): 58.216, (sigma: 7.63)
+Number of observations: 18 
+Number of parameters estimated: 8 
+AIC: 141.98, (AIC for lm: 142.32)
+LM test for residual autocorrelation
+test value: 2.2038, p-value: 0.13767
+

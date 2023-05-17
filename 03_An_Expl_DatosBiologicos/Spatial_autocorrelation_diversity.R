@@ -48,6 +48,7 @@ coordinates(marea_altacoor) <- c("longitud", "latitud")
 
 coordinates(coordenadas_fuente) <- c("longitud", "latitud")
 
+
 costa<-readOGR("../SIG_Datos/costa.shp")
 rios<-readOGR("../SIG_Datos/rios_wgs84.shp")
 estaciones<-readOGR("../SIG_Datos/estaciones.shp")
@@ -261,6 +262,7 @@ grid.arrange(Ictio_Densidad_AltaGrid,
              nrow=3, 
              ncol=2)
 dev.off()
+
 
 
 
